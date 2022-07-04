@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String
+  password String
+  wrights Wright[]
+}
+
+model Wright {
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(255)
+  content String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  wrighter User @relation(fields: [userId], references: [id])
+  userId Int
+}

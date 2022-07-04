@@ -1,0 +1,37 @@
+{
+  "name": "wrighter-server",
+  "version": "1.0.0",
+  "description": "wrighter fastify backend",
+  "main": "src/index.js",
+  "author": "Vishal TK",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json -w",
+    "start": "tsnd --respawn --transpile-only --exit-child src/index.ts",
+    "migrate": "npx prisma migrate dev --name init"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^7.0.0",
+    "@fastify/env": "^4.0.0",
+    "@fastify/jwt": "^6.2.0",
+    "@fastify/middie": "^8.0.0",
+    "@prisma/client": "^4.0.0",
+    "@types/node": "^18.0.1",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "fastify": "^4.2.0",
+    "fastify-zod": "^1.0.2",
+    "frameguard": "^4.0.0",
+    "nodemon": "^2.0.18",
+    "passport-local": "^1.0.0",
+    "x-xss-protection": "^2.0.0",
+    "zod": "^3.17.3"
+  },
+  "devDependencies": {
+    "@tsconfig/node14": "^1.0.3",
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.7.4"
+  }
+}
