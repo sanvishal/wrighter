@@ -49,11 +49,10 @@ const Login: NextPage = () => {
           id="password"
           width={200}
           bg="bgDark"
-          isInvalid
+          isDisabled
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Text>hello</Text>
-        <Button> Log in </Button>
+        <Button isDisabled>login</Button>
       </form>
     </div>
   );

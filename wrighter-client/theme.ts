@@ -23,25 +23,75 @@ export const theme = extendTheme({
   },
   components: {
     Button: {
+      baseStyle: {
+        fontWeight: "700",
+        borderRadius: "12px",
+        _loading: {
+          opacity: 0.7,
+        },
+        _disabled: {
+          opacity: 0.5,
+        },
+      },
+      sizes: {
+        md: {
+          h: "2.5rem",
+        },
+      },
       variants: {
         solid: (props: any) => ({
-          color: mode("#ffffff", "#292a2e")(props),
+          color: "#ffffff",
           backgroundColor: "var(--chakra-colors-accentColor)",
-          fontWeight: "700",
-          borderRadius: "12px",
+          outline: "0px solid var(--chakra-colors-accentColorTrans)",
           _hover: {
-            color: mode("#ffffff", "#292a2e")(props),
+            color: "#ffffff",
             backgroundColor: "var(--chakra-colors-accentColor)",
-            fontWeight: "700",
-            outline: "2px solid var(--chakra-colors-accentColorLight)",
+            outline: "2px solid var(--chakra-colors-accentColorTrans)",
             outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-accentColor)",
+              outline: "0px solid var(--chakra-colors-accentColorTrans)",
+            },
+            _loading: {
+              backgroundColor: "var(--chakra-colors-accentColor)",
+              outline: "0px solid var(--chakra-colors-accentColorTrans)",
+            },
+          },
+          _active: {
+            color: "#ffffff",
+            backgroundColor: "var(--chakra-colors-accentColor)",
+            outline: "2px solid var(--chakra-colors-accentColorTrans)",
+            outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-accentColor)",
+              outline: "0px solid var(--chakra-colors-accentColorTrans)",
+            },
+            _loading: {
+              backgroundColor: "var(--chakra-colors-accentColor)",
+              outline: "0px solid var(--chakra-colors-accentColorTrans)",
+            },
           },
           _focus: {
-            color: mode("#ffffff", "#292a2e")(props),
+            color: "#ffffff",
             backgroundColor: "var(--chakra-colors-accentColor)",
-            fontWeight: "700",
-            outline: "4px solid var(--chakra-colors-accentColorLight)",
+            outline: "4px solid var(--chakra-colors-accentColorTrans)",
             outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-accentColor)",
+              outline: "0px solid var(--chakra-colors-accentColorTrans)",
+            },
+          },
+        }),
+        ghost: (props: any) => ({
+          color: "var(--chakra-colors-textLighter)",
+          backgroundColor: "var(--chakra-colors-bgLight)",
+          _hover: {
+            color: "var(--chakra-colors-textLighter)",
+            backgroundColor: mode("#18141f1f", "#6c6e755c")(props),
+          },
+          _focus: {
+            color: "var(--chakra-colors-textLighter)",
+            backgroundColor: mode("#18141f1f", "#6c6e755c")(props),
           },
         }),
       },
@@ -71,8 +121,8 @@ export const theme = extendTheme({
   },
   semanticTokens: {
     colors: {
-      accentColor: "#33BC84",
-      accentColorLight: "#33BC8450",
+      accentColor: "#6261fe",
+      accentColorTrans: "#6261fe50",
       bgDark: { default: "#f2f2f3", _dark: "#1d1e20" },
       bgLight: { default: "#2320270d", _dark: "#494b504d" },
       bgLighter: { default: "#ffffff", _dark: "#292a2e" },
