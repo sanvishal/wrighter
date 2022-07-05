@@ -35,17 +35,16 @@ export const loginHandler = async (request: FastifyRequest<{ Body: LoginUserInpu
     //   accessToken: fastify.jwt.sign(rest),
     // };
     const token = fastify.jwt.sign(rest, { expiresIn: 86400 * 2 });
-    console.log(token);
     const cd = new Date();
-    cd.setSeconds(cd.getSeconds() + 31536000);
+    cd.setSeconds(cd.getSeconds() + 86400 * 2);
     reply
       .setCookie("token", token, {
-        domain: "*",
+        // domain: "*",
         path: "/",
-        secure: true,
+        secure: process.env.NODE_ENV !== "development",
         httpOnly: true,
         sameSite: true,
-        expires: cd,
+        maxAge: 86400 * 2,
       })
       .code(200)
       .send("Cookie sent");
@@ -66,7 +65,29 @@ export const getUsersHandler = async (request: FastifyRequest, reply: FastifyRep
   }
 };
 
+export const getUserHandler = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const user = await findUserByEmail(request.user.email);
+    if (!user) {
+      return reply.code(401).send({
+        message: "You are not authorized",
+      });
+    }
+    return user;
+  } catch (e) {
+    console.error(e);
+    return reply.code(401).send(e);
+  }
+};
+
 export const userLogoutHandler = async (request: FastifyRequest, reply: FastifyReply) => {
-  reply.clearCookie("token");
+  reply.setCookie("token", "", {
+    // domain: "*",
+    path: "/",
+    secure: process.env.NODE_ENV !== "development",
+    httpOnly: true,
+    sameSite: true,
+    maxAge: -1,
+  });
   return reply.code(200).send();
 };

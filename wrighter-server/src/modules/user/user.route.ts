@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { getUsersHandler, loginHandler, registerUserHandler, userLogoutHandler } from "./user.controller";
+import { getUserHandler, getUsersHandler, loginHandler, registerUserHandler, userLogoutHandler } from "./user.controller";
 import { $ref } from "./user.schema";
 
 export default async function userRoutes(server: FastifyInstance) {
@@ -27,7 +27,9 @@ export default async function userRoutes(server: FastifyInstance) {
     loginHandler
   );
 
-  server.post("/logout", {}, userLogoutHandler);
+  server.get("/whoami", { preHandler: server.authenticate }, getUserHandler);
+
+  server.get("/logout", {}, userLogoutHandler);
 
   server.get(
     "/",

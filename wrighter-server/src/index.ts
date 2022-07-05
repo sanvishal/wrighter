@@ -51,10 +51,22 @@ async function build() {
     verify: {
       maxAge: 86400 * 2,
     },
+    messages: {
+      noAuthorizationInCookieMessage: "You are not authorized to access",
+      authorizationTokenExpiredMessage: "You are not authorized to access",
+      authorizationTokenInvalid: "You are not authorized to access",
+      authorizationTokenUntrusted: "You are not authorized to access",
+    },
   });
 
   // @ts-ignore
-  fastify.use(cors());
+  fastify.use(
+    cors({
+      origin: ["http://localhost:3000", "http://127.0.0.1"],
+      credentials: true,
+      exposedHeaders: ["set-cookie"],
+    })
+  );
   // @ts-ignore
   fastify.use(frameguard());
   // @ts-ignore
