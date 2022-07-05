@@ -2,7 +2,10 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
+
 import { verifyJWT } from "../services/authService";
+import { theme } from "../theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -42,7 +45,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     console.log(verifyJWT(), pageProps);
   };
 
-  return <Component {...pageProps} />;
+  return (
+    <ChakraProvider theme={theme}>
+      <Component {...pageProps} />
+    </ChakraProvider>
+  );
 }
 
 export default MyApp;

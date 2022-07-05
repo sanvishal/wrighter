@@ -6,7 +6,6 @@ import { useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { API_BASE_URL } from "../constants";
 import { getUser, logout } from "../services/authService";
-import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   const handleGetUser = async () => {

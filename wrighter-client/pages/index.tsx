@@ -1,3 +1,4 @@
+import { Button, Input, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { NextPage } from "next";
 import { useState } from "react";
@@ -41,11 +42,18 @@ const Login: NextPage = () => {
     <div>
       <Navbar />
       <form onSubmit={(e) => handleSubmit(e)}>
-        <label htmlFor="email"> Username </label>
-        <input type="text" name="email" id="email" onChange={(e) => setEmail(e.target.value)} />
-        <label htmlFor="password"> Password </label>
-        <input type="text" name="password" id="password" onChange={(e) => setPassword(e.target.value)} />
-        <button> Log in </button>
+        <Input type="text" name="email" id="email" width={200} onChange={(e) => setEmail(e.target.value)} />
+        <Input
+          type="text"
+          name="password"
+          id="password"
+          width={200}
+          bg="bgDark"
+          isInvalid
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Text>hello</Text>
+        <Button> Log in </Button>
       </form>
     </div>
   );

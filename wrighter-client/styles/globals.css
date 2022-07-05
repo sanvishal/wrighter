@@ -1,16 +1,57 @@
-html,
+@font-face {
+  font-family: "Avenir LT Std";
+  src: local("Avenir LT Std 55 Roman"), local("AvenirLTStd-Roman"), url("/fonts/AvenirLTStd-Roman.woff2") format("woff2"),
+    url("/fonts/AvenirLTStd-Roman.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Avenir LT Std";
+  src: local("Avenir LT Std 55 Mediumm"), local("AvenirLTStd-Medium"), url("/fonts/Avenir-Medium.woff2") format("woff2"),
+    url("/fonts/Avenir-Medium.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Avenir LT Std";
+  src: local("Avenir LT Std 55 Oblique"), local("AvenirLTStd-Oblique"), url("/fonts/Avenir-Oblique.woff2") format("woff2"),
+    url("/fonts/Avenir-Oblique.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Avenir LT Std";
+  src: local("Avenir LT Std 95 Black"), local("AvenirLTStd-Black"), url("/fonts/AvenirLTStd-Black.woff2") format("woff2"),
+    url("/fonts/AvenirLTStd-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Avenir LT Std";
+  src: local("Avenir LT Std 45 Book"), local("AvenirLTStd-Book"), url("/fonts/AvenirLTStd-Book.woff2") format("woff2"),
+    url("/fonts/AvenirLTStd-Book.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Avenir LT Std";
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-* {
-  box-sizing: border-box;
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
