@@ -1,13 +1,21 @@
+import { Button } from "@chakra-ui/react";
 import axios from "axios";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { API_BASE_URL } from "../constants";
+import { UserContext } from "../contexts/UserContext";
 import { getUser, logout } from "../services/authService";
 
 const Home: NextPage = () => {
+  const { fetchUser } = useContext(UserContext);
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   const handleGetUser = async () => {
     try {
       const user = await getUser();
@@ -27,8 +35,8 @@ const Home: NextPage = () => {
   return (
     <div>
       <Navbar />
-      <button onClick={() => handleGetUser()}> User </button>
-      <button onClick={() => handleLogOut()}> Logout </button>
+      <Button onClick={() => handleGetUser()}> User </Button>
+      <Button onClick={() => handleLogOut()}> Logout </Button>
     </div>
   );
 };

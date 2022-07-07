@@ -1,11 +1,12 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { API_BASE_URL } from "../constants";
+import { User } from "../types";
 
 export const login = ({ email, password }: { email: string; password: string }) => {
   return axios.post(`${API_BASE_URL}/user/login`, { email, password }, { withCredentials: true });
 };
 
-export const getUser = () => {
+export const getUser = (): Promise<AxiosResponse<User>> => {
   return axios.get(`${API_BASE_URL}/user/whoami`, { withCredentials: true });
 };
 

@@ -17,7 +17,7 @@ export const theme = extendTheme({
     global: (props: any) => ({
       body: {
         bg: mode("#fbfbfb", "#222326")(props),
-        color: mode("#2b292e", "#dddddf")(props),
+        color: mode("#2b292e", "#ededed")(props),
       },
     }),
   },
@@ -25,7 +25,7 @@ export const theme = extendTheme({
     Button: {
       baseStyle: {
         fontWeight: "700",
-        borderRadius: "12px",
+        borderRadius: "10px",
         _loading: {
           opacity: 0.7,
         },
@@ -127,8 +127,16 @@ export const theme = extendTheme({
       bgLight: { default: "#2320270d", _dark: "#494b504d" },
       bgLighter: { default: "#ffffff", _dark: "#292a2e" },
       textPlaceholder: { default: "#96939a", _dark: "#7c7d83" },
+      textColorWhite: "#ededed",
+      textColorBlack: "#2b292e",
+      textColor: { default: "#2b292e", _dark: "#ededed" },
+      textColorInvert: { default: "#ededed", _dark: "#2b292e" },
       textLight: { default: "#2b292e", _dark: "#dddddf" },
       textLighter: { default: "#6a686e", _dark: "#a6a7ab" },
+      border: { default: "#ffffff", _dark: "#333438" },
+      inputBorderColor: { default: "var(--chakra-colors-blackAlpha-400)", _dark: "var(--chakra-colors-whiteAlpha-300)" },
+      errorRed: "#FC8181",
+      shadow: { default: "0px 20px 50px #2b292e10", _dark: "0px 14px 30px #0a0a0b73" },
     },
   },
 });

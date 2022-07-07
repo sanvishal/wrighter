@@ -6,9 +6,12 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import { verifyJWT } from "../services/authService";
 import { theme } from "../theme";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { UserProvider } from "../contexts/UserContext";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const queryClient = new QueryClient();
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
@@ -46,9 +49,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <ChakraProvider theme={theme}>
-      <Component {...pageProps} />
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
+        <UserProvider>
+          <Component {...pageProps} />
+        </UserProvider>
+      </ChakraProvider>
+    </QueryClientProvider>
   );
 }
 
