@@ -6,6 +6,10 @@ export const login = ({ email, password }: { email: string; password: string }) 
   return axios.post(`${API_BASE_URL}/user/login`, { email, password }, { withCredentials: true });
 };
 
+export const register = ({ email, password, name }: { email: string; password: string; name: string }) => {
+  return axios.post(`${API_BASE_URL}/user`, { email, password, name }, { withCredentials: true });
+};
+
 export const getUser = (): Promise<AxiosResponse<User>> => {
   return axios.get(`${API_BASE_URL}/user/whoami`, { withCredentials: true });
 };

@@ -19,11 +19,11 @@ import {
 } from "@chakra-ui/react";
 import { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { useQuery } from "react-query";
 import Logo from "../components/Logo";
 import { Toaster } from "../components/Toaster";
-import { login } from "../services/authService";
+import { login, register } from "../services/authService";
 import { validateEmail } from "../utils";
 
 const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.Element => {
@@ -39,8 +39,6 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
     value: "",
     error: "",
   });
-
-  const [loginError, setLoginError] = useState("");
 
   const handleEmailChange = (emailValue: string) => {
     const isValidEmail = validateEmail(emailValue);
@@ -67,7 +65,6 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
   const handleLogin = async () => {
     const { status, error } = await sendLoginRequest();
     if (status === "error") {
-      setLoginError(error.response?.data?.message || "Something bad happened! Please try again.");
       toast({
         position: "bottom-left",
         render: () => (
@@ -102,6 +99,11 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
             id="email"
             required
             value={email.value}
+            onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === "Enter") {
+                handleLogin();
+              }
+            }}
             onChange={(e: ChangeEvent<HTMLInputElement>) => handleEmailChange(e.target.value)}
           />
         </Box>
@@ -116,6 +118,11 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
             id="password"
             required
             value={password.value}
+            onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === "Enter") {
+                handleLogin();
+              }
+            }}
             onChange={(e: ChangeEvent<HTMLInputElement>) => handlePasswordChange(e.target.value)}
           />
         </Box>
@@ -141,6 +148,83 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
 };
 
 const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.Element => {
+  const toast = useToast();
+  const [name, setName] = useState({ value: "", error: "" });
+  const [email, setEmail] = useState({ value: "", error: "" });
+  const [password, setPassword] = useState({ value: "", error: "" });
+  const [password2, setPassword2] = useState({ value: "", error: "" });
+
+  const handleNameChange = (nameValue: string) => {
+    const isValidName = nameValue.length > 0;
+    const isNameTooLong = nameValue.length > 20;
+    setName({
+      value: nameValue,
+      error: isValidName ? (isNameTooLong ? "name is too long, could break the UI 😅" : "") : "enter a name",
+    });
+  };
+
+  const handleEmailChange = (emailValue: string) => {
+    const isValidEmail = validateEmail(emailValue);
+    setEmail({
+      value: emailValue,
+      error: isValidEmail ? "" : "invalid email",
+    });
+  };
+
+  const handlePasswordChange = (passwordValue: string) => {
+    const isValidPassword = passwordValue.length > 0;
+    const isPasswordLengthValid = passwordValue.length >= 8;
+    setPassword({
+      value: passwordValue,
+      error: isValidPassword ? (!isPasswordLengthValid ? "password must be 8 characters minimum" : "") : "enter a password",
+    });
+  };
+
+  const handlePassword2Change = (passwordValue: string) => {
+    const doesPasswordsMatch = passwordValue === password.value;
+    setPassword2({
+      value: passwordValue,
+      error: doesPasswordsMatch ? "" : "passwords does not match",
+    });
+  };
+
+  const isFormValid = (): boolean => {
+    return (
+      Boolean(name.value) &&
+      Boolean(email.value) &&
+      Boolean(password.value) &&
+      Boolean(password2.value) &&
+      !Boolean(name.error) &&
+      !Boolean(email.error) &&
+      !Boolean(password.error) &&
+      !Boolean(password2.error)
+    );
+  };
+
+  const { refetch: sendRegisterRequest, isLoading } = useQuery<unknown, AxiosError<{ message: string }, unknown>>(
+    "registerQuery",
+    () => register({ email: email.value, password: password.value, name: name.value }),
+    { enabled: false }
+  );
+
+  const handleRegister = async () => {
+    const { status, error } = await sendRegisterRequest();
+    if (status === "error") {
+      toast({
+        position: "bottom-left",
+        render: () => (
+          <Toaster message={error.response?.data?.message || "Something bad happened! Please try again."} type="error" />
+        ),
+      });
+    } else if (status === "success") {
+      handleGotoLogin();
+      toast({
+        position: "bottom-left",
+        render: () => <Toaster message="Account created! You can login now :)" type="success" />,
+      });
+    }
+  };
+
   return (
     <VStack p={3}>
       <Text fontWeight={800} fontSize={{ base: "x-large", md: "xx-large" }}>
@@ -152,7 +236,80 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
           Login
         </span>
       </Text>
-      <FormControl></FormControl>
+      <FormControl>
+        <Box mb={5}>
+          <FormLabel htmlFor="email" mb={1}>
+            Preferred Name &nbsp; <span style={{ color: "var(--chakra-colors-errorRed)" }}>{name.error}</span>
+          </FormLabel>
+          <Input
+            borderColor="inputBorderColor"
+            isInvalid={Boolean(name.error)}
+            type="email"
+            id="email"
+            required
+            value={name.value}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleNameChange(e.target.value)}
+          />
+        </Box>
+        <Box mb={5}>
+          <FormLabel htmlFor="email" mb={1}>
+            Email &nbsp; <span style={{ color: "var(--chakra-colors-errorRed)" }}>{email.error}</span>
+          </FormLabel>
+          <Input
+            borderColor="inputBorderColor"
+            isInvalid={Boolean(email.error)}
+            type="email"
+            id="email"
+            required
+            value={email.value}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleEmailChange(e.target.value)}
+          />
+        </Box>
+        <Box mb={5}>
+          <FormLabel htmlFor="password" mb={1}>
+            Password &nbsp; <span style={{ color: "var(--chakra-colors-errorRed)" }}> {password.error}</span>
+          </FormLabel>
+          <Input
+            borderColor="inputBorderColor"
+            isInvalid={Boolean(password.error)}
+            type="password"
+            id="password"
+            required
+            value={password.value}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handlePasswordChange(e.target.value)}
+          />
+        </Box>
+        <Box>
+          <FormLabel htmlFor="password2" mb={1}>
+            Password Again &nbsp; <span style={{ color: "var(--chakra-colors-errorRed)" }}> {password2.error}</span>
+          </FormLabel>
+          <Input
+            borderColor="inputBorderColor"
+            isInvalid={Boolean(password2.error)}
+            type="password"
+            id="password2"
+            required
+            value={password2.value}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handlePassword2Change(e.target.value)}
+          />
+        </Box>
+      </FormControl>
+      <Box w="full" pt={7}>
+        <Button
+          onClick={handleRegister}
+          isLoading={isLoading}
+          isDisabled={!isFormValid()}
+          w="full"
+          size="lg"
+          fontSize="xl"
+          fontWeight="800"
+          _hover={{
+            transform: "scale(1.025)",
+          }}
+        >
+          Signup
+        </Button>
+      </Box>
     </VStack>
   );
 };
@@ -170,7 +327,7 @@ export default function SignIn(): JSX.Element {
           wrighter
         </Text>
       </HStack>
-      <Container mt={140} centerContent p={0}>
+      <Container mt={{ base: 14, md: 140 }} centerContent p={0}>
         <Tabs
           size="lg"
           index={tabIndex}
