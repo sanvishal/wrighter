@@ -30,6 +30,8 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
   const toast = useToast();
   const router = useRouter();
 
+  const [errorAnimClass, setErrorAnimClass] = useState("");
+
   const [email, setEmail] = useState({
     value: "",
     error: "",
@@ -63,8 +65,10 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
   );
 
   const handleLogin = async () => {
+    setErrorAnimClass("");
     const { status, error } = await sendLoginRequest();
     if (status === "error") {
+      setErrorAnimClass("shake");
       toast({
         position: "bottom-left",
         render: () => (
@@ -129,6 +133,7 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
       </FormControl>
       <Box w="full" pt={7}>
         <Button
+          className={errorAnimClass}
           onClick={handleLogin}
           isLoading={isLoading}
           isDisabled={!(Boolean(email.value) && Boolean(password.value) && !Boolean(email.error) && !Boolean(password.error))}
@@ -149,6 +154,8 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
 
 const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.Element => {
   const toast = useToast();
+
+  const [errorAnimClass, setErrorAnimClass] = useState("");
   const [name, setName] = useState({ value: "", error: "" });
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
@@ -208,8 +215,10 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
   );
 
   const handleRegister = async () => {
+    setErrorAnimClass("");
     const { status, error } = await sendRegisterRequest();
     if (status === "error") {
+      setErrorAnimClass("shake");
       toast({
         position: "bottom-left",
         render: () => (
@@ -296,6 +305,7 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
       </FormControl>
       <Box w="full" pt={7}>
         <Button
+          className={errorAnimClass}
           onClick={handleRegister}
           isLoading={isLoading}
           isDisabled={!isFormValid()}
