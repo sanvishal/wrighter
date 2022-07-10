@@ -40,7 +40,6 @@ const Login: NextPage = () => {
 
   return (
     <div>
-      <Navbar />
       <form onSubmit={(e) => handleSubmit(e)}>
         <Input type="text" name="email" id="email" width={200} onChange={(e) => setEmail(e.target.value)} />
         <Input

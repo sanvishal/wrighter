@@ -1,43 +1,34 @@
-import { Button } from "@chakra-ui/react";
-import axios from "axios";
+import { Box, Button, Container, Flex, useBreakpointValue } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
-import { Navbar } from "../components/Navbar";
-import { API_BASE_URL } from "../constants";
-import { UserContext } from "../contexts/UserContext";
-import { getUser, logout } from "../services/authService";
+import { Editor } from "../components/Editor/Editor";
+import { MobileNav, Navbar } from "../components/Navbar";
+import { useUserContext } from "../contexts/UserContext";
 
 const Home: NextPage = () => {
-  const { fetchUser } = useContext(UserContext);
+  const mobileCheck = useBreakpointValue({ base: { isMobile: true }, md: { isMobile: false } });
+  const { fetchUser } = useUserContext();
 
   useEffect(() => {
     fetchUser();
   }, []);
 
-  const handleGetUser = async () => {
-    try {
-      const user = await getUser();
-
-      console.log(user);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const handleLogOut = async () => {
-    const user = await logout();
-
-    console.log(user);
-  };
-
-  return (
-    <div>
+  return mobileCheck?.isMobile ? (
+    <Box h="100vh">
+      <Container maxW="full" p={0}>
+        <Editor />
+      </Container>
+      <MobileNav />
+    </Box>
+  ) : (
+    <Flex>
       <Navbar />
-      <Button onClick={() => handleGetUser()}> User </Button>
-      <Button onClick={() => handleLogOut()}> Logout </Button>
-    </div>
+      <Container maxW="8xl" pt={2}>
+        <Editor />
+      </Container>
+    </Flex>
   );
 };
 

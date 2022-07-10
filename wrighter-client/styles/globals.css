@@ -43,6 +43,105 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Avenir LT Std";
+  src: local("Avenir LT Std 45 Book"), local("AvenirLTStd-Book"), url("/fonts/AvenirLTStd-Book.woff2") format("woff2"),
+    url("/fonts/AvenirLTStd-Book.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Regular"), local("IBMPlexMono-Regular"), url("/fonts/IBMPlexMono-Regular.woff2") format("woff2"),
+    url("/fonts/IBMPlexMono-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Italic"), local("IBMPlexMono-Italic"), url("/fonts/IBMPlexMono-Italic.woff2") format("woff2"),
+    url("/fonts/IBMPlexMono-Italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Text"), local("IBMPlexMono-Text"), url("/fonts/IBMPlexMono-Text.woff2") format("woff2"),
+    url("/fonts/IBMPlexMono-Text.woff") format("woff");
+  font-weight: 450;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Text Italic"), local("IBMPlexMono-TextItalic"),
+    url("/fonts/IBMPlexMono-TextItalic.woff2") format("woff2"), url("/fonts/IBMPlexMono-TextItalic.woff") format("woff");
+  font-weight: 450;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Medium"), local("IBMPlexMono-Medium"), url("/fonts/IBMPlexMono-Medium.woff2") format("woff2"),
+    url("/fonts/IBMPlexMono-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Medium Italic"), local("IBMPlexMono-MediumItalic"),
+    url("/fonts/IBMPlexMono-MediumItalic.woff2") format("woff2"), url("/fonts/IBMPlexMono-MediumItalic.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Bold"), local("IBMPlexMono-Bold"), url("/fonts/IBMPlexMono-Bold.woff2") format("woff2"),
+    url("/fonts/IBMPlexMono-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Bold Italic"), local("IBMPlexMono-BoldItalic"),
+    url("/fonts/IBMPlexMono-BoldItalic.woff2") format("woff2"), url("/fonts/IBMPlexMono-BoldItalic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Thin"), local("IBMPlexMono-Thin"), url("/fonts/IBMPlexMono-Thin.woff2") format("woff2"),
+    url("/fonts/IBMPlexMono-Thin.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexMono";
+  src: local("IBMPlexMono Thin Italic"), local("IBMPlexMono-ThinItalic"),
+    url("/fonts/IBMPlexMono-ThinItalic.woff2") format("woff2"), url("/fonts/IBMPlexMono-ThinItalic.woff") format("woff");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
 body {
   font-family: "Avenir LT Std";
 }

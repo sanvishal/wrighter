@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/router";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getUser } from "../services/authService";
 import { User } from "../types";
@@ -25,7 +25,7 @@ export const UserProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
     if (status === "success") {
       router.push("/home");
     } else if (status === "error") {
-      router.push("/signin");
+      // router.push("/signin");
     }
 
     return data?.data;
@@ -36,4 +36,8 @@ export const UserProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
   }, []);
 
   return <UserContext.Provider value={{ user, fetchUser }}>{children}</UserContext.Provider>;
+};
+
+export const useUserContext = () => {
+  return useContext(UserContext);
 };
