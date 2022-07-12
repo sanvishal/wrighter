@@ -13,3 +13,8 @@ export interface Wright {
   content: string;
   userId: string;
 }
+
+export type ResponseTypeMap<isGuest, isAuth> = {
+  true: isAuth;
+  false: isGuest;
+};

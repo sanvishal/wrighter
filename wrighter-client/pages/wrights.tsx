@@ -12,23 +12,7 @@ const WrightsList = dynamic(() => import("../components/WrightsList").then((modu
 const Wrights: NextPage = () => {
   return (
     <Content>
-      <Container maxW="full" pt={20}>
-        <HStack spacing={4}>
-          {/* {console.log(friends)} */}
-          <Center borderRadius={10} w={16} h={16} bg="accentColorTrans">
-            <Icon as={FiBookOpen} w={7} h={7} color="accentColor"></Icon>
-          </Center>
-          <VStack align="flex-start" spacing={0}>
-            <Text fontWeight="800" fontSize="xx-large">
-              Wrights
-            </Text>
-            <Text color="textLighter">All your wrightups are here</Text>
-          </VStack>
-        </HStack>
-        <Box mt={10} w="full">
-          <WrightsList />
-        </Box>
-      </Container>
+      <WrightsList />
     </Content>
   );
 };

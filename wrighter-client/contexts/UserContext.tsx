@@ -5,9 +5,18 @@ import { useQuery } from "react-query";
 import { getUser } from "../services/authService";
 import { User } from "../types";
 
-export const UserContext = createContext<{ user: User | undefined | null; fetchUser: () => Promise<User | undefined | null> }>({
+export const UserContext = createContext<{
+  user: User | undefined | null;
+  fetchUser: () => Promise<User | undefined | null>;
+  isAuthenticated: () => boolean;
+  isAuthenticatedString: () => "true" | "false";
+  isUserLoading: boolean;
+}>({
   user: null,
   fetchUser: () => Promise.resolve(null),
+  isAuthenticated: () => false,
+  isUserLoading: false,
+  isAuthenticatedString: () => "false",
 });
 
 export const UserProvider = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
@@ -22,7 +31,7 @@ export const UserProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
   const fetchUser = async () => {
     const { status, data } = await refetchUser();
     setUser(data?.data);
-    if (status === "success") {
+    if (status === "success" && router.route === "/signin") {
       router.push("/home");
     } else if (status === "error") {
       // router.push("/signin");
@@ -35,7 +44,15 @@ export const UserProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
     fetchUser();
   }, []);
 
-  return <UserContext.Provider value={{ user, fetchUser }}>{children}</UserContext.Provider>;
+  const isAuthenticated = () => user !== null && user !== undefined;
+
+  const isAuthenticatedString = () => (isAuthenticated() ? "true" : "false");
+
+  return (
+    <UserContext.Provider value={{ user, fetchUser, isAuthenticated, isAuthenticatedString, isUserLoading }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUserContext = () => {

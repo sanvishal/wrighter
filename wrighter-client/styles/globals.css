@@ -241,3 +241,12 @@ body {
     origin-transform: translate(0px);
   }
 }
+
+#nprogress .bar {
+  background: var(--chakra-colors-accentColor) !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: var(--chakra-colors-accentColor) !important;
+  border-left-color: var(--chakra-colors-accentColor) !important;
+}
