@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { Editor as ByteMdEditor } from "@bytemd/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import gfmPluin from "@bytemd/plugin-gfm";
 import type { BytemdPlugin } from "bytemd";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
@@ -46,10 +46,14 @@ const actionsPlugin = (): BytemdPlugin => {
   };
 };
 
-export const Editor = () => {
+export const Editor = ({ editorOnChangeHandler = () => {} }: { editorOnChangeHandler: (content: string) => void }) => {
   const [content, setContent] = useState("");
 
   const plugins = useMemo(() => [actionsPlugin(), highlightPlugin(), gfmPluin()], []);
+
+  useEffect(() => {
+    editorOnChangeHandler(content);
+  }, [content]);
 
   return (
     <Box>

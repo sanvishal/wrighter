@@ -73,7 +73,7 @@ export const getUserHandler = async (request: FastifyRequest, reply: FastifyRepl
         message: "You are not authorized",
       });
     }
-    return user;
+    return { id: user.id, email: user.email, name: user.name };
   } catch (e) {
     console.error(e);
     return reply.code(401).send(e);

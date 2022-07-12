@@ -13,7 +13,7 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
   email String @unique
   name String
   password String
@@ -21,11 +21,13 @@ model User {
 }
 
 model Wright {
-  id Int @id @default(autoincrement())
-  title String @db.VarChar(255)
+  id String @id
+  title String @db.VarChar(200)
+  head String @db.VarChar(150)
   content String @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   wrighter User @relation(fields: [userId], references: [id])
-  userId Int
+  userId String
+  isUnderReview Boolean @default(false)
 }

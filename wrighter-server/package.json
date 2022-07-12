@@ -22,6 +22,7 @@
     "fastify": "^4.2.0",
     "fastify-zod": "^1.0.2",
     "frameguard": "^4.0.0",
+    "nanoid": "^3.0.0",
     "nodemon": "^2.0.18",
     "passport-local": "^1.0.0",
     "x-xss-protection": "^2.0.0",

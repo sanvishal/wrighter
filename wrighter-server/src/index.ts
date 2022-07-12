@@ -5,9 +5,11 @@ import xXssProtection from "x-xss-protection";
 import fastifyJWT, { JWT } from "@fastify/jwt";
 import fastifyCookie from "@fastify/cookie";
 import userRoutes from "./modules/user/user.route";
+import wrightRoutes from "./modules/wright/wright.route";
 import { userSchemas } from "./modules/user/user.schema";
 import { FastifyRequest } from "fastify";
 import { FastifyReply } from "fastify";
+import { wrightSchemas } from "./modules/wright/wright.schema";
 
 export const fastify = Fastify({
   logger: true,
@@ -26,7 +28,7 @@ declare module "@fastify/jwt" {
   export interface FastifyJWT {
     user: {
       email: string;
-      id: number;
+      id: string;
       name: string;
     };
   }
@@ -92,12 +94,15 @@ async function build() {
 
 build()
   .then((fastify) => {
-    for (let schema of userSchemas) {
+    for (const schema of [...userSchemas, ...wrightSchemas]) {
       fastify.addSchema(schema);
     }
 
     fastify.register(userRoutes, {
       prefix: "api/user",
+    });
+    fastify.register(wrightRoutes, {
+      prefix: "api/wright",
     });
 
     const port = +process.env.PORT! || 8080;
