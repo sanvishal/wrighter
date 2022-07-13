@@ -2,65 +2,63 @@ import { Box } from "@chakra-ui/react";
 import { Editor as ByteMdEditor } from "@bytemd/react";
 import { useEffect, useMemo, useState } from "react";
 import gfmPluin from "@bytemd/plugin-gfm";
-import type { BytemdPlugin } from "bytemd";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
-import { FiActivity, FiArrowDown } from "react-icons/fi";
-import { renderToString } from "react-dom/server";
-import * as icons from "@icon-park/svg";
+import { useRouter } from "next/router";
+import debounce from "lodash.debounce";
+import { db, WrightIDB } from "../../services/dbService";
+import { useQuery } from "react-query";
+import { useUserContext } from "../../contexts/UserContext";
+import { clearAndCreateEditorContext, getWright } from "../../services/wrightService";
+import { Wright } from "../../types";
 
-const actionsPlugin = (): BytemdPlugin => {
-  return {
-    actions: [
-      // {
-      //   icon: icons.Formula({}),
-      //   handler: {
-      //     type: "dropdown",
-      //     actions: [
-      //       {
-      //         title: "some",
-      //         icon: icons.Inline({}),
-      //         handler: {
-      //           type: "action",
-      //           click({ wrapText, editor }) {
-      //             wrapText("$");
-      //             editor.focus();
-      //           },
-      //         },
-      //       },
-      //       {
-      //         title: "someaga",
-      //         icon: icons.Block({}),
-      //         handler: {
-      //           type: "action",
-      //           click({ appendBlock, editor, codemirror }) {
-      //             const { line } = appendBlock("$$\n\\TeX\n$$");
-      //             editor.setSelection(codemirror.Pos(line + 1, 0), codemirror.Pos(line + 1, 4));
-      //             editor.focus();
-      //           },
-      //         },
-      //       },
-      //     ],
-      //   },
-      // },
-    ],
-  };
-};
-
-export const Editor = ({ editorOnChangeHandler = () => {} }: { editorOnChangeHandler: (content: string) => void }) => {
+export const Editor = ({
+  editorOnSaveHandler = () => {},
+  initWright = {},
+}: {
+  editorOnSaveHandler: () => void;
+  initWright: Wright | WrightIDB;
+}) => {
   const [content, setContent] = useState("");
+  const [id, setId] = useState("");
+  const router = useRouter();
 
-  const plugins = useMemo(() => [actionsPlugin(), highlightPlugin(), gfmPluin()], []);
+  const plugins = useMemo(() => [highlightPlugin(), gfmPluin()], []);
+
+  const editorOnChange = async (value: string) => {
+    if (id) {
+      await db.editorContext.update(id, {
+        content: value,
+        head: value.substring(0, 50),
+      });
+      editorOnSaveHandler();
+    }
+  };
+
+  const debouncedEditorOnChange = useMemo(() => debounce(editorOnChange, 500), [id]);
 
   useEffect(() => {
-    editorOnChangeHandler(content);
-  }, [content]);
+    if (initWright) {
+      setContent(initWright.content || "");
+    }
+  }, [initWright]);
+
+  useEffect(() => {
+    if (router.isReady && router?.query?.id) {
+      setId((router?.query?.id || "") as string);
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
+    console.log(id);
+  }, [id]);
 
   return (
     <Box>
       <ByteMdEditor
         value={content}
-        onChange={(v) => {
+        onChange={async (v) => {
           setContent(v);
+          await debouncedEditorOnChange(v);
         }}
         key="editor"
         mode="auto"

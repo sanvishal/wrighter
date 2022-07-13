@@ -17,5 +17,3 @@ export const getUser = (): Promise<AxiosResponse<User>> => {
 export const logout = () => {
   return axios.get(`${API_BASE_URL}/user/logout`, { withCredentials: true });
 };
-
-export const verifyJWT = () => {};

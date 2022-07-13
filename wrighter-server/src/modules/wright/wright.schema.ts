@@ -5,6 +5,7 @@ const wrightResponseSchema = z.object({
   id: z.string(),
   title: z.string(),
   content: z.string(),
+  head: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
   userId: z.string(),

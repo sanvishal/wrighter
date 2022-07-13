@@ -41,3 +41,26 @@ export const getAllWrights = async (isGuest: boolean): Promise<Wright[] | Wright
   const wrights = (await axios.get(`${API_BASE_URL}/wright`, { withCredentials: true })) as AxiosResponse<Wright[]>;
   return wrights.data;
 };
+
+export const clearAndCreateEditorContext = async (wright: Wright | WrightIDB): Promise<void> => {
+  await db.editorContext.clear();
+  await db.editorContext.put(wright);
+};
+
+export const getWright = async (isGuest: boolean, id?: string): Promise<Wright | WrightIDB | undefined> => {
+  if (isGuest && id) {
+    return db.wrights.get(id);
+  }
+
+  const wright = (await axios.get(`${API_BASE_URL}/wright/${id}`, { withCredentials: true })) as AxiosResponse<Wright>;
+  return wright.data;
+};
+
+export const saveWright = async (isGuest: boolean, wright: Wright | WrightIDB): Promise<number | AxiosResponse | undefined> => {
+  if (isGuest && wright.id) {
+    return db.wrights.update(wright.id, wright);
+  }
+
+  const resp = (await axios.put(`${API_BASE_URL}/wright/${wright.id}`, wright, { withCredentials: true })) as AxiosResponse;
+  return resp.data;
+};

@@ -9,7 +9,6 @@ export class IDB extends Dexie {
 
   constructor() {
     super("wrighter");
-    super("editorContext");
     this.version(1).stores({
       wrights: "++id, title, head, createdAt, updatedAt, userId, content",
       editorContext: "++id, title, head, createdAt, updatedAt, userId, content",

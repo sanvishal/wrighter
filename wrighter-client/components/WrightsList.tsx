@@ -7,7 +7,7 @@ import { FiBookOpen, FiPlus } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
-import { createWright, getAllWrights } from "../services/wrightService";
+import { clearAndCreateEditorContext, createWright, getAllWrights } from "../services/wrightService";
 import { Wright } from "../types";
 import { WrightCard } from "./WrightCard";
 

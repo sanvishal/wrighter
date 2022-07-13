@@ -23,6 +23,7 @@
     "dexie-react-hooks": "^1.1.1",
     "framer-motion": "^6",
     "jsonwebtoken": "^8.5.1",
+    "lodash.debounce": "^4.0.8",
     "nanoid": "^4.0.0",
     "next": "12.2.0",
     "nprogress": "^0.2.0",
@@ -33,6 +34,7 @@
     "sass": "^1.53.0"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.7",
     "@types/node": "18.0.1",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
