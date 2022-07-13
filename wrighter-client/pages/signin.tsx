@@ -399,6 +399,14 @@ export default function SignIn(): JSX.Element {
             </TabPanel>
           </TabPanels>
         </Tabs>
+        <VStack w="full" mt={5} px={4} spacing={4}>
+          <Text color="textLighter" fontSize="lg" fontWeight="bold">
+            - or -
+          </Text>
+          <Button variant="ghost" w="full" size="lg" as="a" href="/wrights">
+            Continue as Guest
+          </Button>
+        </VStack>
       </Container>
     </Container>
   );
