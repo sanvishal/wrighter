@@ -5,6 +5,10 @@ import {
   Flex,
   Icon,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Spinner,
   Text,
   useBreakpointValue,
@@ -69,7 +73,7 @@ export const Navbar = () => {
             </IconButton>
           </Box>
         </VStack>
-        <VStack pb={5} spacing={4}>
+        <VStack pb={3} spacing={4}>
           <CustomToolTip
             label={
               !isSaving
@@ -102,34 +106,62 @@ export const Navbar = () => {
             </Box>
           </CustomToolTip>
           <Box>
-            <IconButton aria-label="Toggle Mode" variant="ghost" onClick={toggleColorMode} size="sm" role="group">
-              <Icon
-                transition="transform 0.2s ease-in-out"
-                _groupActive={{
-                  transform: `rotate(${colorMode === "dark" ? "360deg" : "-360deg"}) scale(${colorMode === "dark" ? 0.1 : 1.25})`,
-                }}
-                as={colorMode === "light" ? FiMoon : FiSun}
-                strokeWidth={2.5}
-              />
-            </IconButton>
+            <Menu placement="right">
+              <MenuButton>
+                <Box cursor="pointer">
+                  <Avvvatars value={user?.email || "wrighter guest"} style="shape" />
+                </Box>
+              </MenuButton>
+              <MenuList minWidth="190px">
+                <MenuItem isDisabled fontSize="sm" py={2}>
+                  {user?.name || "wrighter guest"}
+                </MenuItem>
+                <MenuItem
+                  role="group"
+                  closeOnSelect={false}
+                  onClick={toggleColorMode}
+                  icon={<Icon as={colorMode === "light" ? FiMoon : FiSun} strokeWidth={2.5} mt={1} />}
+                >
+                  Toggle theme
+                </MenuItem>
+                <MenuItem
+                  closeOnSelect={false}
+                  icon={
+                    !isLoggingOut ? (
+                      <Icon as={FiLogOut} strokeWidth={2.5} mt={1} />
+                    ) : (
+                      <Spinner
+                        mt={0.5}
+                        sx={{
+                          "--spinner-size": "0.7rem",
+                          borderBottomColor: "textLighter",
+                          borderLeftColor: "textLighter",
+                          borderTopColor: "transparent",
+                          borderRightColor: "transparent",
+                        }}
+                      />
+                    )
+                  }
+                  onClick={handleLogOut}
+                  aria-label="Logout"
+                  _hover={{ bg: "errorRedTransBg" }}
+                >
+                  Logout
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </Box>
-          <CustomToolTip label={user?.email || "guest wrighter"} placement="right">
-            <Box cursor="pointer">
-              <Avvvatars value={user?.email || "wrighter guest"} style="shape" />
-            </Box>
-          </CustomToolTip>
           <Box>
-            <CustomToolTip label="Logout" placement="right">
+            {/* <CustomToolTip label="Logout" placement="right">
               <IconButton
                 isLoading={isLoggingOut}
                 onClick={handleLogOut}
-                aria-label="Logout"
                 icon={<FiLogOut />}
                 size="sm"
                 variant="ghost"
                 _hover={{ bg: "errorRedTransBg", color: "white" }}
               />
-            </CustomToolTip>
+            </CustomToolTip> */}
           </Box>
         </VStack>
       </Flex>

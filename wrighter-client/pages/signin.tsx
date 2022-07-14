@@ -7,19 +7,29 @@ import {
   FormHelperText,
   FormLabel,
   HStack,
+  Icon,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Text,
+  useDisclosure,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/router";
 import { ChangeEvent, KeyboardEvent, useState } from "react";
+import { FiCheck, FiX, FiXCircle } from "react-icons/fi";
 import { useQuery } from "react-query";
 import Logo from "../components/Logo";
 import { Toaster } from "../components/Toaster";
@@ -326,6 +336,7 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
 
 export default function SignIn(): JSX.Element {
   const [tabIndex, setTabIndex] = useState(0);
+  const { isOpen: isGuestWarnOpen, onOpen: onGuestWarnOpen, onClose: onGuestWarnClose } = useDisclosure();
 
   return (
     <Container maxWidth="6xl" py={{ base: 3, md: 6 }}>
@@ -403,10 +414,59 @@ export default function SignIn(): JSX.Element {
           <Text color="textLighter" fontSize="lg" fontWeight="bold">
             - or -
           </Text>
-          <Button variant="ghost" w="full" size="lg" as="a" href="/wrights">
+          <Button variant="ghost" w="full" size="lg" onClick={onGuestWarnOpen}>
             Continue as Guest
           </Button>
         </VStack>
+        <Modal isOpen={isGuestWarnOpen} onClose={onGuestWarnClose} isCentered size="lg">
+          <ModalOverlay />
+          <ModalContent
+            borderRadius={10}
+            bg="bgLighter"
+            border="1px solid"
+            borderColor="containerBorder"
+            boxShadow="shadow"
+            pb={4}
+          >
+            <ModalHeader>
+              <Text>About guest mode</Text>
+            </ModalHeader>
+            <ModalCloseButton borderRadius={10} />
+            <ModalBody py={4}>
+              <VStack align="flex-start" spacing={4}>
+                <HStack spacing={3}>
+                  <Center borderRadius="100px" w={6} h={6} bg="green.500">
+                    <Icon as={FiCheck} strokeWidth={3} />
+                  </Center>
+                  <Text fontWeight="bold">All features of wrighter</Text>
+                </HStack>
+                <HStack spacing={3}>
+                  <Center borderRadius="100px" w={6} h={6} bg="green.500">
+                    <Icon as={FiCheck} strokeWidth={3} />
+                  </Center>
+                  <Text fontWeight="bold">Persistent single browser sync</Text>
+                </HStack>
+                <HStack spacing={3}>
+                  <Center borderRadius="100px" w={6} h={6} bg="errorRed">
+                    <Icon as={FiX} strokeWidth={3} />
+                  </Center>
+                  <Text fontWeight="bold">Persistent cloud sync</Text>
+                </HStack>
+                <HStack spacing={3}>
+                  <Center borderRadius="100px" w={6} h={6} bg="errorRed">
+                    <Icon as={FiX} strokeWidth={3} />
+                  </Center>
+                  <Text fontWeight="bold">Access all your data on multiple devices</Text>
+                </HStack>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button w="full" fontWeight="bold" as="a" href="/wrights">
+                Ok, Continue!
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Container>
     </Container>
   );

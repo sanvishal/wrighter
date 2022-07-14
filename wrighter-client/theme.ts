@@ -118,6 +118,27 @@ export const theme = extendTheme({
         focusBorderColor: "#62646a47",
       },
     },
+    Menu: {
+      parts: ["menu", "item", "list"],
+      baseStyle: {
+        list: {
+          background: "bgLighter",
+          borderRadius: "10px",
+          py: "4px",
+        },
+        item: {
+          py: "4px",
+          width: "calc(100% - 8px)",
+          marginRight: "0px",
+          marginLeft: "4px",
+          fontWeight: "medium",
+          color: "textColor",
+          background: "bgLightest",
+          borderRadius: "6px",
+          fontSize: "0.92rem",
+        },
+      },
+    },
   },
   semanticTokens: {
     colors: {
@@ -136,8 +157,8 @@ export const theme = extendTheme({
       containerBorder: { default: "#e5e5e6", _dark: "#494b504d" },
       border: { default: "#ffffff", _dark: "#333438" },
       inputBorderColor: { default: "var(--chakra-colors-blackAlpha-400)", _dark: "var(--chakra-colors-whiteAlpha-300)" },
-      errorRed: "#FC8181",
-      errorRedTransBg: "#fe413d70",
+      errorRed: "#d90d17",
+      errorRedTransBg: "#fe413d20",
       tooltipBg: { default: "#393b41", _dark: "#393b41" },
       shadow: { default: "0px 20px 50px #2b292e10", _dark: "0px 14px 30px #0a0a0b73" },
       // editorBg: { default: "#fbfbfb", _dark: "#222326" },
