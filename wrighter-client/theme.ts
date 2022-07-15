@@ -121,7 +121,9 @@ export const theme = extendTheme({
     Menu: {
       parts: ["menu", "item", "list"],
       baseStyle: {
+        menu: {},
         list: {
+          border: "1px solid var(--chakra-colors-containerBorder)",
           background: "bgLighter",
           borderRadius: "10px",
           py: "4px",

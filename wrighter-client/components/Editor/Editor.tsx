@@ -16,6 +16,10 @@ import { turndownService } from "../../services/turndownService";
 const pastePlugin = (): BytemdPlugin => {
   return {
     editorEffect(ctx) {
+      if (window) {
+        console.log("cm window set");
+        window["cm"] = ctx.editor;
+      }
       ctx.editor.on("copy", (cm, event) => {
         if (cm.getSelection()) {
           console.log(turndownService.escape(cm.getSelection()), cm.getSelection());
@@ -48,6 +52,12 @@ const pastePlugin = (): BytemdPlugin => {
         }
         event.preventDefault();
       });
+
+      return () => {
+        if (window) {
+          window.cm = null;
+        }
+      };
     },
   };
 };
@@ -75,6 +85,10 @@ export const Editor = ({
     }
   };
 
+  useEffect(() => {
+    console.log(window.cm);
+  }, [id]);
+
   const debouncedEditorOnChange = useMemo(() => debounce(editorOnChange, 500), [id]);
 
   useEffect(() => {
@@ -88,10 +102,6 @@ export const Editor = ({
       setId((router?.query?.id || "") as string);
     }
   }, [router.isReady]);
-
-  useEffect(() => {
-    console.log(id);
-  }, [id]);
 
   return (
     <Box>

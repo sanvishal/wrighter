@@ -7,6 +7,7 @@ import {
   IconButton,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Spinner,
@@ -123,9 +124,10 @@ export const Navbar = () => {
                 </Box>
               </MenuButton>
               <MenuList minWidth="190px">
-                <MenuItem isDisabled fontSize="sm" py={2}>
+                <MenuItem isDisabled fontSize="sm">
                   {user?.name || "wrighter guest"}
                 </MenuItem>
+                <MenuDivider borderColor="containerBorder" opacity={1} my={1.5} />
                 <MenuItem
                   role="group"
                   closeOnSelect={false}
