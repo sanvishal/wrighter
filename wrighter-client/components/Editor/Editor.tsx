@@ -7,9 +7,50 @@ import { useRouter } from "next/router";
 import debounce from "lodash.debounce";
 import { db, WrightIDB } from "../../services/dbService";
 import { useQuery } from "react-query";
+import type { BytemdPlugin } from "bytemd";
 import { useUserContext } from "../../contexts/UserContext";
 import { clearAndCreateEditorContext, getWright } from "../../services/wrightService";
 import { Wright } from "../../types";
+import { turndownService } from "../../services/turndownService";
+
+const pastePlugin = (): BytemdPlugin => {
+  return {
+    editorEffect(ctx) {
+      ctx.editor.on("copy", (cm, event) => {
+        if (cm.getSelection()) {
+          console.log(turndownService.escape(cm.getSelection()), cm.getSelection());
+          event.clipboardData?.setData("text/plain", turndownService.escape(cm.getSelection()));
+        }
+      });
+      ctx.editor.on("paste", (cm, event) => {
+        // event.preventDefault();
+        if (event) {
+          const htmlText = event?.clipboardData?.getData("text/html") || "";
+          const normalText = event?.clipboardData?.getData("text/plain") || "";
+
+          const finalTextToPaste = (() => {
+            const token = ctx.editor.getTokenAt(ctx.editor.getCursor());
+            if (token.state?.overlay?.code || token.state?.overlay?.codeBlock) {
+              return normalText;
+            }
+            if (htmlText.trim().length > 0) {
+              return turndownService.turndown(htmlText);
+            }
+
+            return normalText;
+          })();
+
+          if (!cm.somethingSelected()) {
+            cm.replaceRange(finalTextToPaste, cm.getCursor());
+          } else {
+            cm.replaceSelection(finalTextToPaste);
+          }
+        }
+        event.preventDefault();
+      });
+    },
+  };
+};
 
 export const Editor = ({
   editorOnSaveHandler = () => {},
@@ -22,7 +63,7 @@ export const Editor = ({
   const [id, setId] = useState("");
   const router = useRouter();
 
-  const plugins = useMemo(() => [highlightPlugin(), gfmPluin()], []);
+  const plugins = useMemo(() => [pastePlugin(), highlightPlugin(), gfmPluin()], []);
 
   const editorOnChange = async (value: string) => {
     if (id) {

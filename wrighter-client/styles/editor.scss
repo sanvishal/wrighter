@@ -1,4 +1,4 @@
-$header-sizes: (
+$editor-header-sizes: (
   "h1": 2em,
   "h2": 1.5em,
   "h3": 1.17em,
@@ -8,6 +8,15 @@ $header-sizes: (
 );
 $editor-border-radius: 5px;
 
+$preview-header-sizes: (
+  "h1": 2.4em,
+  "h2": 1.9em,
+  "h3": 1.57em,
+  "h4": 1.4em,
+  "h5": 1.23em,
+  "h6": 1.15em,
+);
+
 .bytemd {
   height: calc(100vh - 20px);
   border: unset;
@@ -15,6 +24,168 @@ $editor-border-radius: 5px;
 
   &-preview {
     border-left: 0px solid var(--chakra-colors-containerBorder) !important;
+    color: var(--chakra-colors-textColor);
+    font-size: 17px;
+    font-family: "Avenir";
+
+    blockquote {
+      font-style: italic;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    strong {
+      font-weight: 800;
+    }
+
+    code {
+      letter-spacing: -0.5px;
+      font-family: "IBMPlexMono", "SFMono-Regular", Consolas;
+      background-color: var(--chakra-colors-bgLighter);
+      color: var(--chakra-colors-textLighter);
+      padding-top: 3px;
+      padding-bottom: 3px;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    a {
+      color: var(--chakra-colors-accentColor);
+      code {
+        color: var(--chakra-colors-accentColor);
+      }
+    }
+
+    pre {
+      margin: 0.8em 0;
+      .hljs {
+        .hljs-comment {
+          font-style: italic;
+        }
+
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-meta .hljs-keyword,
+        .hljs-template-tag,
+        .hljs-template-variable,
+        .hljs-type,
+        .hljs-variable.language_ {
+          color: #f47067;
+        }
+        .hljs-keyword {
+          font-style: italic;
+        }
+        .hljs-title,
+        .hljs-title.class_,
+        .hljs-title.class_.inherited__,
+        .hljs-title.function_ {
+          color: #dcbdfb;
+        }
+        .hljs-attr,
+        .hljs-attribute,
+        .hljs-literal,
+        .hljs-meta,
+        .hljs-number,
+        .hljs-operator,
+        .hljs-selector-attr,
+        .hljs-selector-class,
+        .hljs-selector-id,
+        .hljs-variable {
+          color: #6cb6ff;
+        }
+        .hljs-selector-class,
+        .hljs-selector-id {
+          font-style: italic;
+        }
+        .hljs-meta .hljs-string,
+        .hljs-regexp,
+        .hljs-string {
+          color: #96d0ff;
+        }
+        .hljs-built_in,
+        .hljs-symbol {
+          color: #f69d50;
+        }
+        .hljs-code,
+        .hljs-comment,
+        .hljs-formula {
+          color: #768390;
+        }
+        .hljs-name,
+        .hljs-quote,
+        .hljs-selector-pseudo,
+        .hljs-selector-tag {
+          color: #8ddb8c;
+        }
+        .hljs-subst {
+          color: #adbac7;
+        }
+        .hljs-section {
+          color: #316dca;
+          font-weight: 700;
+        }
+        .hljs-bullet {
+          color: #eac55f;
+        }
+        .hljs-emphasis {
+          color: #adbac7;
+          font-style: italic;
+        }
+        .hljs-strong {
+          color: #adbac7;
+          font-weight: 700;
+        }
+        .hljs-addition {
+          color: #b4f1b4;
+          background-color: #1b4721;
+        }
+        .hljs-deletion {
+          color: #ffd8d3;
+          background-color: #78191b;
+        }
+      }
+    }
+
+    ul {
+      margin: 0.5em 2.5em;
+      ul {
+        margin: 0.2em 1.6em;
+      }
+    }
+
+    h1 {
+      font-size: map-get($map: $preview-header-sizes, $key: "h1");
+      font-weight: 800 !important;
+      line-height: 1.4;
+      margin: 0.4em 0;
+    }
+    h2 {
+      font-size: map-get($map: $preview-header-sizes, $key: "h2");
+      font-weight: 700 !important;
+      line-height: 1.2;
+      margin-top: 0.7em;
+      margin-bottom: 0.4em;
+    }
+    h3 {
+      font-size: map-get($map: $preview-header-sizes, $key: "h3");
+      font-weight: 500 !important;
+      line-height: 1;
+      margin: 0.5em 0;
+    }
+    h4 {
+      font-size: map-get($map: $preview-header-sizes, $key: "h4");
+      font-weight: 500 !important;
+    }
+    h5 {
+      font-size: map-get($map: $preview-header-sizes, $key: "h5");
+      font-weight: 500 !important;
+    }
+    h6 {
+      font-size: map-get($map: $preview-header-sizes, $key: "h6");
+      font-weight: 400 !important;
+    }
   }
 
   &-toolbar {
@@ -153,27 +324,27 @@ $editor-border-radius: 5px;
 
       .cm-header {
         &-1 {
-          font-size: map-get($map: $header-sizes, $key: "h1");
+          font-size: map-get($map: $editor-header-sizes, $key: "h1");
           font-weight: 700 !important;
         }
         &-2 {
-          font-size: map-get($map: $header-sizes, $key: "h2");
+          font-size: map-get($map: $editor-header-sizes, $key: "h2");
           font-weight: 700 !important;
         }
         &-3 {
-          font-size: map-get($map: $header-sizes, $key: "h3");
+          font-size: map-get($map: $editor-header-sizes, $key: "h3");
           font-weight: 500 !important;
         }
         &-4 {
-          font-size: map-get($map: $header-sizes, $key: "h4");
+          font-size: map-get($map: $editor-header-sizes, $key: "h4");
           font-weight: 500 !important;
         }
         &-5 {
-          font-size: map-get($map: $header-sizes, $key: "h5");
+          font-size: map-get($map: $editor-header-sizes, $key: "h5");
           font-weight: 500 !important;
         }
         &-6 {
-          font-size: map-get($map: $header-sizes, $key: "h6");
+          font-size: map-get($map: $editor-header-sizes, $key: "h6");
           font-weight: 500 !important;
         }
       }

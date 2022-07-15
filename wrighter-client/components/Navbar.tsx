@@ -52,7 +52,17 @@ export const Navbar = () => {
   // }, [saveQuery]);
 
   return (
-    <Box minH="100vh" top="0" w={14} bg="bgDark" py={2} borderRight="1px solid" borderRightColor="containerBorder" pos="relative">
+    <Box
+      minH="100vh"
+      top="0"
+      w={14}
+      bg="bgDark"
+      py={2}
+      borderRight="1px solid"
+      borderRightColor="containerBorder"
+      pos="relative"
+      zIndex={999999}
+    >
       <Flex alignItems="center" pos="fixed" w={14} justifyContent="space-between" h="full" flexDirection="column">
         <VStack spacing={4}>
           <Center w="40px" h="40px">

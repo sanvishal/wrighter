@@ -7,7 +7,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import "bytemd/dist/index.css";
 import "highlight.js/styles/default.css";
 import "../styles/editor.scss";
-import { verifyJWT } from "../services/authService";
 import { theme } from "../theme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { UserProvider } from "../contexts/UserContext";
