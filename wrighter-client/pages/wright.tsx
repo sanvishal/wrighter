@@ -2,18 +2,17 @@ import { Box, Center, Container, HStack, Icon, Text, VStack } from "@chakra-ui/r
 import { useLiveQuery } from "dexie-react-hooks";
 import { NextPage } from "next";
 import dynamic from "next/dynamic";
-import { FiBookOpen } from "react-icons/fi";
 import { Content } from "../components/Content";
-const WrightsList = dynamic(() => import("../components/WrightsList").then((module) => module.WrightsList) as any, {
-  ssr: false,
-});
+import { ILocalPreviewProps } from "../components/LocalPreview";
+const LocalPreview = dynamic<ILocalPreviewProps>(
+  () => import("../components/LocalPreview").then((module) => module.LocalPreview) as any,
+  {
+    ssr: false,
+  }
+);
 
 const Wrights: NextPage = () => {
-  return (
-    <Content>
-      <WrightsList />
-    </Content>
-  );
+  return <LocalPreview />;
 };
 
 export default Wrights;

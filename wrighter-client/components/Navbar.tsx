@@ -62,7 +62,8 @@ export const Navbar = () => {
       borderRight="1px solid"
       borderRightColor="containerBorder"
       pos="relative"
-      zIndex={999999}
+      zIndex={9}
+      id="navbar"
     >
       <Flex alignItems="center" pos="fixed" w={14} justifyContent="space-between" h="full" flexDirection="column">
         <VStack spacing={4}>

@@ -58,7 +58,7 @@ export const getWright = async (isGuest: boolean, id?: string): Promise<Wright |
 
 export const saveWright = async (isGuest: boolean, wright: Wright | WrightIDB): Promise<number | AxiosResponse | undefined> => {
   if (isGuest && wright.id) {
-    return db.wrights.update(wright.id, wright);
+    return db.wrights.update(wright.id, { ...wright, updatedAt: new Date().toISOString() });
   }
 
   const resp = (await axios.put(`${API_BASE_URL}/wright/${wright.id}`, wright, { withCredentials: true })) as AxiosResponse;

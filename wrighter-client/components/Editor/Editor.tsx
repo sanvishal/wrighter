@@ -82,9 +82,19 @@ export const Editor = ({
     }
   };
 
-  useEffect(() => {
-    console.log(window.cm);
-  }, [id]);
+  // const fullScreenHandler = () => {
+  //   console.log(document.getElementsByClassName("bytemd")?.[0]?.classList);
+  // };
+
+  // useEffect(() => {
+  //   if (window.cm) {
+  //     document.querySelector('.bytemd-toolbar-right > [bytemd-tippy-path="4"]')?.addEventListener("click", fullScreenHandler);
+  //   }
+
+  //   return () => {
+  //     document.querySelector('.bytemd-toolbar-right > [bytemd-tippy-path="4"]')?.removeEventListener("click", fullScreenHandler);
+  //   };
+  // }, [id]);
 
   const debouncedEditorOnChange = useMemo(() => debounce(editorOnChange, 500), [id]);
 

@@ -1,4 +1,4 @@
-import { Container, Editable, EditablePreview, EditableTextarea, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Container, Editable, EditablePreview, EditableTextarea, Spinner, Text, VStack } from "@chakra-ui/react";
 import debounce from "lodash.debounce";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -8,7 +8,25 @@ import { Content } from "../components/Content";
 import { Editor } from "../components/Editor/Editor";
 import { useUserContext } from "../contexts/UserContext";
 import { db } from "../services/dbService";
+import { createTag } from "../services/tagService";
 import { clearAndCreateEditorContext, getWright, saveWright } from "../services/wrightService";
+
+const Tags = (): JSX.Element => {
+  const { isAuthenticated } = useUserContext();
+  const [currentTag, setCurrentTag] = useState<string>("");
+
+  // const { refetch: fetchAllTagsRequest, isFetching: isTagsLoading } = useQuery(
+  //   "getAllTagsQuery",
+  //   () => createTag(!isAuthenticated(), tag),
+  //   { enabled: false, refetchOnWindowFocus: false }
+  // );
+
+  return (
+    <Box px={{ base: "1%", md: "4%" }} mx="20px">
+      tahs
+    </Box>
+  );
+};
 
 const Wrighting: NextPage = () => {
   const [title, setTitle] = useState("Give me a title");
@@ -17,6 +35,7 @@ const Wrighting: NextPage = () => {
   const [wright, setWright] = useState({});
   const [id, setId] = useState("");
   const [isContextLoaded, setIsContextLoaded] = useState(false);
+  const [tags, setTags] = useState([]);
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -128,6 +147,7 @@ const Wrighting: NextPage = () => {
                 onBlur={() => handleTitleSave(title.trim().length ? title : "Give me a title")}
               />
             </Editable>
+            <Tags />
             <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} />
           </Container>
         </>

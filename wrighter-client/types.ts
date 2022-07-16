@@ -18,3 +18,9 @@ export type ResponseTypeMap<isGuest, isAuth> = {
   true: isAuth;
   false: isGuest;
 };
+
+export type Tag = {
+  id: string;
+  color: string;
+  name: string;
+};
