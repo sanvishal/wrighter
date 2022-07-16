@@ -1,15 +1,12 @@
-import { Box } from "@chakra-ui/react";
-import { Editor as ByteMdEditor } from "@bytemd/react";
+import { Box, useBreakpointValue } from "@chakra-ui/react";
+import { Editor as ByteMdEditor, EditorProps } from "@bytemd/react";
 import { useEffect, useMemo, useState } from "react";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
 import { useRouter } from "next/router";
 import debounce from "lodash.debounce";
 import { db, WrightIDB } from "../../services/dbService";
-import { useQuery } from "react-query";
 import type { BytemdPlugin } from "bytemd";
-import { useUserContext } from "../../contexts/UserContext";
-import { clearAndCreateEditorContext, getWright } from "../../services/wrightService";
 import { Wright } from "../../types";
 import { turndownService } from "../../services/turndownService";
 
@@ -22,7 +19,6 @@ const pastePlugin = (): BytemdPlugin => {
       }
       ctx.editor.on("copy", (cm, event) => {
         if (cm.getSelection()) {
-          console.log(turndownService.escape(cm.getSelection()), cm.getSelection());
           event.clipboardData?.setData("text/plain", turndownService.escape(cm.getSelection()));
         }
       });
@@ -72,6 +68,7 @@ export const Editor = ({
   const [content, setContent] = useState("");
   const [id, setId] = useState("");
   const router = useRouter();
+  const editorMode = useBreakpointValue({ base: "tab", md: "split" });
 
   const plugins = useMemo(() => [pastePlugin(), highlightPlugin(), gfmPluin()], []);
 
@@ -112,7 +109,7 @@ export const Editor = ({
           await debouncedEditorOnChange(v);
         }}
         key="editor"
-        mode="auto"
+        mode={editorMode as EditorProps["mode"]}
         plugins={plugins}
         editorConfig={{
           theme: "wrighter-dark",

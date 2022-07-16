@@ -146,6 +146,7 @@ export const theme = extendTheme({
     colors: {
       accentColor: "#6261fe",
       accentColorTrans: "#6261fe20",
+      bg: { default: "#fbfbfb", _dark: "#222326" },
       bgDark: { default: "#f2f2f3", _dark: "#1d1e20" },
       bgLight: { default: "#2320270d", _dark: "#494b504d" },
       bgLighter: { default: "#ffffff", _dark: "#292a2e" },

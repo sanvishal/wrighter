@@ -19,7 +19,7 @@ const Wrighting: NextPage = () => {
   const [isContextLoaded, setIsContextLoaded] = useState(false);
 
   const handleTitleChange = (value: string) => {
-    setTitle(value.trim());
+    setTitle(value);
   };
 
   const { refetch: getWrightRequest } = useQuery("getWrightQuery", () => getWright(!isAuthenticated(), id), {
@@ -100,8 +100,18 @@ const Wrighting: NextPage = () => {
         </Container>
       ) : (
         <>
-          <Container maxW="full" px={0} py={3}>
-            <Editable defaultValue={title} height="78px" isPreviewFocusable value={title} fontWeight="800" fontSize="xxx-large">
+          <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3}>
+            <Editable
+              defaultValue={title}
+              height="78px"
+              isPreviewFocusable
+              value={title}
+              fontWeight="800"
+              fontSize="xxx-large"
+              // w="94%"
+              px={{ base: "1%", md: "4%" }}
+              mx="20px"
+            >
               <EditablePreview
                 w="full"
                 h="78px"
@@ -118,8 +128,8 @@ const Wrighting: NextPage = () => {
                 onBlur={() => handleTitleSave(title.trim().length ? title : "Give me a title")}
               />
             </Editable>
+            <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} />
           </Container>
-          <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} />
         </>
       )}
     </Content>

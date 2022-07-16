@@ -250,3 +250,21 @@ body {
   border-top-color: var(--chakra-colors-accentColor) !important;
   border-left-color: var(--chakra-colors-accentColor) !important;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 6px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--chakra-colors-bgLight);
+  border-radius: 6px;
+}
