@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { db } from "../services/dbService";
 import { createTag, getAllTags } from "../services/tagService";
@@ -39,4 +39,8 @@ export const TagsProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
   }, [isUserLoading]);
 
   return <TagsContext.Provider value={{ tags, isTagsLoading, fetchTags }}>{children}</TagsContext.Provider>;
+};
+
+export const useTagsContext = () => {
+  return useContext(TagsContext);
 };

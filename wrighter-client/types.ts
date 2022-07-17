@@ -12,6 +12,7 @@ export interface Wright {
   updatedAt: string;
   content: string;
   userId: string;
+  tags?: Tag[];
 }
 
 export type ResponseTypeMap<isGuest, isAuth> = {
@@ -20,7 +21,16 @@ export type ResponseTypeMap<isGuest, isAuth> = {
 };
 
 export type Tag = {
-  id: string;
-  color: string;
+  id?: string;
+  color?: string;
   name: string;
+  userId?: string;
 };
+
+export type TagWright = {
+  id?: number;
+  tagId: string;
+  wrightId: string;
+};
+
+export type TagSearchResult = Tag & { isTagged?: boolean };

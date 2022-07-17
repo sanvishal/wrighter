@@ -141,6 +141,30 @@ export const theme = extendTheme({
         },
       },
     },
+    Popover: {
+      parts: ["content", "arrow", "header", "footer"],
+      baseStyle: {
+        header: {
+          paddingBottom: "12px",
+          borderColor: "var(--chakra-colors-containerBorder) !important",
+        },
+        footer: {
+          paddingTop: "12px",
+          borderColor: "var(--chakra-colors-containerBorder) !important",
+        },
+        arrow: {
+          "--popper-arrow-shadow-color": "var(--chakra-colors-containerBorder)",
+          background: "var(--chakra-colors-bgLighter) !important",
+        },
+        content: {
+          border: "1px solid var(--chakra-colors-containerBorder) !important",
+          background: "bgLighter",
+          borderRadius: "10px",
+          py: "4px",
+          boxShadow: "var(--chakra-shadows-lg)",
+        },
+      },
+    },
   },
   semanticTokens: {
     colors: {

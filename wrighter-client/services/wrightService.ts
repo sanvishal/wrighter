@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import { IndexableType } from "dexie";
+import compact from "lodash.compact";
 import { nanoid } from "nanoid";
 import { API_BASE_URL } from "../constants";
-import { ResponseTypeMap, Wright } from "../types";
+import { ResponseTypeMap, Tag, Wright } from "../types";
 import { toBoolean } from "../utils";
 import { db, WrightIDB } from "./dbService";
 
@@ -36,7 +37,18 @@ export const createWright = async (isGuest: boolean): Promise<Wright | WrightIDB
 
 export const getAllWrights = async (isGuest: boolean): Promise<Wright[] | WrightIDB[] | undefined> => {
   if (isGuest) {
-    return db.wrights.toArray();
+    const wrights = await db.wrights.toArray();
+    if (wrights && wrights?.length > 0) {
+      const wrightsWithTags = wrights.map(async (wright) => {
+        const tagsRelations = await db.tagWright
+          .where("wrightId")
+          .equals(wright.id || "")
+          .toArray();
+        const tags = await db.tags.bulkGet(tagsRelations.map((relation) => relation.tagId));
+        return { ...wright, tags: compact(tags) };
+      });
+      return await Promise.all(wrightsWithTags);
+    }
   }
   const wrights = (await axios.get(`${API_BASE_URL}/wright`, { withCredentials: true })) as AxiosResponse<Wright[]>;
   return wrights.data;
@@ -49,7 +61,19 @@ export const clearAndCreateEditorContext = async (wright: Wright | WrightIDB): P
 
 export const getWright = async (isGuest: boolean, id?: string): Promise<Wright | WrightIDB | undefined> => {
   if (isGuest && id) {
-    return db.wrights.get(id);
+    const wright = await db.wrights.get(id);
+    const tags = await (async () => {
+      if (wright) {
+        const tagsRelations = await db.tagWright
+          .where("wrightId")
+          .equals(wright.id || "")
+          .toArray();
+        const tags = await db.tags.bulkGet(tagsRelations.map((relation) => relation.tagId));
+        return compact(tags);
+      }
+      return [];
+    })();
+    return { ...wright, tags };
   }
 
   const wright = (await axios.get(`${API_BASE_URL}/wright/${id}`, { withCredentials: true })) as AxiosResponse<Wright>;

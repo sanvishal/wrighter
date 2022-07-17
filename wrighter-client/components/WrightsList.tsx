@@ -55,6 +55,7 @@ export const WrightsList = (): JSX.Element => {
   const getAllWrightsHandler = async () => {
     const { data: wrights } = await getWrightsRequest();
     if (wrights) {
+      console.log(wrights);
       setWrights(wrights || []);
     }
   };
