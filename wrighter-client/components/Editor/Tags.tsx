@@ -15,9 +15,10 @@ import {
   Box,
   VStack,
   Spinner,
+  Kbd,
 } from "@chakra-ui/react";
 import debounce from "lodash.debounce";
-import { useState, useEffect, ChangeEvent, KeyboardEvent, useMemo } from "react";
+import { useState, useEffect, ChangeEvent, KeyboardEvent, useMemo, useRef } from "react";
 import { FiPlusCircle, FiX, FiCheck } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { useUserContext } from "../../contexts/UserContext";
@@ -29,7 +30,9 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
   const [currentEditingTag, setCurrentEditingTag] = useState("");
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [showTagEditor, setShowTagEditor] = useState(false);
+  const [focusedTagIdx, setFocusedTagIdx] = useState<number>(0);
   const { isAuthenticated } = useUserContext();
+  const initialFocusRef = useRef<any>();
 
   useEffect(() => {
     if (initWright?.tags && initWright?.tags?.length > 0) {
@@ -56,9 +59,9 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
 
   const searchTagsHandler = async (): Promise<TagSearchResult[]> => {
     const tags = await searchTags(!isAuthenticated(), currentEditingTag);
+    setFocusedTagIdx(currentEditingTag.trim().length === 0 ? 0 : -1);
     if (tags) {
       const modifiedTags: TagSearchResult[] = [];
-      // check if tags are already attached to wright
       for (const tag of tags) {
         if (!currentTags.find((t) => t.id === tag.id)) {
           modifiedTags.push({ ...tag, isTagged: false });
@@ -71,6 +74,10 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     }
     return [];
   };
+
+  useEffect(() => {
+    searchTagRequest();
+  }, []);
 
   const {
     refetch: searchTagRequest,
@@ -96,8 +103,14 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
 
   const handleTagInputChange = async (value: string) => {
     setCurrentEditingTag(value.trim());
-    await debouncedTagsSearch();
+    debouncedTagsSearch();
   };
+
+  useEffect(() => {
+    if (currentEditingTag.length === 0) {
+      setFocusedTagIdx(0);
+    }
+  }, [currentEditingTag]);
 
   return (
     <Box px={{ base: "1%", md: "4%" }} mx="20px">
@@ -132,7 +145,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
             opacity: 1,
           }}
         >
-          <Popover placement="bottom-start">
+          <Popover placement="bottom-start" initialFocusRef={initialFocusRef}>
             <PopoverTrigger>
               <Box>
                 <CustomToolTip label="add new tag">
@@ -148,16 +161,60 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                 </CustomToolTip>
               </Box>
             </PopoverTrigger>
-            <PopoverContent maxW="280px">
+            <PopoverContent
+              maxW="280px"
+              onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Enter") {
+                  // createAndAttachTagRequest();
+                  console.log(focusedTagIdx, searchTagResults);
+                }
+              }}
+              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (searchTagResults) {
+                  const unTaggedTags = searchTagResults.filter((tag) => !tag.isTagged);
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    if (focusedTagIdx === -1) {
+                      setFocusedTagIdx(unTaggedTags.length - 1);
+                      return;
+                    }
+                    if (focusedTagIdx === 0) {
+                      if (currentEditingTag.trim().length > 0) {
+                        setFocusedTagIdx(-1);
+                      } else {
+                        setFocusedTagIdx(unTaggedTags?.length - 1);
+                      }
+                    } else {
+                      const idxToMove = (focusedTagIdx - 1) % unTaggedTags?.length;
+                      setFocusedTagIdx(isNaN(idxToMove) ? -1 : idxToMove);
+                    }
+                  } else if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    if (focusedTagIdx === unTaggedTags?.length - 1) {
+                      if (currentEditingTag.trim().length > 0) {
+                        setFocusedTagIdx(-1);
+                      } else {
+                        setFocusedTagIdx(0);
+                      }
+                    } else {
+                      const idxToMove = (focusedTagIdx + 1) % unTaggedTags?.length;
+                      setFocusedTagIdx(isNaN(idxToMove) ? -1 : idxToMove);
+                    }
+                  }
+                }
+              }}
+            >
               <PopoverArrow />
               <PopoverHeader>
-                <HStack spacing={2}>
-                  <Center w={6} h={6}>
+                <HStack spacing={0} bg="bgLight" borderRadius={8}>
+                  <Center pl={2} w={4} h={6}>
                     <Text color="textLighter" fontWeight="800" fontSize="md" opacity={0.6}>
                       #
                     </Text>
                   </Center>
                   <Input
+                    ref={initialFocusRef}
+                    variant="unstyled"
                     placeholder="search or add tag"
                     isDisabled={isAddingTag || isFetchingTags}
                     autoFocus
@@ -168,16 +225,55 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                     height="32px"
                     px={2}
                     value={currentEditingTag}
-                    onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
-                      if (e.key === "Enter") {
-                        createAndAttachTagRequest();
-                      }
+                    _focusVisible={{
+                      bg: "transparent",
+                      border: "none",
                     }}
+                    // onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
+                    //   if (e.key === "Enter") {
+                    //     // createAndAttachTagRequest();
+                    //     console.log(focusedTagIdx, searchTagResults);
+                    //   }
+                    // }}
+                    // onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                    //   if (searchTagResults) {
+                    //     const unTaggedTags = searchTagResults.filter((tag) => !tag.isTagged);
+                    //     if (e.key === "ArrowUp") {
+                    //       e.preventDefault();
+                    //       if (focusedTagIdx === -1) {
+                    //         setFocusedTagIdx(unTaggedTags.length - 1);
+                    //         return;
+                    //       }
+                    //       if (focusedTagIdx === 0) {
+                    //         if (currentEditingTag.trim().length > 0) {
+                    //           setFocusedTagIdx(-1);
+                    //         } else {
+                    //           setFocusedTagIdx(unTaggedTags?.length - 1);
+                    //         }
+                    //       } else {
+                    //         const idxToMove = (focusedTagIdx - 1) % unTaggedTags?.length;
+                    //         setFocusedTagIdx(isNaN(idxToMove) ? -1 : idxToMove);
+                    //       }
+                    //     } else if (e.key === "ArrowDown") {
+                    //       e.preventDefault();
+                    //       if (focusedTagIdx === unTaggedTags?.length - 1) {
+                    //         if (currentEditingTag.trim().length > 0) {
+                    //           setFocusedTagIdx(-1);
+                    //         } else {
+                    //           setFocusedTagIdx(0);
+                    //         }
+                    //       } else {
+                    //         const idxToMove = (focusedTagIdx + 1) % unTaggedTags?.length;
+                    //         setFocusedTagIdx(isNaN(idxToMove) ? -1 : idxToMove);
+                    //       }
+                    //     }
+                    //   }
+                    // }}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleTagInputChange(e.target.value)}
                   />
                 </HStack>
               </PopoverHeader>
-              <PopoverBody maxH="200px" minH="200px" overflowY="scroll">
+              <PopoverBody maxH="200px" minH="200px" overflowY="auto">
                 {isSearchingTags ? (
                   <Center>
                     <Spinner
@@ -191,8 +287,38 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                     />
                   </Center>
                 ) : (
-                  <VStack align="flex-start">
-                    {searchTagResults?.map((tag) => {
+                  <VStack align="flex-start" w="full" spacing={1}>
+                    {currentEditingTag.trim() && (
+                      <Box
+                        cursor="pointer"
+                        borderRadius={8}
+                        px={1.5}
+                        py={1}
+                        w="full"
+                        bg="successGreenTransBg"
+                        color="successGreen"
+                        transition="opacity 0.15s ease-in-out"
+                        opacity={focusedTagIdx === -1 ? 1 : 0.85}
+                        onMouseMoveCapture={() => {
+                          setFocusedTagIdx(-1);
+                        }}
+                      >
+                        <HStack justify="space-between">
+                          <Text fontWeight="black"># {currentEditingTag}</Text>
+                          <Kbd
+                            bg="bgLighter"
+                            borderColor="successGreen"
+                            opacity={focusedTagIdx === -1 ? 1 : 0}
+                            transform={focusedTagIdx === -1 ? "translateX(0)" : "translateX(4px)"}
+                            transition="all 0.2s ease-in-out"
+                          >
+                            ↩
+                          </Kbd>
+                        </HStack>
+                      </Box>
+                    )}
+
+                    {searchTagResults?.map((tag, idx) => {
                       return (
                         <Box
                           cursor={tag?.isTagged ? "no-drop" : "pointer"}
@@ -201,18 +327,34 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                           py={1}
                           w="full"
                           key={tag.id}
-                          _hover={{
-                            bg: "bgLight",
-                          }}
-                          transition="background 0.15s ease-in-out"
+                          bg={idx === focusedTagIdx ? "bgLight" : "bgLighter"}
+                          // _hover={{
+                          //   bg: "bgLight",
+                          // }}
+                          transition="background 0.3s ease-in-out"
                           opacity={tag?.isTagged ? 0.3 : 1}
+                          onMouseMoveCapture={() => {
+                            if (!tag.isTagged) {
+                              setFocusedTagIdx(idx);
+                            }
+                          }}
                         >
-                          <Text
-                            fontWeight={tag?.isTagged ? "bold" : "black"}
-                            textDecoration={tag?.isTagged ? "line-through" : "none"}
-                          >
-                            # {tag.name}
-                          </Text>
+                          <HStack justify="space-between">
+                            <Text
+                              fontWeight={tag?.isTagged ? "bold" : "black"}
+                              textDecoration={tag?.isTagged ? "line-through" : "none"}
+                            >
+                              # {tag.name}
+                            </Text>
+                            <Kbd
+                              bg="bgLighter"
+                              transition="all 0.25s ease-in-out"
+                              opacity={focusedTagIdx === idx ? 1 : 0}
+                              transform={focusedTagIdx === idx ? "translateX(0)" : "translateX(4px)"}
+                            >
+                              ↩
+                            </Kbd>
+                          </HStack>
                         </Box>
                       );
                     })}

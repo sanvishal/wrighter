@@ -141,6 +141,13 @@ export const theme = extendTheme({
         },
       },
     },
+    Kbd: {
+      baseStyle: {
+        borderBottomWidth: "1px",
+        borderColor: "var(--chakra-colors-containerBorder)",
+        fontSize: "0.96em",
+      },
+    },
     Popover: {
       parts: ["content", "arrow", "header", "footer"],
       baseStyle: {
@@ -186,6 +193,8 @@ export const theme = extendTheme({
       inputBorderColor: { default: "var(--chakra-colors-blackAlpha-400)", _dark: "var(--chakra-colors-whiteAlpha-300)" },
       errorRed: "#d90d17",
       errorRedTransBg: "#fe413d20",
+      successGreenTransBg: { default: "#17825b2e", _dark: "#17825b2e" },
+      successGreen: { default: "#03bf7a", _dark: "#03bf7a" },
       tooltipBg: { default: "#393b41", _dark: "#393b41" },
       shadow: { default: "0px 20px 50px #2b292e10", _dark: "0px 14px 30px #0a0a0b73" },
       // editorBg: { default: "#fbfbfb", _dark: "#222326" },
