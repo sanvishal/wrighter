@@ -18,6 +18,7 @@ model User {
   name String
   password String
   wrights Wright[]
+  tags Tag[]
 }
 
 model Wright {
@@ -29,5 +30,23 @@ model Wright {
   updatedAt DateTime @updatedAt
   wrighter User @relation(fields: [userId], references: [id])
   userId String
+  tagWrights TagWright[]
   isUnderReview Boolean @default(false)
+}
+
+model Tag {
+  id String @id
+  name String @db.VarChar(200)
+  color String @db.VarChar(10) @default("")
+  createdBy User @relation(fields: [userId], references: [id])
+  userId String
+  tagsWrights TagWright[]
+}
+
+model TagWright {
+  id Int @id @default(autoincrement())
+  tag Tag @relation(fields: [tagId], references: [id])
+  tagId String
+  wright Wright @relation(fields: [wrightId], references: [id])
+  wrightId String
 }

@@ -10,6 +10,8 @@ import { userSchemas } from "./modules/user/user.schema";
 import { FastifyRequest } from "fastify";
 import { FastifyReply } from "fastify";
 import { wrightSchemas } from "./modules/wright/wright.schema";
+import tagRoutes from "./modules/tag/tag.route";
+import { tagSchemas } from "./modules/tag/tag.schema";
 
 export const fastify = Fastify({
   logger: true,
@@ -41,7 +43,7 @@ async function build() {
 
   await fastify.register(require("@fastify/middie"));
 
-  await fastify.register(fastifyCookie, { secret: "super-secret" });
+  await fastify.register(fastifyCookie, { secret: "superdoopersecret123123ksdf))!(@*)!13::?><][]]][" });
 
   await fastify.register(fastifyJWT, {
     secret: process.env.SECRET_KEY!,
@@ -94,7 +96,7 @@ async function build() {
 
 build()
   .then((fastify) => {
-    for (const schema of [...userSchemas, ...wrightSchemas]) {
+    for (const schema of [...userSchemas, ...wrightSchemas, ...tagSchemas]) {
       fastify.addSchema(schema);
     }
 
@@ -103,6 +105,9 @@ build()
     });
     fastify.register(wrightRoutes, {
       prefix: "api/wright",
+    });
+    fastify.register(tagRoutes, {
+      prefix: "api/tag",
     });
 
     const port = +process.env.PORT! || 8080;

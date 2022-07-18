@@ -36,7 +36,15 @@ export const createTag = async (isGuest: boolean, tag: Tag): Promise<Tag | undef
 
 export const attachTagToWright = async (isGuest: boolean, tagId: string, wrightId: string): Promise<any> => {
   if (isGuest) {
-    return await db.tagWright.add({ tagId, wrightId });
+    const isAlreadyAttached = await db.tagWright
+      .where("wrightId")
+      .equals(wrightId)
+      .and((t) => t.tagId === tagId)
+      .first();
+    if (!isAlreadyAttached) {
+      return await db.tagWright.add({ tagId, wrightId });
+    }
+    return isAlreadyAttached;
   }
   const resp = (await axios.put(
     `${API_BASE_URL}/wright/${wrightId}`,
@@ -62,4 +70,20 @@ export const searchTags = async (isGuest: boolean, query: string): Promise<Tag[]
   }
   const tags = await axios.get<Tag[]>(`${API_BASE_URL}/tag/search?query=${query}`, { withCredentials: true });
   return tags.data;
+};
+
+export const untagWright = async (isGuest: boolean, tagId: string, wrightId: string): Promise<any> => {
+  if (isGuest) {
+    return await db.tagWright
+      .where("tagId")
+      .equals(tagId)
+      .and((tw) => tw.wrightId === wrightId)
+      .delete();
+  }
+  const resp = (await axios.put(
+    `${API_BASE_URL}/wright/${wrightId}`,
+    { tagId: "" },
+    { withCredentials: true }
+  )) as AxiosResponse<any>;
+  return resp.data;
 };

@@ -16,15 +16,61 @@ import {
   VStack,
   Spinner,
   Kbd,
+  Icon,
 } from "@chakra-ui/react";
 import debounce from "lodash.debounce";
+import { useRouter } from "next/router";
 import { useState, useEffect, ChangeEvent, KeyboardEvent, useMemo, useRef } from "react";
-import { FiPlusCircle, FiX, FiCheck } from "react-icons/fi";
+import { FiPlusCircle, FiX, FiCheck, FiHash } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { useUserContext } from "../../contexts/UserContext";
-import { getTagsForWright, createTag, attachTagToWright, searchTags } from "../../services/tagService";
+import { getTagsForWright, createTag, attachTagToWright, searchTags, untagWright } from "../../services/tagService";
 import { Wright, Tag, TagSearchResult } from "../../types";
 import { CustomToolTip } from "../CustomTooltip";
+
+const Tag = ({ tag, onTagDelete }: { tag: Tag; onTagDelete: (tag: Tag) => void }): JSX.Element => {
+  const [isHovering, setIsHovering] = useState(false);
+  const router = useRouter();
+  const { isAuthenticated } = useUserContext();
+
+  const { refetch: unTagRequest, isFetching: isDeletingTag } = useQuery("deleteTagQuery", () => unTagRequestHandler(), {
+    enabled: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const unTagRequestHandler = async () => {
+    try {
+      await untagWright(!isAuthenticated(), tag?.id || "", router?.query?.id as string);
+      onTagDelete(tag);
+    } catch (e) {
+      // do nothing for now
+    }
+  };
+
+  return (
+    <Box
+      borderRadius={10}
+      border="1px solid"
+      borderColor="containerBorder"
+      px={2}
+      py={0}
+      bg="bgLight"
+      onMouseOver={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <HStack spacing={1}>
+        {isHovering ? (
+          <Icon as={FiX} size="sm" cursor="pointer" onClick={() => unTagRequest()} />
+        ) : (
+          <Icon as={FiHash} size="sm" />
+        )}
+        <Text fontWeight="bold" color="textLight" fontSize="sm">
+          {tag.name}
+        </Text>
+      </HStack>
+    </Box>
+  );
+};
 
 export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
   const [currentEditingTag, setCurrentEditingTag] = useState("");
@@ -57,40 +103,57 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     }
   );
 
+  const searchTagAlreadyExists = () => {
+    if (searchTagResults) {
+      return searchTagResults.some((tag) => tag.name === currentEditingTag);
+    }
+    return false;
+  };
+
+  const markTaggedTags = (curTags: Tag[], allTags: Tag[]): TagSearchResult[] => {
+    const modifiedTags: TagSearchResult[] = [];
+    for (const tag of allTags) {
+      if (!curTags.find((t) => t.id === tag.id)) {
+        modifiedTags.push({ ...tag, isTagged: false });
+      } else {
+        modifiedTags.push({ ...tag, isTagged: true });
+      }
+    }
+    modifiedTags.sort((a, b) => (a?.isTagged ? 1 : -1));
+    return modifiedTags;
+  };
+
   const searchTagsHandler = async (): Promise<TagSearchResult[]> => {
     const tags = await searchTags(!isAuthenticated(), currentEditingTag);
     setFocusedTagIdx(currentEditingTag.trim().length === 0 ? 0 : -1);
     if (tags) {
-      const modifiedTags: TagSearchResult[] = [];
-      for (const tag of tags) {
-        if (!currentTags.find((t) => t.id === tag.id)) {
-          modifiedTags.push({ ...tag, isTagged: false });
-        } else {
-          modifiedTags.push({ ...tag, isTagged: true });
-        }
-      }
-      modifiedTags.sort((a, b) => (a?.isTagged ? 1 : -1));
-      return modifiedTags;
+      return markTaggedTags(currentTags, tags);
     }
     return [];
   };
 
   useEffect(() => {
-    searchTagRequest();
-  }, []);
+    debouncedTagsSearch();
+  }, [currentTags]);
 
   const {
     refetch: searchTagRequest,
     isFetching: isSearchingTags,
     data: searchTagResults,
-  } = useQuery("searchTags", () => searchTagsHandler(), {
+  } = useQuery("searchTagsQuery", () => searchTagsHandler(), {
     enabled: false,
   });
 
   const debouncedTagsSearch = useMemo(() => debounce(searchTagRequest, isAuthenticated() ? 800 : 300), []);
 
   const createAndAttachTagHandler = async () => {
-    const newTag = await createTag(!isAuthenticated(), { name: currentEditingTag });
+    let newtagName = "";
+    if (currentEditingTag.trim().length > 0 && focusedTagIdx === -1) {
+      newtagName = currentEditingTag.trim();
+    } else if (searchTagResults && focusedTagIdx < searchTagResults?.length && focusedTagIdx >= 0) {
+      newtagName = searchTagResults[focusedTagIdx]?.name;
+    }
+    const newTag = await createTag(!isAuthenticated(), { name: newtagName });
     if (newTag && newTag?.id) {
       await attachTagToWright(!isAuthenticated(), newTag.id, initWright.id);
       const { data: updatedTags } = await refetchTagsForWright();
@@ -112,13 +175,18 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     }
   }, [currentEditingTag]);
 
+  const onTagDelete = (tag: Tag) => {
+    const updatedTags = currentTags.filter((t) => t.id !== tag.id);
+    setCurrentTags(updatedTags);
+  };
+
   return (
     <Box px={{ base: "1%", md: "4%" }} mx="20px">
-      <HStack spacing={3} role="group">
+      <HStack spacing={3} role="group" justify="flex-end">
         <HStack>
           {currentTags && currentTags?.length > 0 ? (
             currentTags?.map((tag) => {
-              return <Text key={tag.id}>{tag.name}</Text>;
+              return <Tag tag={tag} key={tag.id} onTagDelete={onTagDelete} />;
             })
           ) : (
             <Text fontSize="sm" fontWeight="medium" color="textLighter" opacity="0.6" as="i">
@@ -140,12 +208,12 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
         <HStack
           transition="opacity 0.2s ease-in-out"
           transitionDelay="0.1s"
-          opacity={showTagEditor ? 1 : 0.44}
+          opacity={showTagEditor ? 1 : 0.77}
           _groupHover={{
             opacity: 1,
           }}
         >
-          <Popover placement="bottom-start" initialFocusRef={initialFocusRef}>
+          <Popover placement="bottom-end" initialFocusRef={initialFocusRef}>
             <PopoverTrigger>
               <Box>
                 <CustomToolTip label="add new tag">
@@ -165,8 +233,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
               maxW="280px"
               onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === "Enter") {
-                  // createAndAttachTagRequest();
-                  console.log(focusedTagIdx, searchTagResults);
+                  createAndAttachTagRequest();
                 }
               }}
               onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
@@ -179,7 +246,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                       return;
                     }
                     if (focusedTagIdx === 0) {
-                      if (currentEditingTag.trim().length > 0) {
+                      if (currentEditingTag.trim().length > 0 && !searchTagAlreadyExists()) {
                         setFocusedTagIdx(-1);
                       } else {
                         setFocusedTagIdx(unTaggedTags?.length - 1);
@@ -191,7 +258,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                   } else if (e.key === "ArrowDown") {
                     e.preventDefault();
                     if (focusedTagIdx === unTaggedTags?.length - 1) {
-                      if (currentEditingTag.trim().length > 0) {
+                      if (currentEditingTag.trim().length > 0 && !searchTagAlreadyExists()) {
                         setFocusedTagIdx(-1);
                       } else {
                         setFocusedTagIdx(0);
@@ -207,10 +274,8 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
               <PopoverArrow />
               <PopoverHeader>
                 <HStack spacing={0} bg="bgLight" borderRadius={8}>
-                  <Center pl={2} w={4} h={6}>
-                    <Text color="textLighter" fontWeight="800" fontSize="md" opacity={0.6}>
-                      #
-                    </Text>
+                  <Center pl={2} w={6} h={6}>
+                    <Icon as={FiHash} opacity={0.6} color="textLighter" />
                   </Center>
                   <Input
                     ref={initialFocusRef}
@@ -229,46 +294,6 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                       bg: "transparent",
                       border: "none",
                     }}
-                    // onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
-                    //   if (e.key === "Enter") {
-                    //     // createAndAttachTagRequest();
-                    //     console.log(focusedTagIdx, searchTagResults);
-                    //   }
-                    // }}
-                    // onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-                    //   if (searchTagResults) {
-                    //     const unTaggedTags = searchTagResults.filter((tag) => !tag.isTagged);
-                    //     if (e.key === "ArrowUp") {
-                    //       e.preventDefault();
-                    //       if (focusedTagIdx === -1) {
-                    //         setFocusedTagIdx(unTaggedTags.length - 1);
-                    //         return;
-                    //       }
-                    //       if (focusedTagIdx === 0) {
-                    //         if (currentEditingTag.trim().length > 0) {
-                    //           setFocusedTagIdx(-1);
-                    //         } else {
-                    //           setFocusedTagIdx(unTaggedTags?.length - 1);
-                    //         }
-                    //       } else {
-                    //         const idxToMove = (focusedTagIdx - 1) % unTaggedTags?.length;
-                    //         setFocusedTagIdx(isNaN(idxToMove) ? -1 : idxToMove);
-                    //       }
-                    //     } else if (e.key === "ArrowDown") {
-                    //       e.preventDefault();
-                    //       if (focusedTagIdx === unTaggedTags?.length - 1) {
-                    //         if (currentEditingTag.trim().length > 0) {
-                    //           setFocusedTagIdx(-1);
-                    //         } else {
-                    //           setFocusedTagIdx(0);
-                    //         }
-                    //       } else {
-                    //         const idxToMove = (focusedTagIdx + 1) % unTaggedTags?.length;
-                    //         setFocusedTagIdx(isNaN(idxToMove) ? -1 : idxToMove);
-                    //       }
-                    //     }
-                    //   }
-                    // }}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleTagInputChange(e.target.value)}
                   />
                 </HStack>
@@ -288,7 +313,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                   </Center>
                 ) : (
                   <VStack align="flex-start" w="full" spacing={1}>
-                    {currentEditingTag.trim() && (
+                    {currentEditingTag.trim() && !searchTagAlreadyExists() && (
                       <Box
                         cursor="pointer"
                         borderRadius={8}
@@ -302,9 +327,21 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                         onMouseMoveCapture={() => {
                           setFocusedTagIdx(-1);
                         }}
+                        onClick={() => {
+                          createAndAttachTagRequest();
+                        }}
+                        ref={(ref: HTMLDivElement) => {
+                          if (focusedTagIdx === -1) {
+                            ref?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+                          }
+                        }}
                       >
                         <HStack justify="space-between">
-                          <Text fontWeight="black"># {currentEditingTag}</Text>
+                          <HStack>
+                            <Icon as={FiHash} opacity={0.6} color="successGreen" />
+                            <Text fontWeight="black">{currentEditingTag}</Text>
+                          </HStack>
+                          {/* <Text fontWeight="black"># {currentEditingTag}</Text> */}
                           <Kbd
                             bg="bgLighter"
                             borderColor="successGreen"
@@ -317,7 +354,6 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                         </HStack>
                       </Box>
                     )}
-
                     {searchTagResults?.map((tag, idx) => {
                       return (
                         <Box
@@ -328,24 +364,32 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                           w="full"
                           key={tag.id}
                           bg={idx === focusedTagIdx ? "bgLight" : "bgLighter"}
-                          // _hover={{
-                          //   bg: "bgLight",
-                          // }}
                           transition="background 0.3s ease-in-out"
                           opacity={tag?.isTagged ? 0.3 : 1}
+                          ref={(ref: HTMLDivElement) => {
+                            if (idx === focusedTagIdx && !tag.isTagged) {
+                              ref?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+                            }
+                          }}
                           onMouseMoveCapture={() => {
                             if (!tag.isTagged) {
                               setFocusedTagIdx(idx);
                             }
                           }}
+                          onClick={() => {
+                            createAndAttachTagRequest();
+                          }}
                         >
                           <HStack justify="space-between">
-                            <Text
-                              fontWeight={tag?.isTagged ? "bold" : "black"}
-                              textDecoration={tag?.isTagged ? "line-through" : "none"}
-                            >
-                              # {tag.name}
-                            </Text>
+                            <HStack>
+                              <Icon as={FiHash} opacity={0.6} color="textLighter" />
+                              <Text
+                                fontWeight={tag?.isTagged ? "bold" : "black"}
+                                textDecoration={tag?.isTagged ? "line-through" : "none"}
+                              >
+                                {tag.name}
+                              </Text>
+                            </HStack>
                             <Kbd
                               bg="bgLighter"
                               transition="all 0.25s ease-in-out"
@@ -361,86 +405,8 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                   </VStack>
                 )}
               </PopoverBody>
-              <PopoverFooter>
-                <HStack spacing={3} w="full" justify="flex-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    bg="errorRedTransBg"
-                    _hover={{ bg: "errorRedTransBg" }}
-                    rightIcon={<FiX />}
-                    iconSpacing={1}
-                    aria-label="remove tag input"
-                    onClick={() => {
-                      setShowTagEditor(false);
-                    }}
-                    opacity="0.9"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    isLoading={isAddingTag || isFetchingTags}
-                    size="sm"
-                    rightIcon={<FiCheck />}
-                    aria-label="add tag confirm"
-                    iconSpacing={1}
-                    onClick={() => {
-                      createAndAttachTagRequest();
-                    }}
-                    fontWeight="700"
-                  >
-                    Done
-                  </Button>
-                </HStack>
-              </PopoverFooter>
             </PopoverContent>
           </Popover>
-          {/* {showTagEditor && (
-            <HStack spacing={1}>
-              <Text color="textLighter" fontWeight="800" fontSize="sm" opacity={0.6}>
-                #
-              </Text>
-              <Input
-                isDisabled={isAddingTag || isFetchingTags}
-                autoFocus
-                size="sm"
-                borderColor="inputBorderColor"
-                borderRadius={10}
-                width={100}
-                height="24px"
-                px={2}
-                value={currentEditingTag}
-                onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key === "Enter") {
-                    createAndAttachTagRequest();
-                  }
-                }}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentEditingTag(e.target.value.trim())}
-              />
-              <IconButton
-                variant="ghost"
-                isLoading={isAddingTag || isFetchingTags}
-                size="xs"
-                icon={<FiCheck />}
-                aria-label="add tag confirm"
-                onClick={() => {
-                  createAndAttachTagRequest();
-                }}
-              />
-              <IconButton
-                variant="ghost"
-                size="xs"
-                bg="errorRedTransBg"
-                _hover={{ bg: "errorRedTransBg" }}
-                icon={<FiX />}
-                aria-label="remove tag input"
-                onClick={() => {
-                  setShowTagEditor(false);
-                }}
-              />
-            </HStack>
-          )} */}
         </HStack>
       </HStack>
     </Box>
