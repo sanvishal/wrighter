@@ -68,7 +68,7 @@ export const searchTags = async (isGuest: boolean, query: string): Promise<Tag[]
   if (isGuest) {
     return await db.tags.filter((tag) => tag.name.toLowerCase().includes(query.toLowerCase())).toArray();
   }
-  const tags = await axios.get<Tag[]>(`${API_BASE_URL}/tag/search?query=${query}`, { withCredentials: true });
+  const tags = await axios.get<Tag[]>(`${API_BASE_URL}/tag?q=${query}`, { withCredentials: true });
   return tags.data;
 };
 

@@ -23,7 +23,12 @@ export const CreateWright = ({
       <Text fontWeight="bold" color="textLighter">
         You don&apos;t seem to have any wrights yet! create one?
       </Text>
-      <Button rightIcon={<FiPlus />} variant="ghost" onClick={createWrightHandler} isLoading={isLoading}>
+      <Button
+        rightIcon={<FiPlus style={{ marginBottom: "4px" }} />}
+        variant="ghost"
+        onClick={createWrightHandler}
+        isLoading={isLoading}
+      >
         Create Wright
       </Button>
     </VStack>
@@ -85,10 +90,10 @@ export const WrightsList = (): JSX.Element => {
           </VStack>
         </HStack>
         <Button
-          rightIcon={<FiPlus />}
+          rightIcon={<FiPlus style={{ marginBottom: "4px" }} />}
           variant="ghost"
           onClick={createWrightHandler}
-          display={wrights?.length > 0 ? "block" : "none"}
+          display={wrights?.length > 0 ? "flex" : "none"}
           isLoading={isLoading}
         >
           Create Wright

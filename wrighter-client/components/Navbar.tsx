@@ -19,7 +19,8 @@ import {
 import Logo from "./Logo";
 import NavLink from "./NavLink";
 import Avvvatars from "avvvatars-react";
-import { FiBookOpen, FiCloud, FiDatabase, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
+import { FiBookOpen, FiCloud, FiDatabase, FiLogOut, FiMessageCircle, FiMessageSquare, FiMoon, FiSun } from "react-icons/fi";
+import { TbBulb } from "react-icons/tb";
 import { CustomToolTip } from "./CustomTooltip";
 import { useUserContext } from "../contexts/UserContext";
 import { useRouter } from "next/router";
@@ -73,7 +74,20 @@ export const Navbar = () => {
           <Box w={9} h={0.5} bg="bgLight" borderRadius={10} mb={3} />
           <Box>
             <IconButton
-              aria-label="Toggle Mode"
+              aria-label="go to bites"
+              variant="ghost"
+              onClick={() => {
+                router.push("/bites");
+              }}
+              size="sm"
+              role="group"
+            >
+              <Icon as={TbBulb} strokeWidth={2.5} fontSize="lg" />
+            </IconButton>
+          </Box>
+          <Box>
+            <IconButton
+              aria-label="go to wrights"
               variant="ghost"
               onClick={() => {
                 router.push("/wrights");
@@ -81,7 +95,7 @@ export const Navbar = () => {
               size="sm"
               role="group"
             >
-              <Icon transition="transform 0.2s ease-in-out" as={FiBookOpen} strokeWidth={2.5} />
+              <Icon as={FiBookOpen} strokeWidth={2.5} />
             </IconButton>
           </Box>
         </VStack>

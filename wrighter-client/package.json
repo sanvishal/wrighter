@@ -32,6 +32,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
     "react-query": "^3.39.1",
+    "remove-markdown": "^0.5.0",
     "sass": "^1.53.0",
     "turndown": "^7.1.1",
     "turndown-plugin-gfm": "^1.0.2"

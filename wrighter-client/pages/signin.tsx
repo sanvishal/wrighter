@@ -86,7 +86,7 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
         ),
       });
     } else if (status === "success") {
-      router.push("/home");
+      router.push("/wrights");
     }
   };
 

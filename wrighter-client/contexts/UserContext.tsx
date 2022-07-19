@@ -32,7 +32,7 @@ export const UserProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
     const { status, data } = await refetchUser();
     setUser(data?.data);
     if (status === "success" && router.route === "/signin") {
-      router.push("/home");
+      router.push("/wrights");
     } else if (status === "error") {
       // router.push("/signin");
     }

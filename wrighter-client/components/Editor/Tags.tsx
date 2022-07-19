@@ -17,6 +17,8 @@ import {
   Spinner,
   Kbd,
   Icon,
+  useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/router";
@@ -27,11 +29,13 @@ import { useUserContext } from "../../contexts/UserContext";
 import { getTagsForWright, createTag, attachTagToWright, searchTags, untagWright } from "../../services/tagService";
 import { Wright, Tag, TagSearchResult } from "../../types";
 import { CustomToolTip } from "../CustomTooltip";
+import { Toaster } from "../Toaster";
 
 const Tag = ({ tag, onTagDelete }: { tag: Tag; onTagDelete: (tag: Tag) => void }): JSX.Element => {
   const [isHovering, setIsHovering] = useState(false);
   const router = useRouter();
   const { isAuthenticated } = useUserContext();
+  const toast = useToast();
 
   const { refetch: unTagRequest, isFetching: isDeletingTag } = useQuery("deleteTagQuery", () => unTagRequestHandler(), {
     enabled: false,
@@ -43,7 +47,10 @@ const Tag = ({ tag, onTagDelete }: { tag: Tag; onTagDelete: (tag: Tag) => void }
       await untagWright(!isAuthenticated(), tag?.id || "", router?.query?.id as string);
       onTagDelete(tag);
     } catch (e) {
-      // do nothing for now
+      toast({
+        position: "bottom-left",
+        render: () => <Toaster message={"something bad happened! please try again."} type="error" />,
+      });
     }
   };
 
@@ -75,10 +82,12 @@ const Tag = ({ tag, onTagDelete }: { tag: Tag; onTagDelete: (tag: Tag) => void }
 export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
   const [currentEditingTag, setCurrentEditingTag] = useState("");
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
-  const [showTagEditor, setShowTagEditor] = useState(false);
   const [focusedTagIdx, setFocusedTagIdx] = useState<number>(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const { onOpen, onClose, isOpen } = useDisclosure();
   const { isAuthenticated } = useUserContext();
   const initialFocusRef = useRef<any>();
+  const toast = useToast();
 
   useEffect(() => {
     if (initWright?.tags && initWright?.tags?.length > 0) {
@@ -86,14 +95,16 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     }
   }, [initWright]);
 
-  const { refetch: createAndAttachTagRequest, isFetching: isAddingTag } = useQuery(
-    "createAndAttachTagQuery",
-    () => createAndAttachTagHandler(),
-    {
-      enabled: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    refetch: createAndAttachTagRequest,
+    isFetching: isAddingTag,
+    error: createAndAttachError,
+    status: createAndAttachStatus,
+  } = useQuery("createAndAttachTagQuery", () => createAndAttachTagHandler(), {
+    enabled: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
 
   const { refetch: refetchTagsForWright, isFetching: isFetchingTags } = useQuery(
     "getTagsForWright",
@@ -119,12 +130,21 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
         modifiedTags.push({ ...tag, isTagged: true });
       }
     }
-    modifiedTags.sort((a, b) => (a?.isTagged ? 1 : -1));
+    modifiedTags.sort((a, b) => {
+      if (a.isTagged && !b.isTagged) {
+        return 1;
+      } else if (!a.isTagged && b.isTagged) {
+        return -1;
+      } else {
+        return a.name.localeCompare(b.name);
+      }
+    });
     return modifiedTags;
   };
 
   const searchTagsHandler = async (): Promise<TagSearchResult[]> => {
     const tags = await searchTags(!isAuthenticated(), currentEditingTag);
+    setIsTyping(false);
     setFocusedTagIdx(currentEditingTag.trim().length === 0 ? 0 : -1);
     if (tags) {
       return markTaggedTags(currentTags, tags);
@@ -133,8 +153,11 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
   };
 
   useEffect(() => {
-    debouncedTagsSearch();
-  }, [currentTags]);
+    if (isOpen) {
+      // setIsTyping(true);
+      debouncedTagsSearch();
+    }
+  }, [currentTags, isOpen]);
 
   const {
     refetch: searchTagRequest,
@@ -144,7 +167,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     enabled: false,
   });
 
-  const debouncedTagsSearch = useMemo(() => debounce(searchTagRequest, isAuthenticated() ? 800 : 300), []);
+  const debouncedTagsSearch = useMemo(() => debounce(searchTagRequest, isAuthenticated() ? 400 : 300), []);
 
   const createAndAttachTagHandler = async () => {
     let newtagName = "";
@@ -152,6 +175,16 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
       newtagName = currentEditingTag.trim();
     } else if (searchTagResults && focusedTagIdx < searchTagResults?.length && focusedTagIdx >= 0) {
       newtagName = searchTagResults[focusedTagIdx]?.name;
+    }
+    if (newtagName.trim().length === 0 || (searchTagResults && searchTagResults[focusedTagIdx]?.isTagged) || isTyping) {
+      return [];
+    }
+    if (focusedTagIdx === -1 && (currentEditingTag.trim().length < 3 || currentEditingTag.trim().length > 35)) {
+      toast({
+        position: "bottom-left",
+        render: () => <Toaster message="tag name too short or too long" type="error" />,
+      });
+      return [];
     }
     const newTag = await createTag(!isAuthenticated(), { name: newtagName });
     if (newTag && newTag?.id) {
@@ -164,8 +197,18 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     return [];
   };
 
+  useEffect(() => {
+    if (createAndAttachStatus === "error") {
+      toast({
+        position: "bottom-left",
+        render: () => <Toaster message={"something bad happened! please try again."} type="error" />,
+      });
+    }
+  }, [isAddingTag, createAndAttachStatus]);
+
   const handleTagInputChange = async (value: string) => {
     setCurrentEditingTag(value.trim());
+    setIsTyping(true);
     debouncedTagsSearch();
   };
 
@@ -194,38 +237,13 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
             </Text>
           )}
         </HStack>
-        <Box
-          w={0.5}
-          h="17px"
-          borderRadius="100px"
-          bg="textLighter"
-          transition="opacity 0.2s ease-in-out"
-          opacity={showTagEditor ? 0.1 : 0.04}
-          _groupHover={{
-            opacity: 0.1,
-          }}
-        ></Box>
-        <HStack
-          transition="opacity 0.2s ease-in-out"
-          transitionDelay="0.1s"
-          opacity={showTagEditor ? 1 : 0.77}
-          _groupHover={{
-            opacity: 1,
-          }}
-        >
-          <Popover placement="bottom-end" initialFocusRef={initialFocusRef}>
+        <Box w={0.5} h="17px" borderRadius="100px" bg="textLighter" transition="opacity 0.2s ease-in-out" opacity={0.16}></Box>
+        <HStack transition="opacity 0.2s ease-in-out" opacity={1}>
+          <Popover placement="bottom-end" initialFocusRef={initialFocusRef} isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <PopoverTrigger>
               <Box>
                 <CustomToolTip label="add new tag">
-                  <IconButton
-                    variant="ghost"
-                    size="xs"
-                    icon={<FiPlusCircle />}
-                    aria-label="add tag"
-                    onClick={() => {
-                      setShowTagEditor(true);
-                    }}
-                  />
+                  <IconButton variant="ghost" size="xs" icon={<FiPlusCircle />} aria-label="add tag" />
                 </CustomToolTip>
               </Box>
             </PopoverTrigger>
@@ -299,11 +317,11 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                 </HStack>
               </PopoverHeader>
               <PopoverBody maxH="200px" minH="200px" overflowY="auto">
-                {isSearchingTags ? (
-                  <Center>
+                {isSearchingTags || isAddingTag || isFetchingTags || isTyping ? (
+                  <Center w="full" h="120px">
                     <Spinner
                       sx={{
-                        "--spinner-size": "1rem",
+                        "--spinner-size": "2rem",
                         borderBottomColor: "textLighter",
                         borderLeftColor: "textLighter",
                         borderTopColor: "transparent",
@@ -354,54 +372,60 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                         </HStack>
                       </Box>
                     )}
-                    {searchTagResults?.map((tag, idx) => {
-                      return (
-                        <Box
-                          cursor={tag?.isTagged ? "no-drop" : "pointer"}
-                          borderRadius={8}
-                          px={1.5}
-                          py={1}
-                          w="full"
-                          key={tag.id}
-                          bg={idx === focusedTagIdx ? "bgLight" : "bgLighter"}
-                          transition="background 0.3s ease-in-out"
-                          opacity={tag?.isTagged ? 0.3 : 1}
-                          ref={(ref: HTMLDivElement) => {
-                            if (idx === focusedTagIdx && !tag.isTagged) {
-                              ref?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-                            }
-                          }}
-                          onMouseMoveCapture={() => {
-                            if (!tag.isTagged) {
-                              setFocusedTagIdx(idx);
-                            }
-                          }}
-                          onClick={() => {
-                            createAndAttachTagRequest();
-                          }}
-                        >
-                          <HStack justify="space-between">
-                            <HStack>
-                              <Icon as={FiHash} opacity={0.6} color="textLighter" />
-                              <Text
-                                fontWeight={tag?.isTagged ? "bold" : "black"}
-                                textDecoration={tag?.isTagged ? "line-through" : "none"}
-                              >
-                                {tag.name}
-                              </Text>
-                            </HStack>
-                            <Kbd
-                              bg="bgLighter"
-                              transition="all 0.25s ease-in-out"
-                              opacity={focusedTagIdx === idx ? 1 : 0}
-                              transform={focusedTagIdx === idx ? "translateX(0)" : "translateX(4px)"}
+                    {searchTagResults && searchTagResults?.length > 0
+                      ? searchTagResults?.map((tag, idx) => {
+                          return (
+                            <Box
+                              cursor={tag?.isTagged ? "no-drop" : "pointer"}
+                              borderRadius={8}
+                              px={1.5}
+                              py={1}
+                              w="full"
+                              key={tag.id}
+                              bg={idx === focusedTagIdx ? "bgLight" : "bgLighter"}
+                              transition="background 0.3s ease-in-out"
+                              opacity={tag?.isTagged ? 0.3 : 1}
+                              ref={(ref: HTMLDivElement) => {
+                                if (idx === focusedTagIdx && !tag.isTagged) {
+                                  ref?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+                                }
+                              }}
+                              onMouseMoveCapture={() => {
+                                if (!tag.isTagged) {
+                                  setFocusedTagIdx(idx);
+                                }
+                              }}
+                              onClick={() => {
+                                createAndAttachTagRequest();
+                              }}
                             >
-                              ↩
-                            </Kbd>
-                          </HStack>
-                        </Box>
-                      );
-                    })}
+                              <HStack justify="space-between">
+                                <HStack>
+                                  <Icon as={FiHash} opacity={0.6} color="textLighter" />
+                                  <Text
+                                    fontWeight={tag?.isTagged ? "bold" : "black"}
+                                    textDecoration={tag?.isTagged ? "line-through" : "none"}
+                                  >
+                                    {tag.name}
+                                  </Text>
+                                </HStack>
+                                <Kbd
+                                  bg="bgLighter"
+                                  transition="all 0.25s ease-in-out"
+                                  opacity={focusedTagIdx === idx ? 1 : 0}
+                                  transform={focusedTagIdx === idx ? "translateX(0)" : "translateX(4px)"}
+                                >
+                                  ↩
+                                </Kbd>
+                              </HStack>
+                            </Box>
+                          );
+                        })
+                      : currentEditingTag.trim().length === 0 && (
+                          <Center w="full" h="120px" color="textLighter">
+                            <Text>type in to add tags!</Text>
+                          </Center>
+                        )}
                   </VStack>
                 )}
               </PopoverBody>

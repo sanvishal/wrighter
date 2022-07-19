@@ -5,6 +5,7 @@ export const createTag = async (tagName: string, userId: string) => {
   const tagAlreadyExists = await prisma.tag.findFirst({
     where: {
       name: tagName,
+      userId: userId,
     },
   });
   if (tagAlreadyExists) {

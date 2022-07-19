@@ -94,3 +94,12 @@ export const unTagWright = async (wrightId: string, tagId: string, userId: strin
     where: { tagId: tagId, wrightId: wrightId, tag: { userId: userId }, wright: { userId: userId } },
   });
 };
+
+export const getTagsForWright = async (wrightId: string, userId: string) => {
+  const tags = await prisma.tagWright.findMany({
+    where: { wrightId: wrightId, tag: { userId: userId }, wright: { userId: userId } },
+    include: { tag: true },
+  });
+  const flattenedtags = tags.map((tag) => tag.tag);
+  return flattenedtags;
+};

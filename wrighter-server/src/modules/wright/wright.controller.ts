@@ -8,6 +8,7 @@ import {
   deleteWright,
   editWright,
   getAllWrights,
+  getTagsForWright,
   getWright,
   unTagWright,
 } from "./wright.service";
@@ -135,6 +136,21 @@ export const untagWrightHandler = async (
         message: "bad request",
       });
     }
+  } catch (e) {
+    console.error(e);
+    return reply.code(500).send(e);
+  }
+};
+
+export const getTagsForWrightHandler = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  try {
+    if (!request.params.id) {
+      return reply.code(400).send({
+        message: "missing id",
+      });
+    }
+    const tags = await getTagsForWright(request.params.id, request.user.id);
+    return tags;
   } catch (e) {
     console.error(e);
     return reply.code(500).send(e);

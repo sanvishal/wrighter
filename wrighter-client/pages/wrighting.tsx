@@ -105,7 +105,7 @@ const Wrighting: NextPage = () => {
           <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3}>
             <Editable
               defaultValue={title}
-              height="78px"
+              height="58px"
               isPreviewFocusable
               value={title}
               fontWeight="800"
@@ -116,16 +116,17 @@ const Wrighting: NextPage = () => {
             >
               <EditablePreview
                 w="full"
-                h="78px"
+                height="58px"
                 bg={title.trim().length <= 0 ? "errorRedTransBg" : "transparent"}
                 opacity={title.trim().length > 0 ? 1 : 0.15}
               />
               <EditableTextarea
+                lineHeight="1"
                 borderRadius={10}
                 _focusVisible={{
                   boxShadow: "0 0 0 3px var(--chakra-colors-containerBorder)",
                 }}
-                height="78px"
+                height="58px"
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleTitleChange(e.target.value || "")}
                 onBlur={() => handleTitleSave(title.trim().length ? title : "Give me a title")}
               />

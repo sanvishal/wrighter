@@ -5,10 +5,12 @@ import {
   deleteWrightHandler,
   editWrightHandler,
   getAllWrightsHandler,
+  getTagsForWrightHandler,
   getWrightHandler,
   untagWrightHandler,
 } from "./wright.controller";
 import { $ref } from "./wright.schema";
+import { $ref as $tagRef } from "../tag/tag.schema";
 
 export default async function wrightRoutes(server: FastifyInstance) {
   server.post(
@@ -67,6 +69,19 @@ export default async function wrightRoutes(server: FastifyInstance) {
       preHandler: server.authenticate,
     },
     deleteWrightHandler
+  );
+
+  server.get(
+    "/:id/tag",
+    {
+      preHandler: server.authenticate,
+      schema: {
+        response: {
+          200: $tagRef("tagResponseArraySchema"),
+        },
+      },
+    },
+    getTagsForWrightHandler
   );
 
   server.put(

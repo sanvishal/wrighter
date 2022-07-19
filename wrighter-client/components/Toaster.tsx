@@ -10,9 +10,9 @@ export const Toaster = ({
   const getTypeColor = (type: "error" | "neutral" | "success") => {
     switch (type) {
       case "error":
-        return "errorRed";
+        return "errorRedTransBg";
       case "success":
-        return "green.500";
+        return "successGreenTransBg";
       default:
         return "bgLight";
     }
@@ -20,8 +20,8 @@ export const Toaster = ({
 
   return (
     // @ts-ignore
-    <Box m={3} p={3} bg={() => getTypeColor(type)} borderRadius={10}>
-      <Text color={type === "error" ? "textColorBlack" : "textColor"}>{message}</Text>
+    <Box m={0} p={2} maxW="270px" minW="270px" bg={() => getTypeColor(type)} borderRadius={10}>
+      <Text color={type === "error" ? "errorRed" : type === "success" ? "successGreen" : "textColor"}>{message}</Text>
     </Box>
   );
 };
