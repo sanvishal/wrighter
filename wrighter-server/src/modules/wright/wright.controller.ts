@@ -1,6 +1,16 @@
+import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { EditWrightRequestSchema } from "./wright.schema";
-import { createWright, deleteWright, editWright, getAllWrights, getWright } from "./wright.service";
+import {
+  attachTagToWright,
+  createWright,
+  deleteWright,
+  editWright,
+  getAllWrights,
+  getWright,
+  unTagWright,
+} from "./wright.service";
 
 export const createWrightHandler = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
@@ -79,6 +89,52 @@ export const deleteWrightHandler = async (request: FastifyRequest<{ Params: { id
       });
     }
     return { message: "success" };
+  } catch (e) {
+    console.error(e);
+    return reply.code(500).send(e);
+  }
+};
+
+export const attachTagToWrightHandler = async (
+  request: FastifyRequest<{ Params: { id: string }; Body: { tagId: string } }>,
+  reply: FastifyReply
+) => {
+  try {
+    if (!request.params.id) {
+      return reply.code(400).send({
+        message: "Missing id",
+      });
+    }
+    await attachTagToWright(request.params.id, request.body.tagId, request.user.id);
+    return { message: "success" };
+  } catch (e: any) {
+    if (e instanceof PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return reply.code(400).send({
+          message: "bad request",
+        });
+      }
+    }
+    if (e.message === "404") {
+      return reply.code(404).send({
+        message: "tag or wright not found",
+      });
+    }
+    return reply.code(500).send(e);
+  }
+};
+
+export const untagWrightHandler = async (
+  request: FastifyRequest<{ Params: { wrightId: string; tagId: string } }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { count } = await unTagWright(request.params.wrightId, request.params.tagId, request.user.id);
+    if (!count) {
+      return reply.code(400).send({
+        message: "bad request",
+      });
+    }
   } catch (e) {
     console.error(e);
     return reply.code(500).send(e);

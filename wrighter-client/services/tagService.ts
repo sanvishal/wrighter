@@ -47,7 +47,7 @@ export const attachTagToWright = async (isGuest: boolean, tagId: string, wrightI
     return isAlreadyAttached;
   }
   const resp = (await axios.put(
-    `${API_BASE_URL}/wright/${wrightId}`,
+    `${API_BASE_URL}/wright/${wrightId}/tag`,
     { tagId },
     { withCredentials: true }
   )) as AxiosResponse<any>;
@@ -80,10 +80,8 @@ export const untagWright = async (isGuest: boolean, tagId: string, wrightId: str
       .and((tw) => tw.wrightId === wrightId)
       .delete();
   }
-  const resp = (await axios.put(
-    `${API_BASE_URL}/wright/${wrightId}`,
-    { tagId: "" },
-    { withCredentials: true }
-  )) as AxiosResponse<any>;
+  const resp = (await axios.delete(`${API_BASE_URL}/wright/${wrightId}/tag/${tagId}`, {
+    withCredentials: true,
+  })) as AxiosResponse<any>;
   return resp.data;
 };

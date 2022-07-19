@@ -25,9 +25,12 @@ export const createTag = async (tagName: string, userId: string) => {
   return newTag;
 };
 
-export const getAllTags = async (userId: string) => {
+export const getAllTags = async (query: string, userId: string) => {
   const tags = await prisma.tag.findMany({
     where: {
+      name: {
+        contains: query.toLowerCase(),
+      },
       createdBy: {
         id: userId,
       },
@@ -35,4 +38,15 @@ export const getAllTags = async (userId: string) => {
   });
 
   return tags;
+};
+
+export const deleteTag = async (tagId: string, userId: string) => {
+  return await prisma.tag.deleteMany({
+    where: {
+      id: tagId,
+      createdBy: {
+        id: userId,
+      },
+    },
+  });
 };

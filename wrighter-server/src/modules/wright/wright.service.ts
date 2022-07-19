@@ -18,12 +18,27 @@ export const createWright = async (userId: string) => {
 };
 
 export const getAllWrights = async (userId: string) => {
-  const wrights = await prisma.wright.findMany({ where: { userId } });
-  return wrights;
+  const wrights = await prisma.wright.findMany({
+    where: { userId },
+    include: { tagWrights: { select: { tag: true } } },
+  });
+  const flattenedWrights = wrights.map((wright) => {
+    const { tagWrights, ...rest } = wright;
+    const tags = tagWrights.map((tagWright) => tagWright.tag);
+    return { ...rest, tags };
+  });
+  return flattenedWrights;
 };
 
 export const getWright = async (id: string) => {
-  const wright = await prisma.wright.findUnique({ where: { id: id } });
+  const wright = await prisma.wright.findUnique({ where: { id: id }, include: { tagWrights: { select: { tag: true } } } });
+  if (wright) {
+    const flattenedWright = {
+      ...wright,
+      tags: wright.tagWrights.map((tagWright) => tagWright.tag),
+    };
+    return flattenedWright;
+  }
   return wright;
 };
 
@@ -50,4 +65,32 @@ export const deleteWright = async (id: string, userId: string) => {
     return null;
   }
   return deletedWright;
+};
+
+export const attachTagToWright = async (wrightId: string, tagId: string, userId: string) => {
+  const isAlreadyAttached = await prisma.tagWright.findFirst({
+    where: { tagId: tagId, wrightId: wrightId, tag: { userId: userId }, wright: { userId: userId } },
+  });
+  if (isAlreadyAttached) {
+    return isAlreadyAttached;
+  }
+  const isTagExists = await prisma.tag.findFirst({ where: { id: tagId, userId: userId } });
+  const isWrightExists = await prisma.wright.findFirst({ where: { id: wrightId, userId: userId } });
+  if (!isTagExists && !isWrightExists) {
+    throw new Error("404");
+  }
+  const resp = await prisma.tagWright.create({
+    data: {
+      tag: { connect: { id: tagId } },
+      wright: { connect: { id: wrightId } },
+    },
+  });
+  console.log(resp);
+  return resp;
+};
+
+export const unTagWright = async (wrightId: string, tagId: string, userId: string) => {
+  return await prisma.tagWright.deleteMany({
+    where: { tagId: tagId, wrightId: wrightId, tag: { userId: userId }, wright: { userId: userId } },
+  });
 };

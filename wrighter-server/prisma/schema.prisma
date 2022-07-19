@@ -45,8 +45,10 @@ model Tag {
 
 model TagWright {
   id Int @id @default(autoincrement())
-  tag Tag @relation(fields: [tagId], references: [id])
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId String
-  wright Wright @relation(fields: [wrightId], references: [id])
+  wright Wright @relation(fields: [wrightId], references: [id], onDelete: Cascade)
   wrightId String
+
+  @@unique([tagId, wrightId])
 }

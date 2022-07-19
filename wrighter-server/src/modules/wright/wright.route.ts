@@ -1,10 +1,12 @@
 import { FastifyInstance } from "fastify";
 import {
+  attachTagToWrightHandler,
   createWrightHandler,
   deleteWrightHandler,
   editWrightHandler,
   getAllWrightsHandler,
   getWrightHandler,
+  untagWrightHandler,
 } from "./wright.controller";
 import { $ref } from "./wright.schema";
 
@@ -65,5 +67,24 @@ export default async function wrightRoutes(server: FastifyInstance) {
       preHandler: server.authenticate,
     },
     deleteWrightHandler
+  );
+
+  server.put(
+    "/:id/tag",
+    {
+      preHandler: server.authenticate,
+      schema: {
+        body: $ref("tagAttachRequestSchema"),
+      },
+    },
+    attachTagToWrightHandler
+  );
+
+  server.delete(
+    "/:wrightId/tag/:tagId",
+    {
+      preHandler: server.authenticate,
+    },
+    untagWrightHandler
   );
 }

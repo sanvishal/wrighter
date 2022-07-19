@@ -43,7 +43,7 @@ async function build() {
 
   await fastify.register(require("@fastify/middie"));
 
-  await fastify.register(fastifyCookie, { secret: "superdoopersecret123123ksdf))!(@*)!13::?><][]]][" });
+  await fastify.register(fastifyCookie, { secret: process.env.COOKIE_SECRET! });
 
   await fastify.register(fastifyJWT, {
     secret: process.env.SECRET_KEY!,

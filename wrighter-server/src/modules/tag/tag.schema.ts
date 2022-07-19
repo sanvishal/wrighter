@@ -8,11 +8,13 @@ const createTagSchema = z.object({
 const tagResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
+  color: z.string().optional(),
 });
 
-const tagResponseArraySchema = z.array(tagResponseSchema);
+export const tagResponseArraySchema = z.array(tagResponseSchema);
 
 export type CreateTagRequestSchema = z.infer<typeof createTagSchema>;
+export type TagResponseSchema = z.infer<typeof tagResponseSchema>;
 
 export const { schemas: tagSchemas, $ref } = buildJsonSchemas(
   {
