@@ -791,6 +791,17 @@
   resolved "https://registry.yarnpkg.com/@icon-park/svg/-/svg-1.4.2.tgz#12838a2549ec8cfc3389089ad335da632bb6285f"
   integrity sha512-1X0DA+1e0R0liYvw+Nb2BQmF1oEo/wS3o/JYkQYifPJXCGYij2vN9sJf/NNhbzDsJWTg4W2bbzZjJvC7Q4w4oQ==
 
+"@microflash/remark-figure-caption@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@microflash/remark-figure-caption/-/remark-figure-caption-1.0.0.tgz#3efa1fd18d541542b58c29c2668579f9a69cc669"
+  integrity sha512-mjyxJ5ncpHTfrqKL+W/kcnVhm6ww0zT5X3Lgfl2LSztR5fxt0b0WSS2mskGiAbQsHsdzo70tMA9qT4qafA99vQ==
+  dependencies:
+    hast-util-whitespace "^2.0.0"
+    remark-parse "^10.0.1"
+    unified "^10.1.2"
+    unist-util-remove "^3.1.0"
+    unist-util-visit "^4.1.0"
+
 "@next/env@12.2.0":
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-12.2.0.tgz#17ce2d9f5532b677829840037e06f208b7eed66b"
@@ -4051,6 +4062,15 @@ unist-util-position@^4.0.0:
   integrity sha512-p/5EMGIa1qwbXjA+QgcBXaPWjSnZfQ2Sc3yBEEfgPwsEmJd8Qh+DSk3LGnmOM4S1bY2C0AjmMnB8RuEYxpPwXQ==
   dependencies:
     "@types/unist" "^2.0.0"
+
+unist-util-remove@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/unist-util-remove/-/unist-util-remove-3.1.0.tgz#8042577e151dac989b7517976bfe4bac58f76ccd"
+  integrity sha512-rO/sIghl13eN8irs5OBN2a4RC10MsJdiePCfwrvnzGtgIbHcDXr2REr0qi9F2r/CIb1r9FyyFmcMRIGs+EyUFw==
+  dependencies:
+    "@types/unist" "^2.0.0"
+    unist-util-is "^5.0.0"
+    unist-util-visit-parents "^5.0.0"
 
 unist-util-stringify-position@^3.0.0:
   version "3.0.2"

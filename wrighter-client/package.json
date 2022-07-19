@@ -15,6 +15,7 @@
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@microflash/remark-figure-caption": "^1.0.0",
     "@types/nprogress": "^0.2.0",
     "avvvatars-react": "^0.4.2",
     "axios": "^0.27.2",

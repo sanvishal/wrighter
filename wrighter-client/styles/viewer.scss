@@ -6,6 +6,22 @@
     max-width: calc(100%) !important;
     margin-left: 20px;
 
+    figure {
+      margin: 20px auto;
+      img {
+        border-radius: 7px;
+        box-shadow: var(--chakra-shadows-md);
+      }
+      figcaption {
+        font-style: italic;
+        text-align: center;
+        margin-top: 8px;
+        font-size: 0.89em;
+        color: var(--chakra-colors-textLighter);
+        opacity: 0.9;
+      }
+    }
+
     blockquote {
       font-style: italic;
       font-weight: 500;

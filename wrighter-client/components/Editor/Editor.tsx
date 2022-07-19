@@ -3,6 +3,8 @@ import { Editor as ByteMdEditor, EditorProps } from "@bytemd/react";
 import { useEffect, useMemo, useState } from "react";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
+// @ts-ignore
+import remarkFigureCaption from "@microflash/remark-figure-caption";
 import { useRouter } from "next/router";
 import debounce from "lodash.debounce";
 import { db, WrightIDB } from "../../services/dbService";
@@ -12,6 +14,7 @@ import { turndownService } from "../../services/turndownService";
 
 const pastePlugin = (): BytemdPlugin => {
   return {
+    remark: (processor) => processor.use(remarkFigureCaption),
     editorEffect(ctx) {
       if (window) {
         console.log("cm window set");
