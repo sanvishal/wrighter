@@ -2,8 +2,11 @@ import { Viewer } from "@bytemd/react";
 import { Container, Text } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { db, WrightIDB } from "../services/dbService";
+import { pastePlugin } from "../services/pluginService";
+import gfmPluin from "@bytemd/plugin-gfm";
+import highlightPlugin from "@bytemd/plugin-highlight-ssr";
 
 export interface ILocalPreviewProps {
   // wright: WrightIDB;
@@ -24,6 +27,8 @@ export const LocalPreview = (): JSX.Element => {
     }
   }, [router.isReady]);
 
+  const plugins = useMemo(() => [pastePlugin(), highlightPlugin(), gfmPluin()], []);
+
   return (
     <Container maxW="5xl" pt={10} id="local-preview">
       {wright ? (
@@ -34,7 +39,7 @@ export const LocalPreview = (): JSX.Element => {
           <Text fontSize="6xl" fontWeight="800">
             {wright.title || ""}
           </Text>
-          <Viewer value={wright.content || ""} />
+          <Viewer value={wright.content || ""} plugins={plugins} />
         </>
       ) : (
         <div>Loading...</div>

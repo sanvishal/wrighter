@@ -3,63 +3,11 @@ import { Editor as ByteMdEditor, EditorProps } from "@bytemd/react";
 import { useEffect, useMemo, useState } from "react";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
-// @ts-ignore
-import remarkFigureCaption from "@microflash/remark-figure-caption";
 import { useRouter } from "next/router";
 import debounce from "lodash.debounce";
 import { db, WrightIDB } from "../../services/dbService";
-import type { BytemdPlugin } from "bytemd";
 import { Wright } from "../../types";
-import { turndownService } from "../../services/turndownService";
-
-const pastePlugin = (): BytemdPlugin => {
-  return {
-    remark: (processor) => processor.use(remarkFigureCaption),
-    editorEffect(ctx) {
-      if (window) {
-        console.log("cm window set");
-        window["cm"] = ctx.editor;
-      }
-      ctx.editor.on("copy", (cm, event) => {
-        if (cm.getSelection()) {
-          event.clipboardData?.setData("text/plain", turndownService.escape(cm.getSelection()));
-        }
-      });
-      ctx.editor.on("paste", (cm, event) => {
-        // event.preventDefault();
-        if (event) {
-          const htmlText = event?.clipboardData?.getData("text/html") || "";
-          const normalText = event?.clipboardData?.getData("text/plain") || "";
-
-          const finalTextToPaste = (() => {
-            const token = ctx.editor.getTokenAt(ctx.editor.getCursor());
-            if (token.state?.overlay?.code || token.state?.overlay?.codeBlock) {
-              return normalText;
-            }
-            if (htmlText.trim().length > 0) {
-              return turndownService.turndown(htmlText);
-            }
-
-            return normalText;
-          })();
-
-          if (!cm.somethingSelected()) {
-            cm.replaceRange(finalTextToPaste, cm.getCursor());
-          } else {
-            cm.replaceSelection(finalTextToPaste);
-          }
-        }
-        event.preventDefault();
-      });
-
-      return () => {
-        if (window) {
-          window.cm = null;
-        }
-      };
-    },
-  };
-};
+import { pastePlugin } from "../../services/pluginService";
 
 export const Editor = ({
   editorOnSaveHandler = () => {},
