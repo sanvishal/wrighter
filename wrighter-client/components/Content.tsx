@@ -1,4 +1,6 @@
 import { Box, Container, Flex, useBreakpointValue } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useUserContext } from "../contexts/UserContext";
 import { MobileNav, Navbar } from "./Navbar";
 
 export const Content = ({
@@ -9,6 +11,12 @@ export const Content = ({
   isWide?: boolean;
 }): JSX.Element => {
   const mobileCheck = useBreakpointValue({ base: { isMobile: true }, md: { isMobile: false } });
+
+  const { fetchUser } = useUserContext();
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   return mobileCheck?.isMobile ? (
     <Box h="100vh">

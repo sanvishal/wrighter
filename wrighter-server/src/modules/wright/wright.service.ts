@@ -10,7 +10,7 @@ export const createWright = async (userId: string) => {
       content: "",
       title: "Give me a title",
       head: "",
-      isUnderReview: false,
+      isPublic: false,
       id: nanoid(),
     },
   });
@@ -30,8 +30,11 @@ export const getAllWrights = async (userId: string) => {
   return flattenedWrights;
 };
 
-export const getWright = async (id: string) => {
+export const getWright = async (id: string, userId: string) => {
   const wright = await prisma.wright.findUnique({ where: { id: id }, include: { tagWrights: { select: { tag: true } } } });
+  if (wright?.userId !== userId && !wright?.isPublic) {
+    return null;
+  }
   if (wright) {
     const flattenedWright = {
       ...wright,
@@ -102,4 +105,17 @@ export const getTagsForWright = async (wrightId: string, userId: string) => {
   });
   const flattenedtags = tags.map((tag) => tag.tag);
   return flattenedtags;
+};
+
+export const toggleWrightVisibility = async (wrightId: string, userId: string) => {
+  const wright = await prisma.wright.findFirst({ where: { id: wrightId, userId: userId } });
+  if (!wright) {
+    return 0;
+  }
+  const isPublic = !wright.isPublic;
+  const { count } = await prisma.wright.updateMany({
+    where: { id: wrightId, userId: userId },
+    data: { isPublic },
+  });
+  return count;
 };

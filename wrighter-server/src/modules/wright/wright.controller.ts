@@ -10,6 +10,7 @@ import {
   getAllWrights,
   getTagsForWright,
   getWright,
+  toggleWrightVisibility,
   unTagWright,
 } from "./wright.service";
 
@@ -40,7 +41,7 @@ export const getWrightHandler = async (request: FastifyRequest<{ Params: { id: s
         message: "Missing id",
       });
     }
-    const wright = await getWright(request.params.id);
+    const wright = await getWright(request.params.id, request?.user?.id);
     if (!wright) {
       return reply.code(404).send({
         message: "Wright not found",
@@ -151,6 +152,25 @@ export const getTagsForWrightHandler = async (request: FastifyRequest<{ Params: 
     }
     const tags = await getTagsForWright(request.params.id, request.user.id);
     return tags;
+  } catch (e) {
+    console.error(e);
+    return reply.code(500).send(e);
+  }
+};
+
+export const toggleWrightVisibilityHandler = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  try {
+    if (!request.params.id) {
+      return reply.code(400).send({
+        message: "missing id",
+      });
+    }
+    const isUpdated = await toggleWrightVisibility(request.params.id, request.user.id);
+    if (!isUpdated) {
+      return reply.code(400).send({
+        message: "bad request",
+      });
+    }
   } catch (e) {
     console.error(e);
     return reply.code(500).send(e);

@@ -1,5 +1,5 @@
 import { Viewer } from "@bytemd/react";
-import { Container, Text } from "@chakra-ui/react";
+import { Center, Container, Spinner, Text } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -9,6 +9,9 @@ import mathPlugin from "@bytemd/plugin-math-ssr";
 import mediumZoom from "@bytemd/plugin-medium-zoom";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
+import { useUserContext } from "../contexts/UserContext";
+import { useQuery } from "react-query";
+import { getWright } from "../services/wrightService";
 
 export interface ILocalPreviewProps {
   // wright: WrightIDB;
@@ -17,17 +20,31 @@ export interface ILocalPreviewProps {
 export const LocalPreview = (): JSX.Element => {
   const router = useRouter();
   const [id, setId] = useState("");
-  const wright = useLiveQuery(() => db.wrights.get(id), [id]);
-
-  useEffect(() => {
-    console.log(wright);
-  }, [wright]);
+  const localWright = useLiveQuery(() => db.wrights.get(id), [id]);
+  const { isAuthenticated, isUserLoading } = useUserContext();
 
   useEffect(() => {
     if (router.isReady && router?.query?.id) {
       setId((router?.query?.id || "") as string);
     }
   }, [router.isReady]);
+
+  const {
+    refetch: getWrightRequest,
+    data: remoteWright,
+    isFetching: isWrightLoading,
+    status: wrightGetStatus,
+  } = useQuery("getPreviewWrightQuery", () => getWright(false, id), {
+    enabled: false,
+    refetchOnWindowFocus: true,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (isAuthenticated() && !isUserLoading && id) {
+      getWrightRequest();
+    }
+  }, [isAuthenticated, isUserLoading, id]);
 
   const plugins = useMemo(
     () => [
@@ -40,21 +57,72 @@ export const LocalPreview = (): JSX.Element => {
     []
   );
 
+  const renderLocalWright = () => {
+    if (!isAuthenticated()) {
+      if (localWright) {
+        return (
+          <>
+            <Text fontSize="sm" color="textLighter" mb="-5px">
+              {new Date(localWright.updatedAt || new Date().toISOString()).toLocaleString()}
+            </Text>
+            <Text fontSize="6xl" fontWeight="800">
+              {localWright.title || ""}
+            </Text>
+            <Viewer value={localWright.content || ""} plugins={plugins} />
+          </>
+        );
+      }
+      return (
+        <Center>
+          <Spinner
+            sx={{
+              "--spinner-size": "2rem",
+              borderBottomColor: "textLighter",
+              borderLeftColor: "textLighter",
+              borderTopColor: "transparent",
+              borderRightColor: "transparent",
+            }}
+          />
+        </Center>
+      );
+    }
+    return null;
+  };
+
   return (
     <Container maxW="5xl" pt={10} id="local-preview">
-      {wright ? (
+      {isAuthenticated() && !isUserLoading && remoteWright ? (
         <>
           <Text fontSize="sm" color="textLighter" mb="-5px">
-            {new Date(wright.updatedAt || new Date().toISOString()).toLocaleString()}
+            {new Date(remoteWright.updatedAt || new Date().toISOString()).toLocaleString()}
           </Text>
           <Text fontSize="6xl" fontWeight="800">
-            {wright.title || ""}
+            {remoteWright.title || ""}
           </Text>
-          <Viewer value={wright.content || ""} plugins={plugins} />
+          <Viewer value={remoteWright.content || ""} plugins={plugins} />
         </>
+      ) : isWrightLoading ? (
+        <Center>
+          <Spinner
+            sx={{
+              "--spinner-size": "2rem",
+              borderBottomColor: "textLighter",
+              borderLeftColor: "textLighter",
+              borderTopColor: "transparent",
+              borderRightColor: "transparent",
+            }}
+          />
+        </Center>
       ) : (
-        <div>Loading...</div>
+        wrightGetStatus === "error" && (
+          <Center>
+            <Text fontSize="2xl" fontWeight="800" color="textLighter">
+              404! Wright not found
+            </Text>
+          </Center>
+        )
       )}
+      {renderLocalWright()}
     </Container>
   );
 };

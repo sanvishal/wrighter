@@ -141,6 +141,17 @@ export const theme = extendTheme({
         },
       },
     },
+    Switch: {
+      parts: ["container", "track", "thumb"],
+      baseStyle: {
+        track: {
+          _checked: {
+            background: "var(--chakra-colors-accentColor)",
+          },
+          background: "var(--chakra-colors-bgDark)",
+        },
+      },
+    },
     Kbd: {
       baseStyle: {
         borderBottomWidth: "1px",

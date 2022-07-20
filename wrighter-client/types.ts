@@ -13,6 +13,7 @@ export interface Wright {
   content: string;
   userId: string;
   tags?: Tag[];
+  isPublic?: boolean;
 }
 
 export type ResponseTypeMap<isGuest, isAuth> = {

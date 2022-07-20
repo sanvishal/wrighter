@@ -31,7 +31,7 @@ model Wright {
   wrighter User @relation(fields: [userId], references: [id])
   userId String
   tagWrights TagWright[]
-  isUnderReview Boolean @default(false)
+  isPublic Boolean @default(false)
 }
 
 model Tag {

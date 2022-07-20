@@ -10,7 +10,7 @@ const wrightResponseSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   userId: z.string(),
-  isUnderReview: z.boolean(),
+  isPublic: z.boolean(),
   tags: tagResponseArraySchema,
 });
 

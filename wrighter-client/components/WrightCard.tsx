@@ -1,6 +1,6 @@
-import { Box, HStack, Icon, IconButton, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, HStack, Icon, IconButton, Text, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FiEdit, FiExternalLink, FiHash, FiX } from "react-icons/fi";
+import { FiEdit, FiExternalLink, FiEye, FiEyeOff, FiHash, FiX } from "react-icons/fi";
 import { Wright } from "../types";
 import { CustomToolTip } from "./CustomTooltip";
 // @ts-ignore
@@ -14,9 +14,23 @@ export const WrightCard = ({ wright }: { wright: Wright }): JSX.Element => {
       <HStack>
         <Box w="90%">
           <VStack align="flex-start" spacing={0}>
-            <Text fontWeight="800" fontSize="x-large">
-              {wright.title}
-            </Text>
+            <HStack spacing={2}>
+              <Text fontWeight="800" fontSize="x-large">
+                {wright.title}
+              </Text>
+              <CustomToolTip
+                placement="top"
+                label={
+                  wright.isPublic
+                    ? "this wright is public, go to editor to configure"
+                    : "this wright is private, go to editor to configure"
+                }
+              >
+                <Center pb={1} pl={2}>
+                  <Icon as={wright?.isPublic ? FiEye : FiEyeOff} color="textLighter" opacity={0.6} />
+                </Center>
+              </CustomToolTip>
+            </HStack>
             <HStack spacing={1}>
               {wright.tags && wright.tags.length > 0 ? (
                 wright?.tags.map((tag) => {

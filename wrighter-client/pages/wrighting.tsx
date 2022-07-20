@@ -1,12 +1,14 @@
-import { Container, Editable, EditablePreview, EditableTextarea, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Container, Editable, EditablePreview, EditableTextarea, IconButton, Spinner, Text, VStack } from "@chakra-ui/react";
 import debounce from "lodash.debounce";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { FiSettings, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { Content } from "../components/Content";
 import { Editor } from "../components/Editor/Editor";
 import { Tags } from "../components/Editor/Tags";
+import { WrightSettings } from "../components/Editor/WrightSettings";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
 import { clearAndCreateEditorContext, getWright, saveWright } from "../services/wrightService";
@@ -102,7 +104,7 @@ const Wrighting: NextPage = () => {
         </Container>
       ) : (
         <>
-          <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3}>
+          <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3} pos="relative">
             <Editable
               defaultValue={title}
               height="58px"
@@ -133,6 +135,9 @@ const Wrighting: NextPage = () => {
             </Editable>
             <Tags initWright={wright as Wright} />
             <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} />
+            <Box pos="absolute" top="24px" left="0px">
+              {isAuthenticated() && <WrightSettings wrightId={id} />}
+            </Box>
           </Container>
         </>
       )}

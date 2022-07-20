@@ -7,6 +7,7 @@ import {
   getAllWrightsHandler,
   getTagsForWrightHandler,
   getWrightHandler,
+  toggleWrightVisibilityHandler,
   untagWrightHandler,
 } from "./wright.controller";
 import { $ref } from "./wright.schema";
@@ -48,6 +49,14 @@ export default async function wrightRoutes(server: FastifyInstance) {
       },
     },
     editWrightHandler
+  );
+
+  server.put(
+    "/:id/visibility",
+    {
+      preHandler: server.authenticate,
+    },
+    toggleWrightVisibilityHandler
   );
 
   server.get(

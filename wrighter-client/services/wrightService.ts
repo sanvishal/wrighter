@@ -88,3 +88,8 @@ export const saveWright = async (isGuest: boolean, wright: Wright | WrightIDB): 
   const resp = (await axios.put(`${API_BASE_URL}/wright/${wright.id}`, wright, { withCredentials: true })) as AxiosResponse;
   return resp.data;
 };
+
+export const toggleWrightVisibility = async (wrightId: string): Promise<AxiosResponse> => {
+  const resp = await axios.put(`${API_BASE_URL}/wright/${wrightId}/visibility`, {}, { withCredentials: true });
+  return resp.data;
+};
