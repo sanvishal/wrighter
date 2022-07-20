@@ -1,5 +1,7 @@
 import { Wright } from "@prisma/client";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
+const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", 22);
+import { splitSlug, slugify } from "../../utils/helpers";
 import prisma from "../../utils/prisma";
 import { EditWrightRequestSchema } from "./wright.schema";
 
@@ -11,6 +13,7 @@ export const createWright = async (userId: string) => {
       title: "Give me a title",
       head: "",
       isPublic: false,
+      slug: slugify("Give me a title"),
       id: nanoid(),
     },
   });
@@ -107,15 +110,42 @@ export const getTagsForWright = async (wrightId: string, userId: string) => {
   return flattenedtags;
 };
 
-export const toggleWrightVisibility = async (wrightId: string, userId: string) => {
+export const changeWrightSettings = async (
+  wrightId: string,
+  userId: string,
+  { isPublic, slug }: { isPublic?: boolean; slug?: string }
+) => {
   const wright = await prisma.wright.findFirst({ where: { id: wrightId, userId: userId } });
   if (!wright) {
     return 0;
   }
-  const isPublic = !wright.isPublic;
   const { count } = await prisma.wright.updateMany({
     where: { id: wrightId, userId: userId },
-    data: { isPublic },
+    data: {
+      isPublic: isPublic === undefined ? wright.isPublic : isPublic,
+      slug: slug?.trim().length === 0 ? slugify(wright.title) : slug,
+    },
   });
   return count;
+};
+
+export const getWrightBySlug = async (slug: string) => {
+  const { wrightId, slug: slugOnly } = splitSlug(slug);
+  const wright = await prisma.wright.findFirst({
+    where: { slug: slugOnly, id: wrightId },
+    include: { tagWrights: { select: { tag: true } }, wrighter: { select: { name: true } } },
+  });
+  if (!wright) {
+    return null;
+  }
+  if (!wright.isPublic) {
+    return null;
+  }
+
+  const flattenedWright = {
+    ...wright,
+    tags: wright.tagWrights.map((tagWright) => tagWright.tag),
+    user: wright.wrighter.name,
+  };
+  return flattenedWright;
 };

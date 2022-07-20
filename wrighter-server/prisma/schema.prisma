@@ -28,6 +28,7 @@ model Wright {
   content String @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  slug String @db.VarChar(200) @default("")
   wrighter User @relation(fields: [userId], references: [id])
   userId String
   tagWrights TagWright[]

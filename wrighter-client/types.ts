@@ -13,6 +13,7 @@ export interface Wright {
   content: string;
   userId: string;
   tags?: Tag[];
+  slug?: string;
   isPublic?: boolean;
 }
 

@@ -1,15 +1,3 @@
-export const validateEmail = (email: string) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-};
-
-export const toBoolean = (value: string) => {
-  return value === "true";
-};
-
 // https://medium.com/dailyjs/web-developer-playbook-slug-a6dcbe06c284
 export const slugify = (text: string) => {
   const a = "àáäâãåèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;";
@@ -25,4 +13,11 @@ export const slugify = (text: string) => {
     .replace(/--+/g, "-") // Replace multiple — with single -
     .replace(/^-+/, "") // Trim — from start of text
     .replace(/-+$/, ""); // Trim — from end of text
+};
+
+export const splitSlug = (slug: string) => {
+  const splittedSlug = slug.split("-");
+  const wrightId = splittedSlug[splittedSlug.length - 1];
+  const restOfSplittedSlug = splittedSlug.slice(0, splittedSlug.length - 1);
+  return { wrightId, slug: restOfSplittedSlug.join("-") };
 };

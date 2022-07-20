@@ -1,12 +1,15 @@
 import {
+  Box,
   Button,
   Center,
   Checkbox,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
   Icon,
   IconButton,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -21,16 +24,19 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { FiCheck, FiSettings, FiX } from "react-icons/fi";
+import { ChangeEvent, useEffect, useState } from "react";
+import { FiCheck, FiInfo, FiSettings, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
-import { getWright, toggleWrightVisibility } from "../../services/wrightService";
+import { changeWrightSettings, getWright } from "../../services/wrightService";
+import { slugify } from "../../utils";
 import { CustomToolTip } from "../CustomTooltip";
 import { Toaster } from "../Toaster";
 
 export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [switchChecked, setSwitchChecked] = useState(false);
+  const [slugValue, setSlugValue] = useState("");
+  const [slugError, setIsSlugError] = useState("");
   const toast = useToast();
 
   const {
@@ -43,9 +49,9 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
     retry: false,
   });
 
-  const { isFetching: isToggling, refetch: toggleVisibilityRequest } = useQuery(
-    "toggleVisibilityQuery",
-    () => toggleWrightVisibility(wrightId),
+  const { isFetching: isSaving, refetch: saveSettings } = useQuery(
+    "wrightSettingsQuery",
+    () => changeWrightSettings(wrightId, switchChecked, slugify(slugValue)),
     {
       refetchOnWindowFocus: false,
       enabled: false,
@@ -55,7 +61,7 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
 
   const handleWrightRequest = async () => {
     const { data: wright } = await getWrightRequest();
-    console.log(wright?.isPublic);
+    setSlugValue(wright?.slug || "");
     setSwitchChecked(wright?.isPublic === undefined ? false : wright.isPublic);
   };
 
@@ -66,7 +72,7 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
   }, [isOpen]);
 
   const handleOnSaveClick = async () => {
-    const { status } = await toggleVisibilityRequest();
+    const { status } = await saveSettings();
     if (status === "success") {
       await handleWrightRequest();
       toast({
@@ -79,6 +85,16 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
         render: () => <Toaster message={"something bad happened! please try again."} type="error" />,
       });
     }
+  };
+
+  const handleSlugChange = (value: string) => {
+    const slug = slugify(value);
+    if (slug.length < 5 || slug.length > 200) {
+      setIsSlugError("slug must be between 5 and 200 characters");
+    } else {
+      setIsSlugError("");
+    }
+    setSlugValue(value);
   };
 
   return (
@@ -95,21 +111,57 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
           <ModalCloseButton borderRadius={10} />
           <ModalBody py={4}>
             {!isWrightLoading && wright ? (
-              <HStack alignItems="flex-start" justifyContent="flex-start" spacing={4}>
-                <Switch
-                  defaultChecked={wright.isPublic}
-                  mt={0.5}
-                  onChange={(e) => {
-                    setSwitchChecked(e.target.checked);
-                  }}
-                />
-                <VStack alignItems="flex-start" justifyContent="flex-start" spacing={1}>
-                  <Text fontWeight="bold">Toggle Wright Visibility</Text>
-                  <Text fontSize="sm" color="textLighter">
-                    Makes Wright {switchChecked ? `Public, others would be able to see it` : `Private, only you can see it`}
-                  </Text>
-                </VStack>
-              </HStack>
+              <VStack alignItems="flex-start">
+                <HStack alignItems="flex-start" justifyContent="flex-start" spacing={4}>
+                  <Switch
+                    defaultChecked={wright.isPublic}
+                    mt={0.5}
+                    onChange={(e) => {
+                      setSwitchChecked(e.target.checked);
+                    }}
+                  />
+                  <VStack alignItems="flex-start" justifyContent="flex-start" spacing={1}>
+                    <Text fontWeight="bold">Toggle Wright Visibility</Text>
+                    <Text fontSize="sm" color="textLighter">
+                      wright is now {switchChecked ? `public, others would be able to see it` : `private, only you can see it`}
+                    </Text>
+                  </VStack>
+                </HStack>
+                <FormControl>
+                  <Box mt={5}>
+                    <FormLabel htmlFor="slug" mb={1}>
+                      <HStack>
+                        <Text>Slug</Text>
+                        <CustomToolTip label="slug will be at the end of your the url when you make it the wright public, it should be descriptive and relavant to the wright, by default the title is your slug">
+                          <Center>
+                            <Icon as={FiInfo} color="textLighter" cursor="pointer" />
+                          </Center>
+                        </CustomToolTip>
+                        {slugError && (
+                          <Text color="errorRed" fontSize="sm" w="full" textAlign="right">
+                            {slugError}
+                          </Text>
+                        )}
+                      </HStack>
+                    </FormLabel>
+                    <Input
+                      borderColor="inputBorderColor"
+                      type="text"
+                      id="slug"
+                      isInvalid={slugError.length > 0}
+                      placeholder="Make this as descriptive as possible, helps with SEO"
+                      required
+                      value={slugValue}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleSlugChange(e.target.value)}
+                    />
+                    <HStack fontSize="sm" color="textLighter" mt={1}>
+                      <Text>
+                        {slugify(slugValue)}-<span style={{ opacity: 0.4 }}>{wrightId}</span>
+                      </Text>
+                    </HStack>
+                  </Box>
+                </FormControl>
+              </VStack>
             ) : (
               <Spinner
                 sx={{
@@ -123,7 +175,13 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
             )}
           </ModalBody>
           <ModalFooter>
-            <Button w="full" fontWeight="bold" isLoading={isWrightLoading || isToggling} onClick={handleOnSaveClick}>
+            <Button
+              w="full"
+              fontWeight="bold"
+              isLoading={isWrightLoading || isSaving}
+              onClick={handleOnSaveClick}
+              disabled={slugError.length > 0}
+            >
               Save
             </Button>
           </ModalFooter>

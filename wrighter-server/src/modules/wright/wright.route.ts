@@ -1,13 +1,14 @@
 import { FastifyInstance } from "fastify";
 import {
   attachTagToWrightHandler,
+  changeWrightSettingsHandler,
   createWrightHandler,
   deleteWrightHandler,
   editWrightHandler,
   getAllWrightsHandler,
   getTagsForWrightHandler,
+  getWrightBySlugHandler,
   getWrightHandler,
-  toggleWrightVisibilityHandler,
   untagWrightHandler,
 } from "./wright.controller";
 import { $ref } from "./wright.schema";
@@ -52,11 +53,11 @@ export default async function wrightRoutes(server: FastifyInstance) {
   );
 
   server.put(
-    "/:id/visibility",
+    "/:id/settings",
     {
       preHandler: server.authenticate,
     },
-    toggleWrightVisibilityHandler
+    changeWrightSettingsHandler
   );
 
   server.get(
@@ -110,5 +111,15 @@ export default async function wrightRoutes(server: FastifyInstance) {
       preHandler: server.authenticate,
     },
     untagWrightHandler
+  );
+
+  server.get(
+    "/public/:slug",
+    {
+      schema: {
+        response: { 200: $ref("wrightBySlugResponseSchema") },
+      },
+    },
+    getWrightBySlugHandler
   );
 }

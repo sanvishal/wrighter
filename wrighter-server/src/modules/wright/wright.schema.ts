@@ -2,7 +2,7 @@ import { z } from "zod";
 import { buildJsonSchemas } from "fastify-zod";
 import { tagResponseArraySchema, TagResponseSchema } from "../tag/tag.schema";
 
-const wrightResponseSchema = z.object({
+const wright = {
   id: z.string(),
   title: z.string(),
   content: z.string(),
@@ -10,8 +10,13 @@ const wrightResponseSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   userId: z.string(),
+  slug: z.string(),
   isPublic: z.boolean(),
   tags: tagResponseArraySchema,
+};
+
+const wrightResponseSchema = z.object({
+  ...wright,
 });
 
 const editWrightRequestSchema = z.object({
@@ -24,9 +29,20 @@ const tagAttachRequestSchema = z.object({
   tagId: z.string(),
 });
 
+const wrightSettingRequestSchema = z.object({
+  isPublic: z.boolean().optional(),
+  slug: z.string().min(5).max(200).optional(),
+});
+
+const wrightBySlugResponseSchema = z.object({
+  ...wright,
+  user: z.string(),
+});
+
 const wrightResponseArraySchema = z.array(wrightResponseSchema);
 
 export type EditWrightRequestSchema = z.infer<typeof editWrightRequestSchema>;
+export type WrightSettingRequestSchema = z.infer<typeof wrightSettingRequestSchema>;
 
 export const { schemas: wrightSchemas, $ref } = buildJsonSchemas(
   {
@@ -34,6 +50,8 @@ export const { schemas: wrightSchemas, $ref } = buildJsonSchemas(
     wrightResponseArraySchema,
     editWrightRequestSchema,
     tagAttachRequestSchema,
+    wrightSettingRequestSchema,
+    wrightBySlugResponseSchema,
   },
   { $id: "wrightSchema" }
 );
