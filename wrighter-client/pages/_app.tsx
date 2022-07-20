@@ -7,6 +7,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import "bytemd/dist/index.css";
 import "highlight.js/styles/default.css";
 import "../styles/editor.scss";
+import "katex/dist/katex.css";
 import { theme } from "../theme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { UserProvider } from "../contexts/UserContext";

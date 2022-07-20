@@ -204,6 +204,7 @@ export const theme = extendTheme({
       editorToolBarBgHover: { default: "#18141f1f", _dark: "#6c6e755c" },
       editorToolBarDropDownBg: { default: "#ffffff", _dark: "#2A2A2E" },
       editorToolBarDropDownBgHover: { default: "#F5F5F5", _dark: "#333439" },
+      editorQuoteFormatting: { default: "#e1e3e7", _dark: "#393a3d" },
     },
   },
 });

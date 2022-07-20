@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { db, WrightIDB } from "../services/dbService";
 import { pastePlugin } from "../services/pluginService";
+import mathPlugin from "@bytemd/plugin-math-ssr";
+import mediumZoom from "@bytemd/plugin-medium-zoom";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
 
@@ -27,7 +29,16 @@ export const LocalPreview = (): JSX.Element => {
     }
   }, [router.isReady]);
 
-  const plugins = useMemo(() => [pastePlugin(), highlightPlugin(), gfmPluin()], []);
+  const plugins = useMemo(
+    () => [
+      mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
+      pastePlugin(),
+      highlightPlugin(),
+      gfmPluin(),
+      mathPlugin({ katexOptions: { output: "html" } }),
+    ],
+    []
+  );
 
   return (
     <Container maxW="5xl" pt={10} id="local-preview">

@@ -1,4 +1,5 @@
 @import "viewer.scss";
+@import "highlight.scss";
 
 $editor-header-sizes: (
   "h1": 2em,
@@ -201,6 +202,20 @@ $preview-header-sizes: (
         font-weight: 400 !important;
       }
 
+      .cm-formatting-quote {
+        position: relative;
+      }
+
+      .cm-formatting-quote::before {
+        content: " ";
+        background-color: var(--chakra-colors-editorQuoteFormatting);
+        width: 3px;
+        left: -18px;
+        border-radius: 6px;
+        height: 3ch;
+        position: absolute;
+      }
+
       .cm-formatting-header {
         opacity: 0.6;
         &-1 {
@@ -364,9 +379,24 @@ $preview-header-sizes: (
   }
 }
 
+// fix a bug in medium zoom
+.medium-zoom-overlay ~ .medium-zoom-overlay {
+  display: none !important;
+}
+
 #local-preview {
   .markdown-body {
     margin-left: 0px !important;
     @include viewer;
+  }
+}
+
+.markdown-body {
+  pre {
+    margin: 0.8em 0 !important;
+
+    code {
+      border-radius: 7px !important;
+    }
   }
 }

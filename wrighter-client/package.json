@@ -11,6 +11,8 @@
   "dependencies": {
     "@bytemd/plugin-gfm": "^1.17.1",
     "@bytemd/plugin-highlight-ssr": "^1.17.1",
+    "@bytemd/plugin-math-ssr": "^1.17.1",
+    "@bytemd/plugin-medium-zoom": "^1.17.1",
     "@bytemd/react": "^1.17.1",
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11",
@@ -24,6 +26,7 @@
     "dexie-react-hooks": "^1.1.1",
     "framer-motion": "^6",
     "jsonwebtoken": "^8.5.1",
+    "katex": "^0.16.0",
     "lodash.compact": "^3.0.1",
     "lodash.debounce": "^4.0.8",
     "nanoid": "^4.0.0",
