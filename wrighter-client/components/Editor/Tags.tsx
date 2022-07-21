@@ -224,7 +224,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
   };
 
   return (
-    <Box px={{ base: "1%", md: "4%" }} mx="20px">
+    <Box px={{ base: "1%", md: "4%" }} mx={{ base: "0px", md: "20px" }}>
       <HStack spacing={3} role="group" justify="flex-end">
         <HStack>
           {currentTags && currentTags?.length > 0 ? (

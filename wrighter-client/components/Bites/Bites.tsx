@@ -4,7 +4,7 @@ import { Content } from "../Content";
 
 export const Bites = (): JSX.Element => {
   return (
-    <Container maxW="full" pt={20}>
+    <Container maxW="full" pt={{ base: 5, md: 20 }}>
       <HStack w="full" justify="space-between">
         <HStack spacing={4}>
           <Center borderRadius={10} w={16} h={16} bg="biteAccentColorTrans">

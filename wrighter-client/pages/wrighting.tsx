@@ -14,9 +14,10 @@ import debounce from "lodash.debounce";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { FiSettings, FiX } from "react-icons/fi";
+import { FiExternalLink, FiSettings, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { Content } from "../components/Content";
+import { CustomToolTip } from "../components/CustomTooltip";
 import { Editor } from "../components/Editor/Editor";
 import { Tags } from "../components/Editor/Tags";
 import { WrightSettings } from "../components/Editor/WrightSettings";
@@ -151,6 +152,20 @@ const Wrighting: NextPage = () => {
             <Box pos="absolute" top="24px" left="0px">
               {isAuthenticated() && (
                 <WrightSettings wrightId={id} isOpen={isSettingsOpen} onOpen={onSettingsOpen} onClose={onSettingsClose} />
+              )}
+              {!isAuthenticated() && (
+                <CustomToolTip label="preview in new tab">
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    icon={<FiExternalLink />}
+                    aria-label="open wright"
+                    as="a"
+                    href={"/wright?id=" + id}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                  />
+                </CustomToolTip>
               )}
             </Box>
           </Container>
