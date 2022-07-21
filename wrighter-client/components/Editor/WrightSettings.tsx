@@ -25,7 +25,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ChangeEvent, useEffect, useState } from "react";
-import { FiCheck, FiInfo, FiSettings, FiX } from "react-icons/fi";
+import { FiCheck, FiExternalLink, FiInfo, FiSettings, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { changeWrightSettings, getWright } from "../../services/wrightService";
 import { slugify } from "../../utils";
@@ -65,7 +65,7 @@ export const WrightSettings = ({
   });
 
   const { isFetching: isSaving, refetch: saveSettings } = useQuery(
-    "wrightSettingsQuery",
+    "saveWrightSettingsQuery",
     () => changeWrightSettings(wrightId, switchChecked, slugify(slugValue)),
     {
       refetchOnWindowFocus: false,
@@ -73,6 +73,10 @@ export const WrightSettings = ({
       retry: false,
     }
   );
+
+  useEffect(() => {
+    getWrightRequest();
+  }, []);
 
   const handleWrightRequest = async () => {
     const { data: wright } = await getWrightRequest();
@@ -105,11 +109,6 @@ export const WrightSettings = ({
     }
   };
 
-  useEffect(() => {
-    console.log(wright?.slug, slugify(slugValue), wright?.isPublic, switchChecked);
-    console.log(wright?.slug !== slugify(slugValue) || wright?.isPublic !== switchChecked, shouldTriggerUpdate);
-  }, [shouldTriggerUpdate]);
-
   const handleSlugChange = (value: string) => {
     const slug = slugify(value);
     if (slug.length < 5 || slug.length > 200) {
@@ -136,9 +135,23 @@ export const WrightSettings = ({
   return (
     <>
       {showButton && (
-        <CustomToolTip label="wright settings" placement="left">
-          <IconButton aria-label="wright settings" icon={<FiSettings />} variant="ghost" size="sm" onClick={onOpen} />
-        </CustomToolTip>
+        <VStack spacing={2}>
+          <CustomToolTip label="wright settings" placement="left">
+            <IconButton aria-label="wright settings" icon={<FiSettings />} variant="ghost" size="sm" onClick={onOpen} />
+          </CustomToolTip>
+          <CustomToolTip label="preview in new tab">
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<FiExternalLink />}
+              aria-label="open wright"
+              as="a"
+              href={!wright?.isPublic ? "/wright?id=" + wright?.id : "wright/" + wright?.slug + `-${wright?.id}`}
+              target="_blank"
+              referrerPolicy="no-referrer"
+            />
+          </CustomToolTip>
+        </VStack>
       )}
       <Modal isOpen={isOpen} onClose={onCloseHandler} isCentered size="lg">
         <ModalOverlay />
@@ -161,7 +174,7 @@ export const WrightSettings = ({
                   <VStack alignItems="flex-start" justifyContent="flex-start" spacing={1}>
                     <Text fontWeight="bold">Toggle Wright Visibility</Text>
                     <Text fontSize="sm" color="textLighter">
-                      wright is now {switchChecked ? `public, others would be able to see it` : `private, only you can see it`}
+                      wright is now {switchChecked ? `public` : `private`}
                     </Text>
                   </VStack>
                 </HStack>

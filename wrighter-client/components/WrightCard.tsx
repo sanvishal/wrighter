@@ -1,4 +1,4 @@
-import { Box, Center, HStack, Icon, IconButton, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, HStack, Icon, IconButton, Stack, Text, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FiEdit, FiExternalLink, FiEye, FiEyeOff, FiHash, FiSettings, FiX } from "react-icons/fi";
 import { Wright } from "../types";
@@ -42,6 +42,7 @@ export const WrightCard = ({
             transform: "translateX(-30px)",
           }}
           transition="all 0.2s ease-in-out"
+          display={{ base: "none", sm: "block" }}
         >
           <IconButton
             cursor="pointer"
@@ -55,7 +56,7 @@ export const WrightCard = ({
           />
         </Box>
       )}
-      <HStack>
+      <HStack alignItems="flex-start">
         <Box w="90%">
           <VStack align="flex-start" spacing={0}>
             <HStack spacing={2}>
@@ -107,7 +108,13 @@ export const WrightCard = ({
             {removeMd(wright.head) || "No content"}
           </Text>
         </Box>
-        <HStack w="10%" spacing={2}>
+        <Stack
+          w="10%"
+          rowGap={{ base: 3, md: 0 }}
+          columnGap={{ base: 0, md: 3 }}
+          flexDir={{ base: "column", md: "row" }}
+          alignSelf={{ base: "flex-start", md: "center" }}
+        >
           <CustomToolTip label="edit wright">
             <IconButton
               variant="ghost"
@@ -121,6 +128,7 @@ export const WrightCard = ({
           </CustomToolTip>
           <CustomToolTip label="preview in new tab">
             <IconButton
+              style={{ marginTop: "0px" }}
               variant="ghost"
               icon={<FiExternalLink />}
               borderRadius="100px"
@@ -131,7 +139,23 @@ export const WrightCard = ({
               referrerPolicy="no-referrer"
             />
           </CustomToolTip>
-        </HStack>
+          {showSettings && (
+            <CustomToolTip label="preview in new tab">
+              <IconButton
+                style={{ marginTop: "0px" }}
+                display={{ base: "flex", md: "none" }}
+                // size={{ base: "sm", md: "md" }}
+                variant="ghost"
+                icon={<FiSettings />}
+                borderRadius="100px"
+                aria-label="open settings"
+                onClick={() => {
+                  onWrightSettingsClick(wright);
+                }}
+              />
+            </CustomToolTip>
+          )}
+        </Stack>
       </HStack>
     </Box>
   );

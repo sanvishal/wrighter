@@ -3,6 +3,7 @@ import {
   Button,
   Center,
   Flex,
+  HStack,
   Icon,
   IconButton,
   Menu,
@@ -30,7 +31,126 @@ import { motion } from "framer-motion";
 import { useQuery, useQueryClient } from "react-query";
 
 export const MobileNav = (): JSX.Element => {
-  return <Box w="full" h={14} bg="bgDark" pos="fixed" bottom="0"></Box>;
+  const { user } = useUserContext();
+  const router = useRouter();
+  const { isAuthenticated } = useUserContext();
+  const { colorMode, toggleColorMode } = useColorMode();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const queryclient = useQueryClient();
+  const isSaving = queryclient.getQueryState("saveWrightQuery")?.isFetching;
+
+  const handleLogOut = async () => {
+    setIsLoggingOut(true);
+    await logout();
+    setIsLoggingOut(false);
+    router.push("/signin");
+  };
+
+  return (
+    <Box w="full" h={14} bg="bgDark" pos="fixed" bottom="0">
+      <Flex alignItems="center" justifyContent="space-between" w="full" flexDirection="row" px={2} h="full">
+        <HStack spacing={4} h="full">
+          <Center w="40px" h="40px">
+            <Logo />
+          </Center>
+          <Box w={0.5} h={9} bg="bgLight" borderRadius={10} ml={3} />
+          <Box>
+            <IconButton
+              aria-label="go to bites"
+              variant="ghost"
+              onClick={() => {
+                router.push("/bites");
+              }}
+              size="sm"
+              role="group"
+            >
+              <Icon as={TbBulb} strokeWidth={2.5} fontSize="lg" />
+            </IconButton>
+          </Box>
+          <Box>
+            <IconButton
+              aria-label="go to wrights"
+              variant="ghost"
+              onClick={() => {
+                router.push("/wrights");
+              }}
+              size="sm"
+              role="group"
+            >
+              <Icon as={FiBookOpen} strokeWidth={2.5} />
+            </IconButton>
+          </Box>
+        </HStack>
+        <HStack spacing={4}>
+          <Box pos="relative" mt={2}>
+            {isSaving ? (
+              <Spinner
+                sx={{
+                  "--spinner-size": "1rem",
+                  borderBottomColor: "textLighter",
+                  borderLeftColor: "textLighter",
+                  borderTopColor: "transparent",
+                  borderRightColor: "transparent",
+                }}
+              />
+            ) : (
+              <>
+                <Box w="5px" h="5px" bg="green.400" borderRadius={100} pos="absolute" bottom="8px" right="0px"></Box>
+                <Icon as={isAuthenticated() ? FiCloud : FiDatabase} strokeWidth={2.5} color="textLighter" />
+              </>
+            )}
+          </Box>
+          <Box>
+            <Menu placement="top-start">
+              <MenuButton>
+                <Box cursor="pointer">
+                  <Avvvatars value={user?.email || "wrighter guest"} style="shape" />
+                </Box>
+              </MenuButton>
+              <MenuList minWidth="190px">
+                <MenuItem isDisabled fontSize="sm">
+                  {user?.name || "wrighter guest"}
+                </MenuItem>
+                <MenuDivider borderColor="containerBorder" opacity={1} my={1.5} />
+                <MenuItem
+                  role="group"
+                  closeOnSelect={false}
+                  onClick={toggleColorMode}
+                  icon={<Icon as={colorMode === "light" ? FiMoon : FiSun} strokeWidth={2.5} mt={1} />}
+                >
+                  Toggle theme
+                </MenuItem>
+                <MenuItem
+                  closeOnSelect={false}
+                  icon={
+                    !isLoggingOut ? (
+                      <Icon as={FiLogOut} strokeWidth={2.5} mt={1} />
+                    ) : (
+                      <Spinner
+                        mt={0.5}
+                        sx={{
+                          "--spinner-size": "0.7rem",
+                          borderBottomColor: "textLighter",
+                          borderLeftColor: "textLighter",
+                          borderTopColor: "transparent",
+                          borderRightColor: "transparent",
+                        }}
+                      />
+                    )
+                  }
+                  onClick={handleLogOut}
+                  aria-label="Logout"
+                  _hover={{ bg: "errorRedTransBg" }}
+                >
+                  Logout
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+        </HStack>
+      </Flex>
+    </Box>
+  );
 };
 
 export const Navbar = () => {
@@ -177,18 +297,6 @@ export const Navbar = () => {
                 </MenuItem>
               </MenuList>
             </Menu>
-          </Box>
-          <Box>
-            {/* <CustomToolTip label="Logout" placement="right">
-              <IconButton
-                isLoading={isLoggingOut}
-                onClick={handleLogOut}
-                icon={<FiLogOut />}
-                size="sm"
-                variant="ghost"
-                _hover={{ bg: "errorRedTransBg", color: "white" }}
-              />
-            </CustomToolTip> */}
           </Box>
         </VStack>
       </Flex>

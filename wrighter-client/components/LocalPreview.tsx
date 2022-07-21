@@ -1,5 +1,5 @@
 import { Viewer } from "@bytemd/react";
-import { Center, Container, Spinner, Text } from "@chakra-ui/react";
+import { Box, Center, Container, IconButton, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -12,6 +12,7 @@ import highlightPlugin from "@bytemd/plugin-highlight-ssr";
 import { useUserContext } from "../contexts/UserContext";
 import { useQuery } from "react-query";
 import { getWright } from "../services/wrightService";
+import { FiMoon, FiSun } from "react-icons/fi";
 
 export interface ILocalPreviewProps {
   // wright: WrightIDB;
@@ -22,6 +23,7 @@ export const LocalPreview = (): JSX.Element => {
   const [id, setId] = useState("");
   const localWright = useLiveQuery(() => db.wrights.get(id), [id]);
   const { isAuthenticated, isUserLoading } = useUserContext();
+  const { toggleColorMode, colorMode } = useColorMode();
 
   useEffect(() => {
     if (router.isReady && router?.query?.id) {
@@ -65,7 +67,7 @@ export const LocalPreview = (): JSX.Element => {
             <Text fontSize="sm" color="textLighter" mb="-5px">
               {new Date(localWright.updatedAt || new Date().toISOString()).toLocaleString()}
             </Text>
-            <Text fontSize="6xl" fontWeight="800">
+            <Text fontWeight="800" lineHeight="1.03" my={4} mb={8} fontSize={{ base: "5xl", md: "6xl" }}>
               {localWright.title || ""}
             </Text>
             <Viewer value={localWright.content || ""} plugins={plugins} />
@@ -90,18 +92,28 @@ export const LocalPreview = (): JSX.Element => {
   };
 
   return (
-    <Container maxW="5xl" pt={10} id="wright-preview">
+    <Container maxW="5xl" pt={10} id="wright-preview" pos="relative">
+      <Box pos="fixed" bottom="20px" left="20px">
+        <IconButton
+          aria-label="toggle theme"
+          as={colorMode === "dark" ? FiMoon : FiSun}
+          onClick={toggleColorMode}
+          cursor="pointer"
+          variant="ghost"
+          p={3}
+        ></IconButton>
+      </Box>
       {isAuthenticated() && !isUserLoading && remoteWright ? (
         <>
           <Text fontSize="sm" color="textLighter" mb="-5px">
             {new Date(remoteWright.updatedAt || new Date().toISOString()).toLocaleString()}
           </Text>
-          <Text fontSize="6xl" fontWeight="800">
+          <Text fontWeight="800" lineHeight="1.03" my={4} mb={8} fontSize={{ base: "5xl", md: "6xl" }}>
             {remoteWright.title || ""}
           </Text>
           <Viewer value={remoteWright.content || ""} plugins={plugins} />
         </>
-      ) : isWrightLoading ? (
+      ) : isWrightLoading || isUserLoading ? (
         <Center>
           <Spinner
             sx={{

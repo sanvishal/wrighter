@@ -27,15 +27,15 @@ const Wrights: NextPage = ({ wright }: { wright: Wright & { user: string } }) =>
     <Container maxW="5xl" id="wright-preview" pt={10}>
       {wright ? (
         <>
-          <HStack mb="-5px" justify="space-between" fontSize="sm" color="textLighter" opacity={0.6}>
-            <Text>{new Date(wright.updatedAt || new Date().toISOString()).toDateString()}</Text>
-            <HStack>
+          <HStack mb="-5px" justify="space-between" fontSize="sm" color="textLighter" opacity={0.6} w="full" spacing={3}>
+            <Text w="30%">{new Date(wright.updatedAt || new Date().toISOString()).toDateString()}</Text>
+            <HStack wrap="wrap" justifyContent="flex-end" w="70%" alignItems="flex-start">
               {wright.tags?.map((tag) => {
                 return <Text key={tag.id}>#{tag.name}</Text>;
               })}
             </HStack>
           </HStack>
-          <Text fontSize="6xl" fontWeight="800">
+          <Text fontSize={{ base: "5xl", md: "6xl" }} fontWeight="800" lineHeight="1.03" my={4}>
             {wright.title || ""}
           </Text>
           <Text fontSize="md" color="textLighter" mt="-8px" mb={12}>
@@ -79,13 +79,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         wright: req.data,
+        // revalidate: 10,
       },
     };
   } catch (e) {
     return {
       props: {
         wright: null,
-        revalidate: 10,
       },
     };
   }

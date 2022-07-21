@@ -218,23 +218,25 @@ $preview-header-sizes: (
 
       .cm-formatting-header {
         opacity: 0.6;
-        &-1 {
-          margin-left: -2ch;
-        }
-        &-2 {
-          margin-left: -3ch; //calc(2ch - #{map-get($map: $editor-header-sizes, $key: "h2")} * 2) !important;
-        }
-        &-3 {
-          margin-left: -4ch;
-        }
-        &-4 {
-          margin-left: -5ch;
-        }
-        &-5 {
-          margin-left: -6ch;
-        }
-        &-6 {
-          margin-left: -7ch;
+        @media screen and (min-width: 48em) {
+          &-1 {
+            margin-left: -2ch;
+          }
+          &-2 {
+            margin-left: -3ch; //calc(2ch - #{map-get($map: $editor-header-sizes, $key: "h2")} * 2) !important;
+          }
+          &-3 {
+            margin-left: -4ch;
+          }
+          &-4 {
+            margin-left: -5ch;
+          }
+          &-5 {
+            margin-left: -6ch;
+          }
+          &-6 {
+            margin-left: -7ch;
+          }
         }
       }
 
@@ -357,14 +359,24 @@ $preview-header-sizes: (
 
 @media screen and (max-width: 48em) {
   .bytemd {
+    // total page height - (computed title height + top padding + bottom padding)
+    height: calc(100vh - (78px + 12px + 12px + 18px));
     .CodeMirror-lines {
       max-width: calc(100%) !important;
       margin-left: 0px !important;
     }
 
+    &.bytemd-fullscreen {
+      .bytemd-toolbar-right {
+        float: unset;
+      }
+      width: unset;
+    }
+
     &-toolbar {
       font-family: "Avenir";
       padding: 10px 0px;
+      max-width: 100%;
       .bytemd-toolbar-left {
         opacity: 1 !important;
       }

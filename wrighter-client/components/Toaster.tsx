@@ -19,8 +19,15 @@ export const Toaster = ({
   };
 
   return (
-    // @ts-ignore
-    <Box m={0} p={2} maxW="270px" minW="270px" bg={() => getTypeColor(type)} borderRadius={10}>
+    <Box
+      m={0}
+      p={2}
+      maxW={{ base: "100%", md: "270px" }}
+      minW={{ base: "100%", md: "270px" }}
+      // @ts-ignore
+      bg={() => getTypeColor(type)}
+      borderRadius={10}
+    >
       <Text color={type === "error" ? "errorRed" : type === "success" ? "successGreen" : "textColor"}>{message}</Text>
     </Box>
   );
