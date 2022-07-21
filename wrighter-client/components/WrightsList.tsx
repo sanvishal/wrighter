@@ -1,15 +1,39 @@
-import { Box, Button, Center, Container, HStack, Icon, Spinner, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Center,
+  Container,
+  Divider,
+  HStack,
+  Icon,
+  IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  Spinner,
+  Switch,
+  Text,
+  useDisclosure,
+  VStack,
+} from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { FiBookOpen, FiPlus } from "react-icons/fi";
+import { FiBookOpen, FiCheck, FiChevronDown, FiPlus, FiSettings, FiX } from "react-icons/fi";
+import { FaSort } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
 import { clearAndCreateEditorContext, createWright, getAllWrights } from "../services/wrightService";
 import { Wright } from "../types";
+import { CustomToolTip } from "./CustomTooltip";
 import { WrightCard } from "./WrightCard";
+import { WrightSettings } from "./Editor/WrightSettings";
 
 export const CreateWright = ({
   createWrightHandler,
@@ -35,10 +59,32 @@ export const CreateWright = ({
   );
 };
 
+enum SortParam {
+  TITLE = "TITLE",
+  UPDATED = "UPDATED",
+  CREATED = "CREATED",
+  TAGS = "TAGS",
+  VISIBILITY = "VISIBILITY",
+}
+
+const sortOptions = [
+  { value: SortParam.TITLE, label: "Title" },
+  { value: SortParam.UPDATED, label: "Last Updated" },
+  { value: SortParam.CREATED, label: "Created Time" },
+  { value: SortParam.TAGS, label: "Number of Tags" },
+  { value: SortParam.VISIBILITY, label: "Visibility" },
+];
+
 export const WrightsList = (): JSX.Element => {
   const [wrights, setWrights] = useState<Wright[] | WrightIDB[]>([]);
+  const [sortedWrights, setSortedWrights] = useState<Wright[] | WrightIDB[]>([]);
   const router = useRouter();
-  const { isUserLoading, isAuthenticated, user } = useUserContext();
+  const { isUserLoading, isAuthenticated } = useUserContext();
+  const { onOpen, onClose, isOpen } = useDisclosure();
+  const [currentSortParam, setCurrentSortParam] = useState<SortParam>(SortParam.UPDATED);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [currentSettingWright, setCurrentSettingWright] = useState("");
+  const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
 
   const { refetch: createWrightRequest, isLoading } = useQuery("createWrightQuery", () => createWright(!isAuthenticated()), {
     enabled: false,
@@ -60,7 +106,6 @@ export const WrightsList = (): JSX.Element => {
   const getAllWrightsHandler = async () => {
     const { data: wrights } = await getWrightsRequest();
     if (wrights) {
-      console.log(wrights);
       setWrights(wrights || []);
     }
   };
@@ -72,8 +117,32 @@ export const WrightsList = (): JSX.Element => {
   }, [isUserLoading]);
 
   useEffect(() => {
-    console.log(wrights);
-  }, [wrights]);
+    const sortWrights = [...wrights];
+    sortWrights.sort((a, b) => {
+      if (currentSortParam === SortParam.TITLE) {
+        return sortOrder === "asc" ? (a.title || "").localeCompare(b.title || "") : (b.title || "").localeCompare(a.title || "");
+      } else if (currentSortParam === SortParam.UPDATED) {
+        return ((a.updatedAt || "") > (b.updatedAt || "") ? -1 : 1) * (sortOrder === "asc" ? 1 : -1);
+      } else if (currentSortParam === SortParam.CREATED) {
+        return ((a.createdAt || "") > (b.createdAt || "") ? -1 : 1) * (sortOrder === "asc" ? 1 : -1);
+      } else if (currentSortParam === SortParam.TAGS) {
+        return ((a.tags?.length || 0) > (b.tags?.length || 0) ? -1 : 1) * (sortOrder === "asc" ? 1 : -1);
+      } else if (currentSortParam === SortParam.VISIBILITY) {
+        return ((a.isPublic || false) > (b.isPublic || false) ? -1 : 1) * (sortOrder === "asc" ? 1 : -1);
+      }
+      return 0;
+    });
+    setSortedWrights(sortWrights);
+  }, [wrights, currentSortParam, sortOrder]);
+
+  const wrightSettingsClickHandler = (clickedWright: Wright) => {
+    setCurrentSettingWright(clickedWright.id);
+    onSettingsOpen();
+  };
+
+  const onTriggerUpdate = () => {
+    getAllWrightsHandler();
+  };
 
   return (
     <Container maxW="full" pt={20}>
@@ -89,15 +158,84 @@ export const WrightsList = (): JSX.Element => {
             <Text color="textLighter">All your wrightups are here</Text>
           </VStack>
         </HStack>
-        <Button
-          rightIcon={<FiPlus style={{ marginBottom: "4px" }} />}
-          variant="ghost"
-          onClick={createWrightHandler}
-          display={wrights?.length > 0 ? "flex" : "none"}
-          isLoading={isLoading}
-        >
-          Create Wright
-        </Button>
+        <HStack>
+          <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+            <PopoverTrigger>
+              <Box>
+                <IconButton as={FaSort} aria-label="display sort settings" variant="ghost" p={3} cursor="pointer" />
+              </Box>
+            </PopoverTrigger>
+            <PopoverContent maxW="250px" fontSize="sm">
+              <PopoverArrow />
+              <PopoverHeader>
+                <HStack justifyContent="space-between">
+                  <Text>{sortOrder === "asc" ? "Ascending" : "Descending"}</Text>
+                  <ButtonGroup spacing={0}>
+                    <Button
+                      height="26px"
+                      variant="ghost"
+                      size="sm"
+                      borderRightRadius={0}
+                      borderRight="1px solid"
+                      borderRightColor="bgDark"
+                      isActive={sortOrder === "asc"}
+                      opacity={sortOrder === "asc" ? 1 : 0.5}
+                      onClick={() => setSortOrder("asc")}
+                    >
+                      ASC
+                    </Button>
+                    <Button
+                      height="26px"
+                      variant="ghost"
+                      size="sm"
+                      borderLeftRadius={0}
+                      opacity={sortOrder === "desc" ? 1 : 0.5}
+                      isActive={sortOrder === "desc"}
+                      onClick={() => setSortOrder("desc")}
+                    >
+                      DESC
+                    </Button>
+                  </ButtonGroup>
+                </HStack>
+              </PopoverHeader>
+              <PopoverBody>
+                <VStack alignItems="flex-start" w="full" spacing={1}>
+                  {sortOptions.map((option) => {
+                    return (
+                      <Box
+                        key={option.value}
+                        p={1}
+                        py={2}
+                        bg={currentSortParam === option.value ? "bgLight" : "transparent"}
+                        transition="background 0.2s ease-in-out"
+                        w="full"
+                        borderRadius={8}
+                        cursor="pointer"
+                        onClick={() => {
+                          setCurrentSortParam(option.value);
+                        }}
+                      >
+                        <HStack px={2}>
+                          <Icon as={FiCheck} opacity={currentSortParam === option.value ? 1 : 0}></Icon>
+                          <Text>{option.label}</Text>
+                        </HStack>
+                      </Box>
+                    );
+                  })}
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+          <Button
+            rightIcon={<FiPlus style={{ marginBottom: "4px" }} />}
+            // variant="ghost"
+            onClick={createWrightHandler}
+            display={wrights?.length > 0 ? "flex" : "none"}
+            isLoading={isLoading}
+          >
+            Create Wright
+          </Button>
+        </HStack>
       </HStack>
       <Box mt={10} w="full">
         {isGettingWrights && isUserLoading ? (
@@ -114,10 +252,28 @@ export const WrightsList = (): JSX.Element => {
             />
           </VStack>
         ) : (
-          <VStack spacing={5} align={wrights?.length > 0 ? "flex-start" : "center"} w="full">
+          <VStack spacing={5} align={wrights?.length > 0 ? "flex-start" : "center"} w="full" mb={10}>
             {wrights?.length > 0 ? (
-              wrights?.map((wright) => {
-                return <WrightCard key={wright.id} wright={wright as Wright} />;
+              sortedWrights?.map((wright, idx) => {
+                return currentSortParam === SortParam.UPDATED && idx === 0 && sortOrder === "asc" ? (
+                  <VStack w="full" alignItems="flex-start" mb={7} fontWeight="bold" fontSize="larger">
+                    <Text>Continue wrighting...</Text>
+                    <WrightCard
+                      key={wright.id}
+                      wright={wright as Wright}
+                      onWrightSettingsClick={wrightSettingsClickHandler}
+                      showSettings={isAuthenticated()}
+                    />
+                    <Divider py={6} opacity={0.3} width="75%" style={{ margin: "8px auto" }} />
+                  </VStack>
+                ) : (
+                  <WrightCard
+                    key={wright.id}
+                    wright={wright as Wright}
+                    onWrightSettingsClick={wrightSettingsClickHandler}
+                    showSettings={isAuthenticated()}
+                  />
+                );
               })
             ) : (
               <CreateWright createWrightHandler={createWrightHandler} isLoading={isLoading} />
@@ -125,6 +281,16 @@ export const WrightsList = (): JSX.Element => {
           </VStack>
         )}
       </Box>
+      {isAuthenticated() && (
+        <WrightSettings
+          showButton={false}
+          wrightId={currentSettingWright}
+          isOpen={isSettingsOpen}
+          onOpen={onSettingsOpen}
+          onClose={onSettingsClose}
+          triggerUpdate={onTriggerUpdate}
+        />
+      )}
     </Container>
   );
 };

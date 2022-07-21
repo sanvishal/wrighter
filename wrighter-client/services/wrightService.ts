@@ -50,7 +50,7 @@ export const getAllWrights = async (isGuest: boolean): Promise<Wright[] | Wright
       return await Promise.all(wrightsWithTags);
     }
   }
-  const wrights = (await axios.get(`${API_BASE_URL}/wright`, { withCredentials: true })) as AxiosResponse<Wright[]>;
+  const wrights = (await axios.get(`${API_BASE_URL}/wright?compact=true`, { withCredentials: true })) as AxiosResponse<Wright[]>;
   return wrights.data;
 };
 
@@ -59,7 +59,11 @@ export const clearAndCreateEditorContext = async (wright: Wright | WrightIDB): P
   await db.editorContext.put(wright);
 };
 
-export const getWright = async (isGuest: boolean, id?: string): Promise<Wright | WrightIDB | undefined> => {
+export const getWright = async (
+  isGuest: boolean,
+  id?: string,
+  isCompact: boolean = false
+): Promise<Wright | WrightIDB | undefined> => {
   if (isGuest && id) {
     const wright = await db.wrights.get(id);
     const tags = await (async () => {
@@ -76,7 +80,9 @@ export const getWright = async (isGuest: boolean, id?: string): Promise<Wright |
     return { ...wright, tags };
   }
 
-  const wright = (await axios.get(`${API_BASE_URL}/wright/${id}`, { withCredentials: true })) as AxiosResponse<Wright>;
+  const wright = (await axios.get(`${API_BASE_URL}/wright/${id}${isCompact ? "?compact=true" : ""}`, {
+    withCredentials: true,
+  })) as AxiosResponse<Wright>;
   return wright.data;
 };
 

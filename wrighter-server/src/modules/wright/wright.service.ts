@@ -20,11 +20,23 @@ export const createWright = async (userId: string) => {
   return wright;
 };
 
-export const getAllWrights = async (userId: string) => {
+export const getAllWrights = async (userId: string, compact: boolean) => {
   const wrights = await prisma.wright.findMany({
     where: { userId },
-    include: { tagWrights: { select: { tag: true } } },
+    select: {
+      tagWrights: { select: { tag: true } },
+      id: true,
+      content: !compact,
+      head: true,
+      isPublic: true,
+      slug: true,
+      title: true,
+      createdAt: true,
+      updatedAt: true,
+      userId: true,
+    },
   });
+
   const flattenedWrights = wrights.map((wright) => {
     const { tagWrights, ...rest } = wright;
     const tags = tagWrights.map((tagWright) => tagWright.tag);
@@ -33,8 +45,22 @@ export const getAllWrights = async (userId: string) => {
   return flattenedWrights;
 };
 
-export const getWright = async (id: string, userId: string) => {
-  const wright = await prisma.wright.findUnique({ where: { id: id }, include: { tagWrights: { select: { tag: true } } } });
+export const getWright = async (id: string, userId: string, compact: boolean) => {
+  const wright = await prisma.wright.findUnique({
+    where: { id: id },
+    select: {
+      tagWrights: { select: { tag: true } },
+      id: true,
+      content: !compact,
+      head: true,
+      isPublic: true,
+      slug: true,
+      title: true,
+      createdAt: true,
+      updatedAt: true,
+      userId: true,
+    },
+  });
   if (wright?.userId !== userId && !wright?.isPublic) {
     return null;
   }

@@ -32,18 +32,33 @@ import { slugify } from "../../utils";
 import { CustomToolTip } from "../CustomTooltip";
 import { Toaster } from "../Toaster";
 
-export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export const WrightSettings = ({
+  wrightId,
+  isOpen,
+  onOpen,
+  onClose,
+  showButton = true,
+  triggerUpdate,
+}: {
+  wrightId: string;
+  isOpen: any;
+  onOpen: any;
+  onClose: any;
+  showButton?: boolean;
+  triggerUpdate?: () => void;
+}): JSX.Element => {
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const [switchChecked, setSwitchChecked] = useState(false);
   const [slugValue, setSlugValue] = useState("");
   const [slugError, setIsSlugError] = useState("");
+  const [shouldTriggerUpdate, setShouldTriggerUpdate] = useState(false);
   const toast = useToast();
 
   const {
     data: wright,
     isFetching: isWrightLoading,
     refetch: getWrightRequest,
-  } = useQuery("getWrightOnSettingsQuery", () => getWright(false, wrightId), {
+  } = useQuery("getWrightOnSettingsQuery", () => getWright(false, wrightId, true), {
     refetchOnWindowFocus: false,
     enabled: false,
     retry: false,
@@ -72,6 +87,9 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
   }, [isOpen]);
 
   const handleOnSaveClick = async () => {
+    if (wright?.slug !== slugify(slugValue) || wright?.isPublic !== switchChecked) {
+      setShouldTriggerUpdate(true);
+    }
     const { status } = await saveSettings();
     if (status === "success") {
       await handleWrightRequest();
@@ -87,6 +105,11 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
     }
   };
 
+  useEffect(() => {
+    console.log(wright?.slug, slugify(slugValue), wright?.isPublic, switchChecked);
+    console.log(wright?.slug !== slugify(slugValue) || wright?.isPublic !== switchChecked, shouldTriggerUpdate);
+  }, [shouldTriggerUpdate]);
+
   const handleSlugChange = (value: string) => {
     const slug = slugify(value);
     if (slug.length < 5 || slug.length > 200) {
@@ -97,12 +120,27 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
     setSlugValue(value);
   };
 
+  const onCloseHandler = () => {
+    if (shouldTriggerUpdate && triggerUpdate) {
+      triggerUpdate();
+    }
+    onClose();
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldTriggerUpdate(false);
+    }
+  }, [isOpen]);
+
   return (
     <>
-      <CustomToolTip label="wright settings" placement="left">
-        <IconButton aria-label="wright settings" icon={<FiSettings />} variant="ghost" size="sm" onClick={onOpen} />
-      </CustomToolTip>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+      {showButton && (
+        <CustomToolTip label="wright settings" placement="left">
+          <IconButton aria-label="wright settings" icon={<FiSettings />} variant="ghost" size="sm" onClick={onOpen} />
+        </CustomToolTip>
+      )}
+      <Modal isOpen={isOpen} onClose={onCloseHandler} isCentered size="lg">
         <ModalOverlay />
         <ModalContent borderRadius={10} bg="bgLighter" border="1px solid" borderColor="containerBorder" boxShadow="shadow" pb={4}>
           <ModalHeader>
@@ -116,7 +154,7 @@ export const WrightSettings = ({ wrightId }: { wrightId: string }): JSX.Element 
                   <Switch
                     defaultChecked={wright.isPublic}
                     mt={0.5}
-                    onChange={(e) => {
+                    onChange={(e: any) => {
                       setSwitchChecked(e.target.checked);
                     }}
                   />

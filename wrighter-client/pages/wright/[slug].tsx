@@ -27,7 +27,7 @@ const Wrights: NextPage = ({ wright }: { wright: Wright & { user: string } }) =>
     <Container maxW="5xl" id="wright-preview" pt={10}>
       {wright ? (
         <>
-          <HStack mb="-5px" justify="space-between" fontSize="sm" color="textLighter">
+          <HStack mb="-5px" justify="space-between" fontSize="sm" color="textLighter" opacity={0.6}>
             <Text>{new Date(wright.updatedAt || new Date().toISOString()).toDateString()}</Text>
             <HStack>
               {wright.tags?.map((tag) => {

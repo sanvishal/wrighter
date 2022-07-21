@@ -25,9 +25,12 @@ export const createWrightHandler = async (request: FastifyRequest, reply: Fastif
   }
 };
 
-export const getAllWrightsHandler = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getAllWrightsHandler = async (
+  request: FastifyRequest<{ Querystring: { compact?: string } }>,
+  reply: FastifyReply
+) => {
   try {
-    const wrights = await getAllWrights(request.user.id);
+    const wrights = await getAllWrights(request.user.id, Boolean(request?.query?.compact));
     return wrights;
   } catch (e) {
     console.error(e);
@@ -35,14 +38,17 @@ export const getAllWrightsHandler = async (request: FastifyRequest, reply: Fasti
   }
 };
 
-export const getWrightHandler = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+export const getWrightHandler = async (
+  request: FastifyRequest<{ Params: { id: string }; Querystring: { compact?: string } }>,
+  reply: FastifyReply
+) => {
   try {
     if (!request.params.id) {
       return reply.code(400).send({
         message: "Missing id",
       });
     }
-    const wright = await getWright(request.params.id, request?.user?.id);
+    const wright = await getWright(request.params.id, request?.user?.id, Boolean(request?.query?.compact));
     if (!wright) {
       return reply.code(404).send({
         message: "Wright not found",

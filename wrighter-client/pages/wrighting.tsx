@@ -1,4 +1,15 @@
-import { Box, Container, Editable, EditablePreview, EditableTextarea, IconButton, Spinner, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Editable,
+  EditablePreview,
+  EditableTextarea,
+  IconButton,
+  Spinner,
+  Text,
+  useDisclosure,
+  VStack,
+} from "@chakra-ui/react";
 import debounce from "lodash.debounce";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -21,6 +32,7 @@ const Wrighting: NextPage = () => {
   const [wright, setWright] = useState<Wright | WrightIDB>({});
   const [id, setId] = useState("");
   const [isContextLoaded, setIsContextLoaded] = useState(false);
+  const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -136,7 +148,9 @@ const Wrighting: NextPage = () => {
             <Tags initWright={wright as Wright} />
             <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} />
             <Box pos="absolute" top="24px" left="0px">
-              {isAuthenticated() && <WrightSettings wrightId={id} />}
+              {isAuthenticated() && (
+                <WrightSettings wrightId={id} isOpen={isSettingsOpen} onOpen={onSettingsOpen} onClose={onSettingsClose} />
+              )}
             </Box>
           </Container>
         </>

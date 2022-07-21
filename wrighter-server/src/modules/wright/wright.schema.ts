@@ -5,7 +5,7 @@ import { tagResponseArraySchema, TagResponseSchema } from "../tag/tag.schema";
 const wright = {
   id: z.string(),
   title: z.string(),
-  content: z.string(),
+  content: z.string().optional(),
   head: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
