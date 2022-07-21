@@ -90,7 +90,7 @@ export const LocalPreview = (): JSX.Element => {
   };
 
   return (
-    <Container maxW="5xl" pt={10} id="local-preview">
+    <Container maxW="5xl" pt={10} id="wright-preview">
       {isAuthenticated() && !isUserLoading && remoteWright ? (
         <>
           <Text fontSize="sm" color="textLighter" mb="-5px">
