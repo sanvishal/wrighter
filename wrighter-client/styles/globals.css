@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@900&display=swap");
 @font-face {
   font-family: "Avenir LT Std";
   src: local("Avenir LT Std 55 Roman"), local("AvenirLTStd-Roman"), url("/fonts/AvenirLTStd-Roman.woff2") format("woff2"),
@@ -154,6 +155,15 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+#waves-bg {
+  opacity: 1;
+  background-color: var(--chakra-colors-landingPageBgColor);
+  mask-image: linear-gradient(360deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 100%), url("/bgWaves.svg");
+}
+#waves-bg-overlay {
+  background: linear-gradient(360deg, var(--chakra-colors-bg) 0%, rgba(0, 0, 0, 0) 130%);
 }
 
 .shake {

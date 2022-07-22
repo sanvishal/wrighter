@@ -1,0 +1,70 @@
+.date-range-picker {
+  border-radius: 5px;
+  background-color: var(--chakra-colors-bgLight) !important;
+  font-family: "Avenir Next", sans-serif !important;
+
+  .rdrDateDisplayWrapper {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: var(--chakra-colors-bgLight) !important;
+  }
+
+  .rdrNextPrevButton {
+    background-color: var(--chakra-colors-bgLight) !important;
+    &.rdrNextButton {
+      i {
+        border-radius: 2px;
+        border-color: transparent transparent transparent var(--chakra-colors-textLight);
+      }
+    }
+    &.rdrPprevButton {
+      i {
+        border-radius: 2px;
+        border-color: transparent var(--chakra-colors-textLight) transparent transparent;
+      }
+    }
+  }
+
+  .rdrWeekDay {
+    color: var(--chakra-colors-textLighter) !important;
+  }
+  .rdrDayPassive {
+    .rdrDayNumber {
+      span {
+        color: var(--chakra-colors-textLighter) !important;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  .rdrDayToday {
+    .rdrDayNumber {
+      span::after {
+        background-color: var(--chakra-colors-biteAccentColor);
+      }
+    }
+  }
+
+  .rdrDayNumber {
+    span {
+      color: var(--chakra-colors-textColor) !important;
+    }
+  }
+
+  .rdrDateInput {
+    background-color: var(--chakra-colors-bgLight) !important;
+    input {
+      color: var(--chakra-colors-textColor) !important;
+    }
+    &.rdrDateDisplayItemActive {
+      border-color: var(--chakra-colors-biteAccentColor);
+    }
+  }
+
+  .rdrMonthAndYearPickers {
+    select {
+      color: var(--chakra-colors-textColor) !important;
+      background: none;
+    }
+  }
+}

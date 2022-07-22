@@ -36,3 +36,20 @@ export type TagWright = {
 };
 
 export type TagSearchResult = Tag & { isTagged?: boolean };
+
+export enum BiteType {
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
+  LINK = "LINK",
+}
+
+export type Bite = {
+  id: string;
+  title: string;
+  content: string;
+  type: BiteType;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+  tags?: Tag[];
+};

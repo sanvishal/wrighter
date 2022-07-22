@@ -1,8 +1,8 @@
 import { Box, Center, HStack, Icon, IconButton, Stack, Text, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FiEdit, FiExternalLink, FiEye, FiEyeOff, FiHash, FiSettings, FiX } from "react-icons/fi";
-import { Wright } from "../types";
-import { CustomToolTip } from "./CustomTooltip";
+import { Wright } from "../../types";
+import { CustomToolTip } from "../CustomTooltip";
 // @ts-ignore
 import removeMd from "remove-markdown";
 
@@ -121,7 +121,7 @@ export const WrightCard = ({
               onClick={() => {
                 router.push("/wrighting?id=" + wright.id);
               }}
-              icon={<FiEdit />}
+              icon={<FiEdit strokeWidth={2.5} />}
               borderRadius="100px"
               aria-label="edit wright"
             />

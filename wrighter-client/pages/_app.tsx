@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import "../styles/calender.scss";
 import type { AppProps } from "next/app";
 import NProgress from "nprogress";
 import Router from "next/router";
@@ -8,6 +9,8 @@ import "bytemd/dist/index.css";
 import "highlight.js/styles/default.css";
 import "../styles/editor.scss";
 import "katex/dist/katex.css";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { theme } from "../theme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { UserProvider } from "../contexts/UserContext";

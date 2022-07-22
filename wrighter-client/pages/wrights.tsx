@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { FiBookOpen } from "react-icons/fi";
 import { Content } from "../components/Content";
 import { useUserContext } from "../contexts/UserContext";
-const WrightsList = dynamic(() => import("../components/WrightsList").then((module) => module.WrightsList) as any, {
+const WrightsList = dynamic(() => import("../components/Wrights/WrightsList").then((module) => module.WrightsList) as any, {
   ssr: false,
 });
 

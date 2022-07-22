@@ -47,7 +47,7 @@ export const MobileNav = (): JSX.Element => {
   };
 
   return (
-    <Box w="full" h={14} bg="bgDark" pos="fixed" bottom="0">
+    <Box w="full" h={14} bg="bgDark" pos="fixed" bottom="0" borderTopRadius={10}>
       <Flex alignItems="center" justifyContent="space-between" w="full" flexDirection="row" px={2} h="full">
         <HStack spacing={4} h="full">
           <Center w="40px" h="40px">
@@ -219,7 +219,7 @@ export const Navbar = () => {
             </IconButton>
           </Box>
         </VStack>
-        <VStack pb={3} spacing={4}>
+        <VStack pb={5} spacing={4}>
           <CustomToolTip
             label={
               !isSaving

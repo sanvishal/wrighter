@@ -82,6 +82,49 @@ export const theme = extendTheme({
             },
           },
         }),
+        "solid-bite": (props: any) => ({
+          color: "#ffffff",
+          backgroundColor: "var(--chakra-colors-biteAccentColor)",
+          outline: "0px solid var(--chakra-colors-biteAccentColorTrans)",
+          _hover: {
+            color: "#ffffff",
+            backgroundColor: "var(--chakra-colors-biteAccentColor)",
+            outline: "2px solid var(--chakra-colors-biteAccentColorTrans)",
+            outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-biteAccentColor)",
+              outline: "0px solid var(--chakra-colors-biteAccentColorTrans)",
+            },
+            _loading: {
+              backgroundColor: "var(--chakra-colors-biteAccentColor)",
+              outline: "0px solid var(--chakra-colors-biteAccentColorTrans)",
+            },
+          },
+          _active: {
+            color: "#ffffff",
+            backgroundColor: "var(--chakra-colors-biteAccentColor)",
+            outline: "2px solid var(--chakra-colors-biteAccentColorTrans)",
+            outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-biteAccentColor)",
+              outline: "0px solid var(--chakra-colors-biteAccentColorTrans)",
+            },
+            _loading: {
+              backgroundColor: "var(--chakra-colors-biteAccentColor)",
+              outline: "0px solid var(--chakra-colors-biteAccentColorTrans)",
+            },
+          },
+          _focus: {
+            color: "#ffffff",
+            backgroundColor: "var(--chakra-colors-biteAccentColor)",
+            outline: "4px solid var(--chakra-colors-biteAccentColorTrans)",
+            outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-biteAccentColor)",
+              outline: "0px solid var(--chakra-colors-biteAccentColorTrans)",
+            },
+          },
+        }),
         ghost: (props: any) => ({
           color: "var(--chakra-colors-textLighter)",
           backgroundColor: "var(--chakra-colors-bgLight)",
@@ -186,9 +229,9 @@ export const theme = extendTheme({
   },
   semanticTokens: {
     colors: {
-      accentColor: "#6261fe",
+      accentColor: { default: "#6261fe", _dark: "#4242ff" },
       accentColorTrans: "#6261fe20",
-      biteAccentColor: "#F37021",
+      biteAccentColor: { default: "#F37021", _dark: "#d0570b" },
       biteAccentColorTrans: "#F3702120",
       bg: { default: "#fbfbfb", _dark: "#222326" },
       bgDark: { default: "#f2f2f3", _dark: "#1d1e20" },
@@ -216,6 +259,7 @@ export const theme = extendTheme({
       editorToolBarDropDownBg: { default: "#ffffff", _dark: "#2A2A2E" },
       editorToolBarDropDownBgHover: { default: "#F5F5F5", _dark: "#333439" },
       editorQuoteFormatting: { default: "#e1e3e7", _dark: "#393a3d" },
+      landingPageBgColor: { default: "#e8e8e8", _dark: "#57575738" },
     },
   },
 });

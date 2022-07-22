@@ -15,25 +15,21 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spinner,
-  Switch,
   Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useLiveQuery } from "dexie-react-hooks";
-import { nanoid } from "nanoid";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { FiBookOpen, FiCheck, FiChevronDown, FiPlus, FiSettings, FiX } from "react-icons/fi";
+import { FiBookOpen, FiCheck, FiPlus } from "react-icons/fi";
 import { FaSort } from "react-icons/fa";
 import { useQuery } from "react-query";
-import { useUserContext } from "../contexts/UserContext";
-import { db, WrightIDB } from "../services/dbService";
-import { clearAndCreateEditorContext, createWright, getAllWrights } from "../services/wrightService";
-import { Wright } from "../types";
-import { CustomToolTip } from "./CustomTooltip";
+import { useUserContext } from "../../contexts/UserContext";
+import { WrightIDB } from "../../services/dbService";
+import { createWright, getAllWrights } from "../../services/wrightService";
+import { Wright } from "../../types";
 import { WrightCard } from "./WrightCard";
-import { WrightSettings } from "./Editor/WrightSettings";
+import { WrightSettings } from "../Editor/WrightSettings";
 
 export const CreateWright = ({
   createWrightHandler,
