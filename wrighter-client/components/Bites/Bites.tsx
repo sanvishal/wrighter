@@ -15,6 +15,7 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   addDays,
@@ -33,6 +34,7 @@ import { FiCalendar, FiChevronLeft, FiChevronRight, FiLoader, FiPlus } from "rea
 import { TbBulb } from "react-icons/tb";
 import { Content } from "../Content";
 import { Calendar, DateRange, DateRangePicker, Range, RangeKeyDict } from "react-date-range";
+import { CreateBite } from "./CreateBite";
 
 export const Bites = (): JSX.Element => {
   const [carouselDate, setCarouselDate] = useState({
@@ -45,6 +47,7 @@ export const Bites = (): JSX.Element => {
     endDate: new Date(),
     key: "selection",
   });
+  const { isOpen: isBiteCreateOpen, onOpen: onBiteCreateOpen, onClose: onBiteCreateClose } = useDisclosure();
 
   const handleDateRangeSelect = (ranges: RangeKeyDict) => {
     if (ranges.selection && ranges.selection.startDate && ranges.selection.endDate) {
@@ -150,7 +153,7 @@ export const Bites = (): JSX.Element => {
             variant="solid-bite"
             rightIcon={<FiPlus style={{ marginBottom: "4px" }} />}
             // variant="ghost"
-            // onClick={createWrightHandler}
+            onClick={onBiteCreateOpen}
             // display={wrights?.length > 0 ? "flex" : "none"}
             // isLoading={isLoading}
           >
@@ -260,6 +263,7 @@ export const Bites = (): JSX.Element => {
           </Text>
         </VStack>
       </Box>
+      <CreateBite isOpen={isBiteCreateOpen} onClose={onBiteCreateClose} date={getSelectedDate()} />
     </Container>
   );
 };
