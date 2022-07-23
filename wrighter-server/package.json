@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "watch-node": "nodemon dist/index.js",
-    "postinstall": "npx prisma migrate deploy && tsc",
+    "postinstall": "npx prisma generate && tsc",
     "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
     "migrate": "npx prisma migrate dev --name init"
   },
