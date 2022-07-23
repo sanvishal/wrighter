@@ -66,7 +66,7 @@ async function build() {
   // @ts-ignore
   fastify.use(
     cors({
-      origin: ["http://localhost:3000", "http://127.0.0.1"],
+      origin: ["http://localhost:3000", "http://127.0.0.1", "https://wrighter.vercel.app"],
       credentials: true,
       exposedHeaders: ["set-cookie"],
     })
