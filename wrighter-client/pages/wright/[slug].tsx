@@ -8,8 +8,8 @@ import axios from "axios";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useMemo } from "react";
 import { API_BASE_URL } from "../../constants";
-import { pastePlugin } from "../../services/pluginService";
 import { Wright } from "../../types";
+import Head from "next/head";
 
 interface PageProps {
   wright: Wright & { user: string };
@@ -19,7 +19,7 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
   const plugins = useMemo(
     () => [
       mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
-      pastePlugin(),
+      // pastePlugin({injectCM: false}),
       highlightPlugin(),
       gfmPluin(),
       mathPlugin({ katexOptions: { output: "html" } }),
@@ -29,6 +29,9 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
 
   return (
     <Container maxW="5xl" id="wright-preview" pt={10}>
+      <Head>
+        <title>{wright ? wright.title : "wrighter • wright"}</title>
+      </Head>
       {wright ? (
         <>
           <HStack mb="-5px" justify="space-between" fontSize="sm" color="textLighter" opacity={0.6} w="full" spacing={3}>

@@ -4,7 +4,7 @@
   "description": "write the (w)right way",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently --kill-others -n CLIENT,SERVER -c green,red \"cd wrighter-client && yarn dev\" \"cd wrighter-server && yarn dev\""
+    "dev": "concurrently --kill-others -n CLIENT,SERVER -c green.bold,magenta.bold \"cd wrighter-client && yarn dev\" \"cd wrighter-server && yarn dev\""
   },
   "repository": {
     "type": "git",

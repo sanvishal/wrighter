@@ -12,8 +12,9 @@ import {
 } from "@chakra-ui/react";
 import debounce from "lodash.debounce";
 import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import Head from "next/head";
+import { Router, useRouter } from "next/router";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { FiExternalLink, FiSettings, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { Content } from "../components/Content";
@@ -61,14 +62,18 @@ const Wrighting: NextPage = () => {
     if (id && !isUserLoading) {
       getEditorContext();
     }
+
+    return () => {
+      saveWrightHandler();
+    };
   }, [id, isUserLoading]);
 
   const saveWrightHandler = async () => {
     if (id) {
       const wright = await db.editorContext.get(id);
       if (wright && wright?.id) {
+        await saveWright(!isAuthenticated(), wright);
         console.log("updated");
-        return await saveWright(!isAuthenticated(), wright);
       }
     }
   };
@@ -98,6 +103,9 @@ const Wrighting: NextPage = () => {
 
   return (
     <Content isWide>
+      <Head>
+        <title>wrighter • wrighting</title>
+      </Head>
       {!isContextLoaded ? (
         <Container maxWidth="full" centerContent mt={200}>
           <VStack spacing={4}>

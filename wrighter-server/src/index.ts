@@ -78,7 +78,6 @@ async function build() {
 
   fastify.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      console.log(request.cookies);
       await request.jwtVerify();
     } catch (e) {
       console.log(e);
@@ -116,7 +115,7 @@ build()
         console.error(err);
         process.exit(1);
       }
-      console.log(`⚡️ Server listening at ${address}`);
+      console.log(`⚡ Server listening at ${address}`);
     });
   })
   .catch((e) => console.error(e));

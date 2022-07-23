@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
 import mathPlugin from "@bytemd/plugin-math-ssr";
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import debounce from "lodash.debounce";
 import { db, WrightIDB } from "../../services/dbService";
 import { Wright } from "../../types";
@@ -23,7 +23,7 @@ export const Editor = ({
   const editorMode = useBreakpointValue({ base: "tab", md: "split" });
 
   const plugins = useMemo(
-    () => [pastePlugin(), highlightPlugin(), gfmPluin(), mathPlugin({ katexOptions: { output: "html" } })],
+    () => [pastePlugin({ injectCM: true }), highlightPlugin(), gfmPluin(), mathPlugin({ katexOptions: { output: "html" } })],
     []
   );
 

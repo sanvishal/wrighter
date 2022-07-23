@@ -13,6 +13,7 @@ import { useUserContext } from "../contexts/UserContext";
 import { useQuery } from "react-query";
 import { getWright } from "../services/wrightService";
 import { FiMoon, FiSun } from "react-icons/fi";
+import Head from "next/head";
 
 export interface ILocalPreviewProps {
   // wright: WrightIDB;
@@ -51,7 +52,7 @@ export const LocalPreview = (): JSX.Element => {
   const plugins = useMemo(
     () => [
       mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
-      pastePlugin(),
+      // pastePlugin({ injectCM: false }),
       highlightPlugin(),
       gfmPluin(),
       mathPlugin({ katexOptions: { output: "html" } }),
@@ -91,8 +92,21 @@ export const LocalPreview = (): JSX.Element => {
     return null;
   };
 
+  const getPageTitle = () => {
+    if (remoteWright) {
+      return remoteWright.title;
+    }
+    if (localWright) {
+      return localWright.title;
+    }
+    return "wrighter • wright";
+  };
+
   return (
     <Container maxW="5xl" pt={10} id="wright-preview" pos="relative">
+      <Head>
+        <title>{getPageTitle()}</title>
+      </Head>
       <Box pos="fixed" bottom="20px" left="20px">
         <IconButton
           aria-label="toggle theme"

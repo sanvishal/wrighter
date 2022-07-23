@@ -17,6 +17,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { AxiosError } from "axios";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { useQuery } from "react-query";
@@ -236,6 +237,9 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
 
   return (
     <VStack p={3}>
+      <Head>
+        <title>wrighter • signin</title>
+      </Head>
       <Text fontWeight={800} fontSize={{ base: "x-large", md: "xx-large" }}>
         Start Wrighting!
       </Text>

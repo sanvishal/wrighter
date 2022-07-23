@@ -26,3 +26,15 @@ export const slugify = (text: string) => {
     .replace(/^-+/, "") // Trim — from start of text
     .replace(/-+$/, ""); // Trim — from end of text
 };
+
+export const isValidUrl = (str: string) => {
+  let url;
+
+  try {
+    url = new URL(str);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+};
