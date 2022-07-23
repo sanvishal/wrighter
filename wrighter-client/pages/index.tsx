@@ -1,6 +1,7 @@
 import { Box, Button, Container, HStack, Input, Spacer, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { NextPage } from "next";
+import Head from "next/head";
 import { useState } from "react";
 import { GuestWarn } from "../components/GuestWarn";
 import Logo from "../components/Logo";
@@ -12,6 +13,9 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>wrighter</title>
+      </Head>
       <Box pos="fixed" top="0" left="0" w="full" h="100vh" id="waves-bg-overlay" zIndex="-1"></Box>
       <Box pos="fixed" top="0" left="0" w="full" h="100vh" id="waves-bg" zIndex="-2"></Box>
       <Container maxW="8xl">

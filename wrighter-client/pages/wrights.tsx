@@ -2,6 +2,7 @@ import { Box, Center, Container, HStack, Icon, Text, VStack } from "@chakra-ui/r
 import { useLiveQuery } from "dexie-react-hooks";
 import { NextPage } from "next";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { useEffect } from "react";
 import { FiBookOpen } from "react-icons/fi";
 import { Content } from "../components/Content";
@@ -13,6 +14,9 @@ const WrightsList = dynamic(() => import("../components/Wrights/WrightsList").th
 const Wrights: NextPage = () => {
   return (
     <Content>
+      <Head>
+        <title>wrighter • wrights</title>
+      </Head>
       <WrightsList />
     </Content>
   );

@@ -412,3 +412,76 @@ $preview-header-sizes: (
     }
   }
 }
+
+.mini-editor {
+  .bytemd {
+    height: 420px;
+    border-radius: 8px;
+
+    .CodeMirror-lines {
+      padding-top: 5px;
+      margin-left: 5px !important;
+
+      .cm-formatting-header {
+        margin-left: unset;
+      }
+    }
+
+    &-toolbar {
+      padding-left: 5px !important;
+      padding-right: 5px !important;
+      margin: 0px;
+      &-right [bytemd-tippy-path="4"] {
+        display: none;
+      }
+    }
+  }
+
+  .bytemd-preview {
+    .markdown-body {
+      margin-left: unset;
+      padding: 0px 20px;
+
+      h1 {
+        margin: 0.1em 0;
+      }
+      h2 {
+        line-height: 1.2;
+        margin-top: 0.4em;
+        margin-bottom: 0.1em;
+      }
+      h3 {
+        line-height: 1.1;
+        margin: 0.1em 0;
+      }
+    }
+  }
+}
+
+#bite-tag-select {
+  ul:empty {
+    display: none;
+  }
+  mark {
+    background-color: transparent;
+    color: var(--chakra-colors-textColor);
+  }
+  ul {
+    p span:nth-child(1) {
+      display: none;
+    }
+
+    p span:nth-child(2) {
+      background-color: transparent;
+      color: var(--chakra-colors-successGreen);
+      font-weight: 800;
+    }
+  }
+}
+
+#bite-tag-select > .chakra-stack {
+  margin-top: 0px;
+  .chakra-stack:first-of-type {
+    margin-top: 0px;
+  }
+}
