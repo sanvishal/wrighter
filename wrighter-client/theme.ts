@@ -125,6 +125,49 @@ export const theme = extendTheme({
             },
           },
         }),
+        "solid-negative-cta": (props: any) => ({
+          color: "#ffffff",
+          backgroundColor: "var(--chakra-colors-errorRed)",
+          outline: "0px solid var(--chakra-colors-errorRedTransBg)",
+          _hover: {
+            color: "#ffffff",
+            backgroundColor: "var(--chakra-colors-errorRed)",
+            outline: "2px solid var(--chakra-colors-errorRedTransBg)",
+            outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-errorRed)",
+              outline: "0px solid var(--chakra-colors-errorRedTransBg)",
+            },
+            _loading: {
+              backgroundColor: "var(--chakra-colors-errorRed)",
+              outline: "0px solid var(--chakra-colors-errorRedTransBg)",
+            },
+          },
+          _active: {
+            color: "#ffffff",
+            backgroundColor: "var(--chakra-colors-errorRed)",
+            outline: "2px solid var(--chakra-colors-errorRedTransBg)",
+            outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-errorRed)",
+              outline: "0px solid var(--chakra-colors-errorRedTransBg)",
+            },
+            _loading: {
+              backgroundColor: "var(--chakra-colors-errorRed)",
+              outline: "0px solid var(--chakra-colors-errorRedTransBg)",
+            },
+          },
+          _focus: {
+            color: "#ffffff",
+            backgroundColor: "var(--chakra-colors-errorRed)",
+            outline: "4px solid var(--chakra-colors-errorRedTransBg)",
+            outlineOffset: "-1px",
+            _disabled: {
+              backgroundColor: "var(--chakra-colors-errorRed)",
+              outline: "0px solid var(--chakra-colors-errorRedTransBg)",
+            },
+          },
+        }),
         ghost: (props: any) => ({
           color: "var(--chakra-colors-textLighter)",
           backgroundColor: "var(--chakra-colors-bgLight)",

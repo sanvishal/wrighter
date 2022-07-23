@@ -49,6 +49,7 @@ export const getAllWrights = async (isGuest: boolean): Promise<Wright[] | Wright
       });
       return await Promise.all(wrightsWithTags);
     }
+    return [];
   }
   const wrights = (await axios.get(`${API_BASE_URL}/wright?compact=true`, { withCredentials: true })) as AxiosResponse<Wright[]>;
   return wrights.data;
@@ -98,4 +99,18 @@ export const saveWright = async (isGuest: boolean, wright: Wright | WrightIDB): 
 export const changeWrightSettings = async (wrightId: string, isPublic: boolean, slug: string): Promise<AxiosResponse> => {
   const resp = await axios.put(`${API_BASE_URL}/wright/${wrightId}/settings`, { isPublic, slug }, { withCredentials: true });
   return resp.data;
+};
+
+export const deleteWright = async (isGuest: boolean, wrightId: string) => {
+  if (isGuest) {
+    await db.wrights.delete(wrightId);
+    const tagWrightsToDelete = (await db.tagWright.where("wrightId").equals(wrightId).toArray()).map(
+      (relation) => relation.id || ""
+    );
+    if (tagWrightsToDelete.length > 0) {
+      await db.tagWright.bulkDelete(tagWrightsToDelete);
+    }
+    return;
+  }
+  return axios.delete(`${API_BASE_URL}/wright/${wrightId}`, { withCredentials: true });
 };

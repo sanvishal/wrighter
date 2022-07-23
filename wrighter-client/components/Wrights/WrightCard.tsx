@@ -1,6 +1,6 @@
 import { Box, Center, HStack, Icon, IconButton, Stack, Text, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FiEdit, FiExternalLink, FiEye, FiEyeOff, FiHash, FiSettings, FiX } from "react-icons/fi";
+import { FiDelete, FiEdit, FiExternalLink, FiEye, FiEyeOff, FiHash, FiSettings, FiTrash2, FiX } from "react-icons/fi";
 import { Wright } from "../../types";
 import { CustomToolTip } from "../CustomTooltip";
 // @ts-ignore
@@ -10,10 +10,12 @@ export const WrightCard = ({
   wright,
   showSettings = false,
   onWrightSettingsClick,
+  onWrightDeleteClick,
 }: {
   wright: Wright;
   showSettings?: boolean;
   onWrightSettingsClick: (wright: Wright) => void;
+  onWrightDeleteClick: (wright: Wright) => void;
 }): JSX.Element => {
   const router = useRouter();
 
@@ -29,21 +31,21 @@ export const WrightCard = ({
       pos="relative"
       role="group"
     >
-      {showSettings && (
-        <Box
-          h="full"
-          w="70px"
-          pos="absolute"
-          opacity={0}
-          left="-25px"
-          top="0"
-          _groupHover={{
-            opacity: 1,
-            transform: "translateX(-30px)",
-          }}
-          transition="all 0.2s ease-in-out"
-          display={{ base: "none", sm: "block" }}
-        >
+      <Box
+        h="full"
+        w="70px"
+        pos="absolute"
+        opacity={0}
+        left="-25px"
+        top="0"
+        _groupHover={{
+          opacity: 1,
+          transform: "translateX(-30px)",
+        }}
+        transition="all 0.2s ease-in-out"
+        display={{ base: "none", sm: "block" }}
+      >
+        {showSettings && (
           <IconButton
             cursor="pointer"
             as={FiSettings}
@@ -53,11 +55,25 @@ export const WrightCard = ({
             variant="ghost"
             aria-label="wright settings"
             p={3}
+            mb={3}
           />
-        </Box>
-      )}
+        )}
+        <IconButton
+          cursor="pointer"
+          as={FiTrash2}
+          onClick={() => {
+            onWrightDeleteClick(wright);
+          }}
+          variant="ghost"
+          bg="errorRedTransBg"
+          _hover={{ bg: "errorRedTransBg" }}
+          _focus={{ bg: "errorRedTransBg" }}
+          aria-label="wright delete"
+          p={3}
+        />
+      </Box>
       <HStack alignItems="flex-start">
-        <Box w="90%">
+        <Box w={{ base: "85%", md: "90%" }}>
           <VStack align="flex-start" spacing={0}>
             <HStack spacing={2}>
               <Text fontWeight="800" fontSize="x-large">
@@ -109,8 +125,8 @@ export const WrightCard = ({
           </Text>
         </Box>
         <Stack
-          w="10%"
-          rowGap={{ base: 3, md: 0 }}
+          w={{ base: "15%", md: "10%" }}
+          rowGap={{ base: 2, md: 0 }}
           columnGap={{ base: 0, md: 3 }}
           flexDir={{ base: "column", md: "row" }}
           alignSelf={{ base: "flex-start", md: "center" }}
@@ -122,13 +138,19 @@ export const WrightCard = ({
                 router.push("/wrighting?id=" + wright.id);
               }}
               icon={<FiEdit strokeWidth={2.5} />}
+              height={{ base: "28px", md: "40px" }}
+              padding={{ base: "14px", md: "7px" }}
+              size={{ base: "sm", md: "md" }}
               borderRadius="100px"
               aria-label="edit wright"
             />
           </CustomToolTip>
           <CustomToolTip label="preview in new tab">
             <IconButton
+              size={{ base: "sm", md: "md" }}
               style={{ marginTop: "0px" }}
+              height={{ base: "28px", md: "40px" }}
+              padding={{ base: "14px", md: "7px" }}
               variant="ghost"
               icon={<FiExternalLink />}
               borderRadius="100px"
@@ -142,6 +164,9 @@ export const WrightCard = ({
           {showSettings && (
             <CustomToolTip label="preview in new tab">
               <IconButton
+                height={{ base: "28px", md: "auto" }}
+                padding={{ base: "14px", md: "auto" }}
+                size="sm"
                 style={{ marginTop: "0px" }}
                 display={{ base: "flex", md: "none" }}
                 // size={{ base: "sm", md: "md" }}
@@ -155,6 +180,25 @@ export const WrightCard = ({
               />
             </CustomToolTip>
           )}
+          <CustomToolTip label="delete wright">
+            <IconButton
+              display={{ base: "flex", md: "none" }}
+              size="sm"
+              style={{ marginTop: "0px" }}
+              height={{ base: "28px", md: "auto" }}
+              padding={{ base: "14px", md: "auto" }}
+              onClick={() => {
+                onWrightDeleteClick(wright);
+              }}
+              variant="ghost"
+              bg="errorRedTransBg"
+              _hover={{ bg: "errorRedTransBg" }}
+              _focus={{ bg: "errorRedTransBg" }}
+              icon={<FiTrash2 />}
+              borderRadius="100px"
+              aria-label="delete wright"
+            />
+          </CustomToolTip>
         </Stack>
       </HStack>
     </Box>
