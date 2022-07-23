@@ -77,20 +77,20 @@ export const WrightCard = ({
           <VStack align="flex-start" spacing={0}>
             <HStack spacing={2}>
               <Text fontWeight="800" fontSize="x-large">
-                {wright.title}
+                {wright.title} &nbsp;
+                <CustomToolTip
+                  placement="top"
+                  label={
+                    wright.isPublic
+                      ? `this wright is public`
+                      : `this wright is private${!showSettings ? ", guest wrighters cannot make wright public" : ""}`
+                  }
+                >
+                  <Text as="span">
+                    <Icon as={wright?.isPublic ? FiEye : FiEyeOff} color="textLighter" opacity={0.6} w="0.74em" h="0.74em" />
+                  </Text>
+                </CustomToolTip>
               </Text>
-              <CustomToolTip
-                placement="top"
-                label={
-                  wright.isPublic
-                    ? `this wright is public`
-                    : `this wright is private${!showSettings ? ", guests cannot make wright public" : ""}`
-                }
-              >
-                <Center pb={1} pl={2}>
-                  <Icon as={wright?.isPublic ? FiEye : FiEyeOff} color="textLighter" opacity={0.6} />
-                </Center>
-              </CustomToolTip>
             </HStack>
             <HStack spacing={1}>
               {wright.tags && wright.tags.length > 0 ? (

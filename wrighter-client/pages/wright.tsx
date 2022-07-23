@@ -5,10 +5,12 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { Content } from "../components/Content";
 import { ILocalPreviewProps } from "../components/LocalPreview";
+import { SuspenseFallback } from "../components/SuspenseFallback";
 const LocalPreview = dynamic<ILocalPreviewProps>(
   () => import("../components/LocalPreview").then((module) => module.LocalPreview) as any,
   {
     ssr: false,
+    loading: () => <SuspenseFallback />,
   }
 );
 
