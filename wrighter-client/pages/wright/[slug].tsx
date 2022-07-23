@@ -11,7 +11,11 @@ import { API_BASE_URL } from "../../constants";
 import { pastePlugin } from "../../services/pluginService";
 import { Wright } from "../../types";
 
-const Wrights: NextPage = ({ wright }: { wright: Wright & { user: string } }) => {
+interface PageProps {
+  wright: Wright & { user: string };
+}
+
+const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
   const plugins = useMemo(
     () => [
       mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
@@ -79,7 +83,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         wright: req.data,
-        // revalidate: 10,
+        revalidate: 10,
       },
     };
   } catch (e) {
