@@ -6,7 +6,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "allowJs": true
+    "allowJs": true,
+    "outDir": "dist"
   },
   "extends": "@tsconfig/node14/tsconfig.json"
 }

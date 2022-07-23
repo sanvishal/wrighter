@@ -6,8 +6,10 @@
   "author": "Vishal TK",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p tsconfig.json -w",
-    "start": "tsnd --respawn --transpile-only --exit-child src/index.ts",
+    "start": "node dist/index.js",
+    "watch-node": "nodemon dist/index.js",
+    "postinstall": "tsc",
+    "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
     "migrate": "npx prisma migrate dev --name init"
   },
   "dependencies": {
