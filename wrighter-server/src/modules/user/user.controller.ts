@@ -43,7 +43,7 @@ export const loginHandler = async (request: FastifyRequest<{ Body: LoginUserInpu
         path: "/",
         secure: process.env.NODE_ENV !== "development",
         httpOnly: true,
-        sameSite: process.env.NODE_ENV !== "development" ? false : "none",
+        sameSite: process.env.NODE_ENV === "development" ? false : "none",
         maxAge: 86400 * 2,
       })
       .code(200)
