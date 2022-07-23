@@ -1,0 +1,22 @@
+{
+  "name": "wrighter",
+  "version": "1.0.0",
+  "description": "write the (w)right way",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently --kill-others -n CLIENT,SERVER -c green,red \"cd wrighter-client && yarn dev\" \"cd wrighter-server && yarn dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanvishal/wrighter.git"
+  },
+  "author": "Vishal TK",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanvishal/wrighter/issues"
+  },
+  "homepage": "https://github.com/sanvishal/wrighter#readme",
+  "dependencies": {
+    "concurrently": "^7.3.0"
+  }
+}

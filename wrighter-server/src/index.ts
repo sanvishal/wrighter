@@ -14,7 +14,7 @@ import tagRoutes from "./modules/tag/tag.route";
 import { tagSchemas } from "./modules/tag/tag.schema";
 
 export const fastify = Fastify({
-  logger: true,
+  logger: process.env.NODE_ENV === "development",
 });
 
 declare module "fastify" {
