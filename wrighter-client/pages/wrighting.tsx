@@ -107,7 +107,7 @@ const Wrighting: NextPage = () => {
         <title>wrighter • wrighting</title>
       </Head>
       {!isContextLoaded ? (
-        <Container maxWidth="full" centerContent mt={200}>
+        <Container maxWidth="full" centerContent mt={20}>
           <VStack spacing={4}>
             <Spinner
               sx={{
@@ -132,13 +132,14 @@ const Wrighting: NextPage = () => {
               isPreviewFocusable
               value={title}
               fontWeight="800"
-              fontSize={{ base: "xx-large", md: "xxx-large" }}
+              fontSize={{ base: "26px", md: "xx-large" }}
               // w="94%"
               px={{ base: "1%", md: "4%" }}
               mx={{ base: "0px", md: "20px" }}
               // overflow="auto"
             >
               <EditablePreview
+                overflowY="auto"
                 w="full"
                 height={{ base: "48px", md: "58px" }}
                 bg={title.trim().length <= 0 ? "errorRedTransBg" : "transparent"}
@@ -164,6 +165,7 @@ const Wrighting: NextPage = () => {
               {!isAuthenticated() && (
                 <CustomToolTip label="preview in new tab">
                   <IconButton
+                    display={{ base: "none", md: "flex" }}
                     variant="ghost"
                     size="sm"
                     icon={<FiExternalLink />}
