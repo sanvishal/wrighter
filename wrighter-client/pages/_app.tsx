@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { UserProvider } from "../contexts/UserContext";
 import { useEffect } from "react";
 import { TagsProvider } from "../contexts/TagsContext";
+import { GrainyTexture } from "../components/GrainyTexture";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
@@ -27,6 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
+        <GrainyTexture />
         <UserProvider>
           <TagsProvider>
             <Component {...pageProps} />

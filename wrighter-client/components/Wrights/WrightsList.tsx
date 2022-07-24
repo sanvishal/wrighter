@@ -151,7 +151,7 @@ export const WrightsList = (): JSX.Element => {
   };
 
   return (
-    <Container maxW="full" pt={{ base: 5, md: 20 }}>
+    <Container maxW="full" pt={{ base: 5, md: 20 }} pb={20} className="fade-in">
       <HStack w="full" justify="space-between" wrap={{ base: "wrap", md: "nowrap" }}>
         <HStack spacing={4}>
           <Center borderRadius={10} w={16} h={16} bg="accentColorTrans">

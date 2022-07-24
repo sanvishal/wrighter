@@ -53,3 +53,9 @@ export type Bite = {
   userId: string;
   tags?: Tag[];
 };
+
+export type TagBite = {
+  id?: number;
+  tagId: string;
+  biteId: string;
+};

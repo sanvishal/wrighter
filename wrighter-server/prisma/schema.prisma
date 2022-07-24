@@ -19,6 +19,7 @@ model User {
   password String
   wrights Wright[]
   tags Tag[]
+  bites Bite[]
 }
 
 model Wright {
@@ -42,6 +43,7 @@ model Tag {
   createdBy User @relation(fields: [userId], references: [id])
   userId String
   tagsWrights TagWright[]
+  tagBites TagBite[]
 }
 
 model TagWright {
@@ -52,4 +54,25 @@ model TagWright {
   wrightId String
 
   @@unique([tagId, wrightId])
+}
+
+model Bite {
+  id String @id
+  title String @db.VarChar(150)
+  content String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy User @relation(fields: [userId], references: [id])
+  userId String
+  tagBites TagBite[]
+}
+
+model TagBite {
+  id Int @id @default(autoincrement())
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId String
+  bite Bite @relation(fields: [biteId], references: [id], onDelete: Cascade)
+  biteId String
+
+  @@unique([tagId, biteId])
 }

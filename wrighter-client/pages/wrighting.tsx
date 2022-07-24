@@ -107,7 +107,7 @@ const Wrighting: NextPage = () => {
         <title>wrighter • wrighting</title>
       </Head>
       {!isContextLoaded ? (
-        <Container maxWidth="full" centerContent mt={20}>
+        <Container maxWidth="full" centerContent mt={16}>
           <VStack spacing={4}>
             <Spinner
               sx={{
@@ -125,7 +125,7 @@ const Wrighting: NextPage = () => {
         </Container>
       ) : (
         <>
-          <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3} pos="relative">
+          <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3} pos="relative" className="fade-in">
             <Editable
               defaultValue={title}
               height={{ base: "48px", md: "58px" }}

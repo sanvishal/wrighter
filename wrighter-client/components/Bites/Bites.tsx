@@ -11,30 +11,25 @@ import {
   Popover,
   PopoverArrow,
   PopoverBody,
-  PopoverCloseButton,
   PopoverContent,
-  PopoverHeader,
   PopoverTrigger,
   useDisclosure,
+  Stack,
+  Spinner,
 } from "@chakra-ui/react";
-import {
-  addDays,
-  compareAsc,
-  compareDesc,
-  differenceInDays,
-  format,
-  formatDistanceToNow,
-  formatRelative,
-  isEqual,
-  subDays,
-} from "date-fns";
-import { formatDistance } from "date-fns/esm";
+import { addDays, compareDesc, differenceInDays, format, formatDistanceToNow, subDays } from "date-fns";
 import { useEffect, useState } from "react";
 import { FiCalendar, FiChevronLeft, FiChevronRight, FiLoader, FiPlus } from "react-icons/fi";
 import { TbBulb } from "react-icons/tb";
-import { Content } from "../Content";
-import { Calendar, DateRange, DateRangePicker, Range, RangeKeyDict } from "react-date-range";
+import { DateRange, Range, RangeKeyDict } from "react-date-range";
 import { CreateBite } from "./CreateBite";
+import { useMutation, useQuery } from "react-query";
+import { deleteBite, getBites } from "../../services/biteService";
+import { useUserContext } from "../../contexts/UserContext";
+// @ts-ignore
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import { BiteCard } from "./BiteCard";
+import { Bite } from "../../types";
 
 export const Bites = (): JSX.Element => {
   const [carouselDate, setCarouselDate] = useState({
@@ -48,11 +43,11 @@ export const Bites = (): JSX.Element => {
     key: "selection",
   });
   const { isOpen: isBiteCreateOpen, onOpen: onBiteCreateOpen, onClose: onBiteCreateClose } = useDisclosure();
+  const { isAuthenticated } = useUserContext();
 
   const handleDateRangeSelect = (ranges: RangeKeyDict) => {
     if (ranges.selection && ranges.selection.startDate && ranges.selection.endDate) {
       const diff = differenceInDays(ranges.selection.endDate, ranges.selection.startDate);
-      console.log(compareDesc(ranges.selection.startDate, ranges.selection.endDate));
       if (diff > 20) {
         setSelectionDateRange({
           startDate: ranges.selection.startDate,
@@ -134,8 +129,45 @@ export const Bites = (): JSX.Element => {
     });
   }, [selectedCarouselIdx]);
 
+  const getBitesHandler = async () => {
+    if (selectionDateRange.startDate && selectionDateRange.endDate) {
+      const bites = await getBites(!isAuthenticated(), selectionDateRange.startDate, selectionDateRange.endDate);
+      bites.sort((a, b) => a.createdAt.localeCompare(b.createdAt) * -1);
+      return bites;
+    }
+    return [];
+  };
+
+  const { mutate: biteDeleteRequest } = useMutation((biteToDelete: Bite) => deleteBite(!isAuthenticated(), biteToDelete.id));
+
+  const {
+    refetch: getBitesRequest,
+    data: bites,
+    isFetching: isBitesLoading,
+  } = useQuery("getBites", () => getBitesHandler(), {
+    enabled: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const onDeleteHandler = async (biteToDelete: Bite) => {
+    await biteDeleteRequest(biteToDelete);
+    if (!isAuthenticated()) {
+      // fake delay cuz indexeddb deletion is not consistent
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+    await getBitesRequest();
+  };
+
+  useEffect(() => {
+    getBitesRequest();
+  }, [selectionDateRange, carouselDate.start]);
+
+  const triggerRefresh = () => {
+    getBitesRequest();
+  };
+
   return (
-    <Container maxW="full" pt={{ base: 5, md: 20 }}>
+    <Container maxW="full" pt={{ base: 5, md: 20 }} pb={20} overflowX="hidden" className="fade-in">
       <HStack w="full" justify="space-between">
         <HStack spacing={4}>
           <Center borderRadius={10} w={16} h={16} bg="biteAccentColorTrans">
@@ -145,26 +177,36 @@ export const Bites = (): JSX.Element => {
             <Text fontWeight="800" fontSize="xx-large">
               Bites
             </Text>
-            <Text color="textLighter">jot down bite-sized thoughts</Text>
+            <Text color="textLighter">jot down bite-sized thoughts and information</Text>
           </VStack>
         </HStack>
-        <HStack width={{ base: "100%", md: "auto" }} justifyContent={{ base: "center" }} style={{ marginTop: "20px" }}>
-          <Button
-            variant="solid-bite"
-            rightIcon={<FiPlus style={{ marginBottom: "4px" }} />}
-            // variant="ghost"
-            onClick={onBiteCreateOpen}
-            // display={wrights?.length > 0 ? "flex" : "none"}
-            // isLoading={isLoading}
-          >
-            Create Bite
-          </Button>
-        </HStack>
+        <Button
+          variant="solid-bite"
+          rightIcon={<FiPlus style={{ marginBottom: "2px" }} />}
+          onClick={onBiteCreateOpen}
+          display={{ base: "none", md: "flex" }}
+        >
+          Create Bite
+        </Button>
+        <IconButton
+          aria-label="create bite"
+          variant="solid-bite"
+          as={FiPlus}
+          size="md"
+          p={2}
+          onClick={onBiteCreateOpen}
+          display={{ base: "flex", md: "none" }}
+        />
       </HStack>
       <Box mt={8} w="full">
-        <HStack justifyContent="space-between">
-          <HStack spacing={4}>
-            <Box as="button" w={10} h="90px" onClick={() => handleCarouselChange(-1)}>
+        <Stack
+          justifyContent={{ md: "space-between", base: "unset" }}
+          rowGap={{ base: 5, md: 0 }}
+          alignItems={{ base: "center", md: "unset" }}
+          direction={{ base: "column", md: "row" }}
+        >
+          <HStack spacing={{ md: 4, base: 2 }}>
+            <Box as="button" w={10} h="90px" onClick={() => handleCarouselChange(-1)} display={{ base: "none", md: "block" }}>
               <IconButton as={FiChevronLeft} aria-label="carousel date back" variant="ghost" p={2} />
             </Box>
             {[1, 2, 3, 4, 5, 6, 7].map((val, idx) => {
@@ -172,9 +214,9 @@ export const Bites = (): JSX.Element => {
               return (
                 <Box
                   as="button"
-                  w={16}
-                  h="90px"
-                  bg={idx === selectedCarouselIdx ? "bgLighter" : "bgLight"}
+                  w={{ base: 10, md: 16 }}
+                  h={{ base: "70px", md: "90px" }}
+                  bg={idx === selectedCarouselIdx ? "bgLight" : "bgLighter"}
                   opacity={idx === selectedCarouselIdx ? 1 : 0.6}
                   transform={idx === selectedCarouselIdx ? "scale(1.15)" : "scale(1)"}
                   shadow={idx === selectedCarouselIdx ? "md" : "unset"}
@@ -205,14 +247,14 @@ export const Bites = (): JSX.Element => {
                   <Center w="full" h="full">
                     <VStack>
                       <VStack spacing={1}>
-                        <Text fontWeight="bold" color="textLighter" fontSize="sm">
+                        <Text fontWeight="bold" color="textLighter" fontSize={{ md: "sm", base: "10px" }}>
                           {format(currDate, "EEE")}
                         </Text>
-                        <Text fontWeight="800" color="textLight" fontSize="xx-large" lineHeight={1}>
+                        <Text fontWeight="800" color="textLight" fontSize={{ md: "xx-large", base: "md" }} lineHeight={1}>
                           {format(currDate, "dd")}
                         </Text>
                       </VStack>
-                      <Text fontWeight="bold" color="textLighter" fontSize="xs" opacity={0.5}>
+                      <Text fontWeight="bold" color="textLighter" fontSize={{ md: "sm", base: "10px" }} opacity={0.5}>
                         {format(currDate, "LLL")}
                       </Text>
                     </VStack>
@@ -220,40 +262,58 @@ export const Bites = (): JSX.Element => {
                 </Box>
               );
             })}
-            <Box as="button" w={10} h="90px" onClick={() => handleCarouselChange(1)}>
+            <Box as="button" w={10} h="90px" onClick={() => handleCarouselChange(1)} display={{ base: "none", md: "block" }}>
               <IconButton as={FiChevronRight} aria-label="carousel date forward" variant="ghost" p={2} />
             </Box>
           </HStack>
-          <Popover>
-            <PopoverTrigger>
-              {selectionDateRange.startDate && selectionDateRange.endDate && (
-                <HStack spacing={0} cursor="pointer">
-                  <HStack fontSize="sm" bg="bgLight" color="textLighter" h="40px" pl={3} borderLeftRadius={10} pt="2px">
-                    <Text>{format(selectionDateRange.startDate, "dd MMM yy")}</Text>
-                    <Text>-</Text>
-                    <Text>{format(selectionDateRange.endDate, "dd MMM yy")}</Text>
+          <HStack justifyContent={{ base: "space-between", md: "unset" }} w={{ base: "full", md: "auto" }}>
+            <Popover>
+              <PopoverTrigger>
+                {selectionDateRange.startDate && selectionDateRange.endDate && (
+                  <HStack spacing={0} cursor="pointer">
+                    <HStack fontSize="sm" bg="bgLight" color="textLighter" h="40px" pl={3} borderLeftRadius={10} pt="2px">
+                      <Text>{format(selectionDateRange.startDate, "dd MMM")}</Text>
+                      <Text>-</Text>
+                      <Text>{format(selectionDateRange.endDate, "dd MMM")}</Text>
+                    </HStack>
+                    <Box>
+                      <IconButton as={FiCalendar} aria-label="calender open" variant="ghost" p={3} borderLeftRadius={0} />
+                    </Box>
                   </HStack>
-                  <Box>
-                    <IconButton as={FiCalendar} aria-label="calender open" variant="ghost" p={3} borderLeftRadius={0} />
-                  </Box>
-                </HStack>
-              )}
-            </PopoverTrigger>
-            <PopoverContent maxW="unset" minW="unset" width="auto">
-              <PopoverArrow />
-              <PopoverBody maxW="unset" minW="unset">
-                <DateRange
-                  dragSelectionEnabled
-                  rangeColors={["var(--chakra-colors-biteAccentColor)", "red", "blue"]}
-                  editableDateInputs
-                  ranges={[selectionDateRange]}
-                  onChange={handleDateRangeSelect}
-                  className="date-range-picker"
-                />
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-        </HStack>
+                )}
+              </PopoverTrigger>
+              <PopoverContent maxW="unset" minW="unset" width="auto">
+                <PopoverArrow />
+                <PopoverBody maxW="unset" minW="unset">
+                  <DateRange
+                    dragSelectionEnabled
+                    rangeColors={["var(--chakra-colors-biteAccentColor)", "red", "blue"]}
+                    editableDateInputs
+                    ranges={[selectionDateRange]}
+                    onChange={handleDateRangeSelect}
+                    className="date-range-picker"
+                  />
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+            <HStack display={{ base: "flex", md: "none" }}>
+              <IconButton
+                as={FiChevronLeft}
+                onClick={() => handleCarouselChange(-1)}
+                aria-label="carousel date back"
+                variant="ghost"
+                p={2}
+              />
+              <IconButton
+                as={FiChevronRight}
+                onClick={() => handleCarouselChange(1)}
+                aria-label="carousel date forward"
+                variant="ghost"
+                p={2}
+              />
+            </HStack>
+          </HStack>
+        </Stack>
         <VStack mt={8} alignItems="flex-start" spacing={-1}>
           <Text fontWeight={800} fontSize="3xl">
             {getSelectedDateString()}
@@ -263,7 +323,48 @@ export const Bites = (): JSX.Element => {
           </Text>
         </VStack>
       </Box>
-      <CreateBite isOpen={isBiteCreateOpen} onClose={onBiteCreateClose} date={getSelectedDate()} />
+      <Box mt={10}>
+        {isBitesLoading ? (
+          <Center mt={20}>
+            <Spinner
+              sx={{
+                "--spinner-size": "2rem",
+                borderBottomColor: "textLighter",
+                borderLeftColor: "textLighter",
+                borderTopColor: "transparent",
+                borderRightColor: "transparent",
+              }}
+            />
+          </Center>
+        ) : (
+          <>
+            {bites && bites.length === 0 && (
+              <Center mt={16} flexDirection="column" gap={2} className="fade-in">
+                <Text fontSize="lg" color="textLighter">
+                  No bites found on {format(getSelectedDate(), "do MMM")}, create one?
+                </Text>
+                <Button variant="ghost" rightIcon={<FiPlus style={{ marginBottom: "2px" }} />} onClick={onBiteCreateOpen}>
+                  Create Bite
+                </Button>
+              </Center>
+            )}
+            <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2 }} className="fade-in">
+              <Masonry gutter="20px">
+                {bites &&
+                  bites.map((bite) => {
+                    return <BiteCard bite={bite} key={bite.id} onDeleteClick={onDeleteHandler} />;
+                  })}
+              </Masonry>
+            </ResponsiveMasonry>
+          </>
+        )}
+      </Box>
+      <CreateBite
+        isOpen={isBiteCreateOpen}
+        onClose={onBiteCreateClose}
+        date={getSelectedDate()}
+        triggerRefresh={triggerRefresh}
+      />
     </Container>
   );
 };

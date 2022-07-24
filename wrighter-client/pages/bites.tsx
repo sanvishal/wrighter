@@ -6,7 +6,7 @@ import { Content } from "../components/Content";
 import { SuspenseFallback } from "../components/SuspenseFallback";
 const Bites = dynamic(() => import("../components/Bites/Bites").then((module) => module.Bites) as any, {
   ssr: false,
-  loading: () => <SuspenseFallback />,
+  loading: () => <SuspenseFallback message="crunching your bites..." />,
 });
 
 const BitesPage: NextPage = () => {

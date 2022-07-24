@@ -1,5 +1,5 @@
 import Dexie, { Table } from "dexie";
-import { Tag, TagWright, Wright } from "../types";
+import { Bite, Tag, TagBite, TagWright, Wright } from "../types";
 
 export interface WrightIDB extends Partial<Wright> {}
 
@@ -8,6 +8,8 @@ export class IDB extends Dexie {
   editorContext!: Table<WrightIDB>;
   tags!: Table<Tag>;
   tagWright!: Table<TagWright>;
+  bites!: Table<Bite>;
+  tagBite!: Table<TagBite>;
 
   constructor() {
     super("wrighter");
@@ -16,6 +18,8 @@ export class IDB extends Dexie {
       editorContext: "++id, title, head, createdAt, updatedAt, userId, content",
       tags: "++id, name, color, userId",
       tagWright: "++id, tagId, wrightId",
+      bites: "++id, title, content, type, createdAt, updatedAt, userId",
+      tagBite: "++id, tagId, biteId",
     });
   }
 }
