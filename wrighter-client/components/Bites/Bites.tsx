@@ -1,35 +1,41 @@
 import {
-  Container,
-  HStack,
-  Center,
-  Icon,
-  VStack,
-  Text,
   Box,
   Button,
+  Center,
+  Container,
+  HStack,
+  Icon,
   IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
-  useDisclosure,
-  Stack,
   Spinner,
+  Stack,
+  Text,
+  useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
-import { addDays, compareDesc, differenceInDays, format, formatDistanceToNow, subDays } from "date-fns";
-import { useEffect, useState } from "react";
-import { FiCalendar, FiChevronLeft, FiChevronRight, FiLoader, FiPlus } from "react-icons/fi";
-import { TbBulb } from "react-icons/tb";
+import { addDays, differenceInDays, format, formatDistanceToNow, subDays } from "date-fns";
+import { ChangeEvent, useEffect, useState } from "react";
 import { DateRange, Range, RangeKeyDict } from "react-date-range";
-import { CreateBite } from "./CreateBite";
+import { FiCalendar, FiCheck, FiChevronLeft, FiChevronRight, FiFilter, FiHash, FiLoader, FiPlus } from "react-icons/fi";
+import { TbBulb } from "react-icons/tb";
 import { useMutation, useQuery } from "react-query";
-import { deleteBite, getBites } from "../../services/biteService";
 import { useUserContext } from "../../contexts/UserContext";
+import { deleteBite, getBites } from "../../services/biteService";
+import { CreateBite } from "./CreateBite";
+import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { UseMultipleSelectionStateChange } from "downshift";
 // @ts-ignore
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import { useTagsContext } from "../../contexts/TagsContext";
+import { ACTag, Bite } from "../../types";
 import { BiteCard } from "./BiteCard";
-import { Bite } from "../../types";
 
 export const Bites = (): JSX.Element => {
   const [carouselDate, setCarouselDate] = useState({
@@ -44,6 +50,17 @@ export const Bites = (): JSX.Element => {
   });
   const { isOpen: isBiteCreateOpen, onOpen: onBiteCreateOpen, onClose: onBiteCreateClose } = useDisclosure();
   const { isAuthenticated } = useUserContext();
+  const { tags: allTags } = useTagsContext();
+  const [tags, setTags] = useState<ACTag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<ACTag[]>([]);
+
+  useEffect(() => {
+    setTags(
+      allTags.map((tag) => {
+        return { ...tag, label: tag.name, value: tag.name };
+      })
+    );
+  }, [allTags]);
 
   const handleDateRangeSelect = (ranges: RangeKeyDict) => {
     if (ranges.selection && ranges.selection.startDate && ranges.selection.endDate) {
@@ -164,6 +181,13 @@ export const Bites = (): JSX.Element => {
 
   const triggerRefresh = () => {
     getBitesRequest();
+  };
+
+  const handleTagSelectStateChange = (changes: UseMultipleSelectionStateChange<ACTag>) => {
+    // enums is undefined and does not work for some reason
+    if (changes.type === "__function_add_selected_item__" || changes.type === "__function_remove_selected_item__") {
+      setSelectedTags(changes?.selectedItems || []);
+    }
   };
 
   return (
@@ -314,14 +338,76 @@ export const Bites = (): JSX.Element => {
             </HStack>
           </HStack>
         </Stack>
-        <VStack mt={8} alignItems="flex-start" spacing={-1}>
-          <Text fontWeight={800} fontSize="3xl">
-            {getSelectedDateString()}
-          </Text>
-          <Text fontWeight="bold" fontSize="large" color="textLighter" opacity={0.6}>
-            {getRelativeSelectedDateString()}
-          </Text>
-        </VStack>
+        <HStack justifyContent="space-between">
+          <VStack mt={8} alignItems="flex-start" spacing={-1}>
+            <Text fontWeight={800} fontSize="3xl">
+              {getSelectedDateString()}
+            </Text>
+            <Text fontWeight="bold" fontSize="large" color="textLighter" opacity={0.6}>
+              {getRelativeSelectedDateString()}
+            </Text>
+          </VStack>
+          <Popover>
+            <PopoverTrigger>
+              <IconButton icon={<FiFilter />} aria-label="bite filter" variant="ghost" p={3} cursor="pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverBody>
+                <VStack w="full" alignItems="flex-start" id="bite-tag-select" className="tag-filter">
+                  {selectedTags.length === 0 && (
+                    <Text fontSize="sm" as="i" color="textLighter" w="full" textAlign="center">
+                      no tags selected
+                    </Text>
+                  )}
+                  <CUIAutoComplete
+                    label=""
+                    placeholder="Filter by tags"
+                    hideToggleButton
+                    tagStyleProps={{
+                      bg: "bgLight",
+                      borderRadius: "10px",
+                      marginBottom: "5px !important",
+                      // marginTop: "5px !important",
+                      marginLeft: "0px !important",
+                      marginRight: "5px !important",
+                      fontSize: "sm",
+                      paddingTop: "3px",
+                      paddingBottom: "3px",
+                      height: "15px",
+                    }}
+                    disableCreateItem
+                    onStateChange={(changes: UseMultipleSelectionStateChange<ACTag>) => handleTagSelectStateChange(changes)}
+                    inputStyleProps={{ position: "relative", width: "full" }}
+                    renderCustomInput={(props) => {
+                      return (
+                        <InputGroup w="full">
+                          <InputLeftElement children={<Icon as={FiHash} color="textLighter" mb={1.5} />} />
+                          <Input {...props} borderColor="inputBorderColor" size="md" borderRadius={8} height="36px" />
+                        </InputGroup>
+                      );
+                    }}
+                    selectedItems={selectedTags}
+                    listStyleProps={{
+                      position: "absolute",
+                      zIndex: 10000,
+                      width: "200px",
+                      borderRadius: "8px",
+                      overflow: "auto",
+                      height: "200px",
+                      backgroundColor: "bgLighter",
+                    }}
+                    // @ts-ignore
+                    icon={FiCheck}
+                    listItemStyleProps={{ borderRadius: "5px", margin: "4px", fontSize: "md", cursor: "pointer" }}
+                    highlightItemBg="bgLight"
+                    items={tags}
+                  />
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        </HStack>
       </Box>
       <Box mt={10}>
         {isBitesLoading ? (

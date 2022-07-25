@@ -485,3 +485,12 @@ $preview-header-sizes: (
     margin-top: 0px;
   }
 }
+
+.tag-filter > .chakra-stack {
+  width: 100% !important;
+  .chakra-stack:first-of-type {
+    height: 60px;
+    overflow-y: auto;
+    align-content: flex-start;
+  }
+}

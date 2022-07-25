@@ -44,6 +44,8 @@ model Tag {
   userId String
   tagsWrights TagWright[]
   tagBites TagBite[]
+
+  @@index([id, userId])
 }
 
 model TagWright {
@@ -54,6 +56,13 @@ model TagWright {
   wrightId String
 
   @@unique([tagId, wrightId])
+  @@index([tagId, wrightId])
+}
+
+enum BiteType {
+  LINK
+  TEXT
+  IMAGE
 }
 
 model Bite {
@@ -62,6 +71,7 @@ model Bite {
   content String @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  type BiteType
   createdBy User @relation(fields: [userId], references: [id])
   userId String
   tagBites TagBite[]
@@ -75,4 +85,5 @@ model TagBite {
   biteId String
 
   @@unique([tagId, biteId])
+  @@index([tagId, biteId])
 }

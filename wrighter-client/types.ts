@@ -29,6 +29,8 @@ export type Tag = {
   userId?: string;
 };
 
+export type ACTag = Tag & { label: string; value: string };
+
 export type TagWright = {
   id?: number;
   tagId: string;
