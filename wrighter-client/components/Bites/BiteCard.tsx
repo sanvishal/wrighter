@@ -1,11 +1,19 @@
 import { Box, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Portal, Text } from "@chakra-ui/react";
 import { FiHash, FiSettings, FiTrash2 } from "react-icons/fi";
-import { Bite, BiteType } from "../../types";
+import { Bite, BiteType, Tag } from "../../types";
 import { ImageCard } from "./Image/ImageCard";
 import { LinkCard } from "./Link/LinkCard";
 import { TextCard } from "./Text/TextCard";
 
-export const BiteCard = ({ bite, onDeleteClick }: { bite: Bite; onDeleteClick: (bite: Bite) => void }) => {
+export const BiteCard = ({
+  bite,
+  onDeleteClick,
+  onTagClick,
+}: {
+  bite: Bite;
+  onDeleteClick: (bite: Bite) => void;
+  onTagClick: (tag: Tag) => void;
+}) => {
   return (
     <>
       <Box p={3} bg="bgLight" borderRadius={10} _hover={{ boxShadow: "xl" }} transition="box-shadow 0.25s ease-in-out">
@@ -46,6 +54,8 @@ export const BiteCard = ({ bite, onDeleteClick }: { bite: Bite; onDeleteClick: (
                   role="group"
                   transition="background 0.2s ease-in-out"
                   _hover={{ bg: "bgLighter" }}
+                  cursor="pointer"
+                  onClick={() => onTagClick(tag)}
                 >
                   <Icon as={FiHash} color="textLighter" width="0.8em" height="0.8em" mb={0.5} />
                   <Text color="textLighter" fontSize="sm">

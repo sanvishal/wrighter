@@ -12,6 +12,7 @@ import {
   Popover,
   PopoverArrow,
   PopoverBody,
+  PopoverCloseButton,
   PopoverContent,
   PopoverTrigger,
   Spinner,
@@ -34,7 +35,7 @@ import { UseMultipleSelectionStateChange } from "downshift";
 // @ts-ignore
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { useTagsContext } from "../../contexts/TagsContext";
-import { ACTag, Bite } from "../../types";
+import { ACTag, Bite, Tag } from "../../types";
 import { BiteCard } from "./BiteCard";
 
 export const Bites = (): JSX.Element => {
@@ -188,6 +189,23 @@ export const Bites = (): JSX.Element => {
     if (changes.type === "__function_add_selected_item__" || changes.type === "__function_remove_selected_item__") {
       setSelectedTags(changes?.selectedItems || []);
     }
+  };
+
+  const onTagClickHandler = (tag: Tag) => {
+    if (!selectedTags.find((t) => t.id === tag.id)) {
+      setSelectedTags([...selectedTags, { ...tag, label: tag.name, value: tag.name }]);
+    }
+  };
+
+  const getFilteredBites = () => {
+    const selectedTagIds = selectedTags.map((tag) => tag.id);
+    return (bites || []).filter((bite) => {
+      if (selectedTags.length === 0) {
+        return true;
+      }
+      const biteTagIds = bite.tags ? bite.tags.map((tag) => tag.id) : [];
+      return selectedTagIds.some((tagId) => biteTagIds.includes(tagId));
+    });
   };
 
   return (
@@ -349,9 +367,15 @@ export const Bites = (): JSX.Element => {
           </VStack>
           <Popover>
             <PopoverTrigger>
-              <IconButton icon={<FiFilter />} aria-label="bite filter" variant="ghost" p={3} cursor="pointer" />
+              <Center pos="relative">
+                <IconButton icon={<FiFilter />} aria-label="bite filter" variant="ghost" p={3} cursor="pointer"></IconButton>
+                {selectedTags.length > 0 && (
+                  <Box pos="absolute" w="40%" h="2px" borderRadius={10} bg="biteAccentColor" bottom="-6px"></Box>
+                )}
+              </Center>
             </PopoverTrigger>
             <PopoverContent>
+              <PopoverCloseButton color="textLighter" />
               <PopoverArrow />
               <PopoverBody>
                 <VStack w="full" alignItems="flex-start" id="bite-tag-select" className="tag-filter">
@@ -424,7 +448,7 @@ export const Bites = (): JSX.Element => {
           </Center>
         ) : (
           <>
-            {bites && bites.length === 0 && (
+            {bites && bites.length === 0 ? (
               <Center mt={16} flexDirection="column" gap={2} className="fade-in">
                 <Text fontSize="lg" color="textLighter">
                   No bites found on {format(getSelectedDate(), "do MMM")}, create one?
@@ -433,15 +457,27 @@ export const Bites = (): JSX.Element => {
                   Create Bite
                 </Button>
               </Center>
+            ) : getFilteredBites().length === 0 ? (
+              <Center mt={16} flexDirection="column" gap={2} className="fade-in">
+                <Text fontSize="lg" color="textLighter">
+                  No bites found on {format(getSelectedDate(), "do MMM")} with tags{" "}
+                  <Text as="span" fontWeight="bold">
+                    {selectedTags.map((tag) => `#${tag.name}`).join(", ")}
+                  </Text>
+                </Text>
+              </Center>
+            ) : (
+              <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2 }} className="fade-in">
+                <Masonry gutter="20px">
+                  {bites &&
+                    getFilteredBites().map((bite) => {
+                      return (
+                        <BiteCard bite={bite} key={bite.id} onDeleteClick={onDeleteHandler} onTagClick={onTagClickHandler} />
+                      );
+                    })}
+                </Masonry>
+              </ResponsiveMasonry>
             )}
-            <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2 }} className="fade-in">
-              <Masonry gutter="20px">
-                {bites &&
-                  bites.map((bite) => {
-                    return <BiteCard bite={bite} key={bite.id} onDeleteClick={onDeleteHandler} />;
-                  })}
-              </Masonry>
-            </ResponsiveMasonry>
           </>
         )}
       </Box>
