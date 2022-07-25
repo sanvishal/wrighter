@@ -169,10 +169,8 @@ export const Bites = (): JSX.Element => {
 
   const onDeleteHandler = async (biteToDelete: Bite) => {
     await biteDeleteRequest(biteToDelete);
-    if (!isAuthenticated()) {
-      // fake delay cuz indexeddb deletion is not consistent
-      await new Promise((resolve) => setTimeout(resolve, 300));
-    }
+    // fake delay cuz deletion is not read consistent
+    await new Promise((resolve) => setTimeout(resolve, 300));
     await getBitesRequest();
   };
 

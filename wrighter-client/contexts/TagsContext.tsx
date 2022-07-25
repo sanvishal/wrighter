@@ -19,7 +19,7 @@ export const TagsProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
   const { isAuthenticated, isUserLoading } = useUserContext();
 
   const { refetch: fetchAllTagsRequest, isFetching: isTagsLoading } = useQuery(
-    "getAllTagsQuery",
+    ["getAllTagsQuery", !isAuthenticated()],
     () => getAllTags(!isAuthenticated()),
     { enabled: false, refetchOnWindowFocus: false }
   );

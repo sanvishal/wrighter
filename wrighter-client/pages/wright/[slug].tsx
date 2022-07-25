@@ -10,6 +10,7 @@ import { useMemo } from "react";
 import { API_BASE_URL } from "../../constants";
 import { Wright } from "../../types";
 import Head from "next/head";
+import { figCaptionPlugin } from "../../services/pluginService";
 
 interface PageProps {
   wright: Wright & { user: string };
@@ -20,6 +21,7 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
     () => [
       mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
       // pastePlugin({injectCM: false}),
+      figCaptionPlugin(),
       highlightPlugin(),
       gfmPluin(),
       mathPlugin({ katexOptions: { output: "html" } }),

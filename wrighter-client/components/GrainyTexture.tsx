@@ -8,8 +8,7 @@ export const GrainyTexture = () => {
       id="texture"
       className={colorMode === "dark" ? "dark-tex" : "light-tex"}
       style={{
-        display: "none", // for now
-        filter: colorMode === "dark" ? "contrast(600%) brightness(40%)" : "brightness(100%)",
+        filter: colorMode === "dark" ? "contrast(600%) brightness(35%)" : "brightness(100%)",
       }}
     >
       <filter id="noise">

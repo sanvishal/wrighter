@@ -28,7 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <GrainyTexture />
+        {/* <GrainyTexture /> */}
         <UserProvider>
           <TagsProvider>
             <Component {...pageProps} />

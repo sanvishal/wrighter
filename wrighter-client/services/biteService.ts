@@ -1,4 +1,5 @@
 import axios from "axios";
+import { addDays, startOfDay, subDays } from "date-fns";
 import compact from "lodash.compact";
 import { nanoid } from "nanoid";
 import { API_BASE_URL } from "../constants";
@@ -44,8 +45,12 @@ export const getBites = async (isGuest: boolean, startDate: Date, endDate: Date)
     });
     return await Promise.all(promisedBites);
   }
-  const resp = await axios.get<Bite[]>(`${API_BASE_URL}/bites`, {
-    params: { startDate: startDate.toDateString(), endDate: endDate.toISOString() },
+  const resp = await axios.get<Bite[]>(`${API_BASE_URL}/bite`, {
+    params: {
+      f: startDate.toISOString(),
+      t: endDate.toISOString(),
+    },
+    withCredentials: true,
   });
   return resp.data;
 };

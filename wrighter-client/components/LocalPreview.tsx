@@ -4,7 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { db, WrightIDB } from "../services/dbService";
-import { pastePlugin } from "../services/pluginService";
+import { figCaptionPlugin, pastePlugin } from "../services/pluginService";
 import mathPlugin from "@bytemd/plugin-math-ssr";
 import mediumZoom from "@bytemd/plugin-medium-zoom";
 import gfmPluin from "@bytemd/plugin-gfm";
@@ -51,8 +51,8 @@ export const LocalPreview = (): JSX.Element => {
 
   const plugins = useMemo(
     () => [
+      figCaptionPlugin(),
       mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
-      // pastePlugin({ injectCM: false }),
       highlightPlugin(),
       gfmPluin(),
       mathPlugin({ katexOptions: { output: "html" } }),
@@ -103,7 +103,7 @@ export const LocalPreview = (): JSX.Element => {
   };
 
   return (
-    <Container maxW="5xl" pt={10} id="wright-preview" pos="relative">
+    <Container maxW="5xl" pt={10} id="wright-preview" pos="relative" pb={10}>
       <Head>
         <title>{getPageTitle()}</title>
       </Head>

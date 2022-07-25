@@ -172,7 +172,7 @@ body {
   z-index: 9999999999999999;
   width: 100%;
   height: calc(100vh + 200px);
-  opacity: 0.12;
+  opacity: 0.18;
   pointer-events: none;
   transform: translateY(0px);
 }
@@ -182,12 +182,12 @@ body {
   only screen and (-webkit-min-device-pixel-ratio: 2),
   only screen and (min-device-pixel-ratio: 2) {
   #texture.dark-tex {
-    opacity: 0.18;
+    opacity: 0.3;
   }
 
   #texture.light-tex {
-    opacity: 0.2;
-    filter: contrast(100%) brightness(80%) !important;
+    opacity: 0.25;
+    filter: contrast(100%) brightness(75%) !important;
   }
 }
 
@@ -336,5 +336,15 @@ body {
   }
   100% {
     transform: translateY(0px);
+  }
+}
+
+.landing-img-cont {
+  height: 100vw;
+}
+
+@media screen and (min-width: 962px) {
+  .landing-img-cont {
+    height: 1000px;
   }
 }

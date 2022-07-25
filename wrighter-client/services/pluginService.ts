@@ -3,9 +3,12 @@ import remarkFigureCaption from "@microflash/remark-figure-caption";
 import type { BytemdPlugin } from "bytemd";
 import { turndownService } from "../services/turndownService";
 
+export const figCaptionPlugin = (): BytemdPlugin => {
+  return { remark: (processor) => processor.use(remarkFigureCaption) };
+};
+
 export const pastePlugin = ({ injectCM = false }: { injectCM?: boolean }): BytemdPlugin => {
   return {
-    remark: (processor) => processor.use(remarkFigureCaption),
     editorEffect(ctx) {
       if (window && injectCM) {
         console.log("cm window set");
