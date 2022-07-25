@@ -70,7 +70,7 @@ model Bite {
   id String @id
   title String @db.VarChar(150)
   content String @db.Text
-  createdAt DateTime @default(now())
+  createdAt DateTime 
   updatedAt DateTime @updatedAt
   type BiteType
   createdBy User @relation(fields: [userId], references: [id])
