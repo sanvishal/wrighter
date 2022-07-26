@@ -1,5 +1,6 @@
 import { Box, Container, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { CommandBarProvider } from "../contexts/CommandBarContext";
 import { useUserContext } from "../contexts/UserContext";
 import { MobileNav, Navbar } from "./Navbar";
 
@@ -18,19 +19,23 @@ export const Content = ({
     fetchUser();
   }, []);
 
-  return mobileCheck?.isMobile ? (
-    <Box h="100vh">
-      <Container maxW="full" p={0}>
-        {children}
-      </Container>
-      <MobileNav />
-    </Box>
-  ) : (
-    <Flex>
-      <Navbar />
-      <Container maxW={isWide ? "8xl" : "5xl"} pt={2}>
-        {children}
-      </Container>
-    </Flex>
+  return (
+    <CommandBarProvider>
+      {mobileCheck?.isMobile ? (
+        <Box h="100vh">
+          <Container maxW="full" p={0}>
+            {children}
+          </Container>
+          <MobileNav />
+        </Box>
+      ) : (
+        <Flex>
+          <Navbar />
+          <Container maxW={isWide ? "8xl" : "5xl"} pt={2}>
+            {children}
+          </Container>
+        </Flex>
+      )}
+    </CommandBarProvider>
   );
 };

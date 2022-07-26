@@ -135,15 +135,13 @@ const Home: NextPage = () => {
           </Box>
         </Center>
         <VStack mt={5} alignItems="flex-start" pos="relative">
-          <Text>
-            <Text fontWeight="bold" fontSize="xxx-large" lineHeight={1}>
-              Your <span style={{ opacity: 0.25 }}>**</span>
-              <span style={{ fontWeight: "900" }}>next writing companion,</span>
-              <span style={{ opacity: 0.25 }}>**</span>
-            </Text>
-            <Text fontSize="xxx-large" fontWeight="bold">
-              feature packed!
-            </Text>
+          <Text fontWeight="bold" fontSize="xxx-large" lineHeight={1}>
+            Your <span style={{ opacity: 0.25 }}>**</span>
+            <span style={{ fontWeight: "900" }}>next writing companion,</span>
+            <span style={{ opacity: 0.25 }}>**</span>
+          </Text>
+          <Text fontSize="xxx-large" fontWeight="bold">
+            feature packed!
           </Text>
           <Text
             display={{ base: "none", md: "block" }}

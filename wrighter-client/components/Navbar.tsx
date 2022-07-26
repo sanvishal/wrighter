@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Center,
   Flex,
   HStack,
@@ -12,33 +11,19 @@ import {
   MenuItem,
   MenuList,
   Spinner,
-  Text,
-  useBreakpointValue,
   useColorMode,
   VStack,
 } from "@chakra-ui/react";
-import Logo from "./Logo";
-import NavLink from "./NavLink";
 import Avvvatars from "avvvatars-react";
-import {
-  FiBookOpen,
-  FiCloud,
-  FiDatabase,
-  FiKey,
-  FiLogOut,
-  FiMessageCircle,
-  FiMessageSquare,
-  FiMoon,
-  FiSun,
-} from "react-icons/fi";
-import { TbBulb } from "react-icons/tb";
-import { CustomToolTip } from "./CustomTooltip";
-import { useUserContext } from "../contexts/UserContext";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { FiBookOpen, FiCloud, FiDatabase, FiKey, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
+import { TbBulb } from "react-icons/tb";
+import { useQueryClient } from "react-query";
+import { useUserContext } from "../contexts/UserContext";
 import { logout } from "../services/authService";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { useQuery, useQueryClient } from "react-query";
+import { CustomToolTip } from "./CustomTooltip";
+import Logo from "./Logo";
 
 export const MobileNav = (): JSX.Element => {
   const { user } = useUserContext();

@@ -10,9 +10,10 @@ export const figCaptionPlugin = (): BytemdPlugin => {
 export const pastePlugin = ({ injectCM = false }: { injectCM?: boolean }): BytemdPlugin => {
   return {
     editorEffect(ctx) {
+      // injecting the whole editor instance in window and using it feels illegal... but it works so... ¯\_(ツ)_/¯
       if (window && injectCM) {
         console.log("cm window set");
-        window["cm"] = ctx.editor;
+        window["cm"] = ctx;
       }
       ctx.editor.on("copy", (cm, event) => {
         if (cm.getSelection()) {
@@ -49,6 +50,7 @@ export const pastePlugin = ({ injectCM = false }: { injectCM?: boolean }): Bytem
       return () => {
         if (window && injectCM) {
           window.cm = null;
+          console.log("cm window destroy");
         }
       };
     },

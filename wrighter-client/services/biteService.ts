@@ -2,6 +2,7 @@ import axios from "axios";
 import { addDays, startOfDay, subDays } from "date-fns";
 import compact from "lodash.compact";
 import { nanoid } from "nanoid";
+import { useQuery } from "react-query";
 import { API_BASE_URL } from "../constants";
 import { Bite } from "../types";
 import { db } from "./dbService";
@@ -63,4 +64,27 @@ export const deleteBite = async (isGuest: boolean, biteId: string) => {
   }
   const resp = await axios.delete(`${API_BASE_URL}/bite/${biteId}`, { withCredentials: true });
   return resp.data;
+};
+
+export const searchBites = async (isGuest: boolean, query: string) => {
+  if (isGuest) {
+    return await db.bites
+      .filter((bite) => bite.title.toLowerCase().includes(query.toLowerCase()))
+      .limit(7)
+      .toArray();
+  }
+  const resp = await axios.get<Bite[]>(`${API_BASE_URL}/bite/search`, {
+    params: {
+      q: query,
+    },
+    withCredentials: true,
+  });
+  return resp.data;
+};
+
+export const useSearchBites = (isGuest: boolean, query: string) => {
+  return useQuery(["searchBites", query], () => searchBites(isGuest, query), {
+    enabled: false,
+    refetchOnWindowFocus: false,
+  });
 };

@@ -9,6 +9,7 @@ import debounce from "lodash.debounce";
 import { db, WrightIDB } from "../../services/dbService";
 import { Wright } from "../../types";
 import { figCaptionPlugin, pastePlugin } from "../../services/pluginService";
+import { useWrightingActions } from "../../contexts/CommandBarHooks/useWrightingActions";
 
 export const Editor = ({
   editorOnSaveHandler = () => {},
@@ -70,6 +71,8 @@ export const Editor = ({
       setId((router?.query?.id || "") as string);
     }
   }, [router.isReady]);
+
+  useWrightingActions();
 
   return (
     <Box>

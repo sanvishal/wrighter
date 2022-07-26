@@ -61,3 +61,8 @@ export type TagBite = {
   tagId: string;
   biteId: string;
 };
+
+export enum COMMAND_PARENT {
+  WRIGHT_SEARCH = "wright-search",
+  BITE_ATTACH = "bite-attach",
+}

@@ -22,6 +22,7 @@ import { CustomToolTip } from "../components/CustomTooltip";
 import { Editor } from "../components/Editor/Editor";
 import { Tags } from "../components/Editor/Tags";
 import { WrightSettings } from "../components/Editor/WrightSettings";
+import { useWrightingActions } from "../contexts/CommandBarHooks/useWrightingActions";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
 import { clearAndCreateEditorContext, getWright, saveWright } from "../services/wrightService";
