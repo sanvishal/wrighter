@@ -6,6 +6,7 @@ import {
   HStack,
   Icon,
   IconButton,
+  Stack,
   Text,
   useColorMode,
   useDisclosure,
@@ -32,8 +33,14 @@ const Home: NextPage = () => {
       <Box pos="absolute" top="0" left="0" w="full" h="150vh" id="waves-bg-overlay" zIndex="-1"></Box>
       <Box pos="absolute" top="0" left="0" w="full" h="150vh" id="waves-bg" zIndex="-2"></Box>
       <Container maxW="8xl">
-        <HStack w="full" justifyContent="space-between" pt={4}>
-          <HStack w="50px" h="50px" spacing={3}>
+        <Stack
+          w="full"
+          justifyContent={{ md: "space-between", base: "none" }}
+          alignItems={{ base: "center", md: "none" }}
+          pt={4}
+          flexDir={{ base: "column", md: "row" }}
+        >
+          <HStack w="50px" h="50px" spacing={3} justifyContent={{ md: "flex-start", base: "center" }}>
             <Box>
               <Logo />
             </Box>
@@ -57,12 +64,12 @@ const Home: NextPage = () => {
               </Button>
             </Box>
           </HStack>
-        </HStack>
-        <VStack mt={24} w="full" textAlign="center" spacing={0}>
-          <Text fontSize="x-large" color="textLighter" fontWeight="bold">
+        </Stack>
+        <VStack mt={{ base: 14, md: 24 }} w="full" textAlign="center" spacing={1}>
+          <Text fontSize={{ base: "md", md: "x-large" }} color="textLighter" fontWeight="bold">
             Your new favourite markdown editor
           </Text>
-          <Text fontSize="5rem" fontWeight={800} lineHeight={1}>
+          <Text fontSize={{ base: "xx-large", md: "5rem" }} fontWeight={800} lineHeight={1}>
             Minimal yet powerful writing app
           </Text>
           <Box h={8} />
@@ -98,7 +105,7 @@ const Home: NextPage = () => {
           <Box _groupHover={{ opacity: "0" }} opacity="1" pos="absolute" top="0" mt={10} transition="opacity 0.17s ease-in-out">
             <HStack w="full" justifyContent="space-between">
               <HStack>
-                <Text fontSize="xx-large" fontWeight="800" color="textLight">
+                <Text fontSize={{ md: "xx-large", base: "large" }} fontWeight="800" color="textLight">
                   Editor
                 </Text>
                 <Icon as={FiCornerRightDown} />
@@ -117,7 +124,7 @@ const Home: NextPage = () => {
           <Box _groupHover={{ opacity: "1" }} opacity="0" pos="absolute" top="0" mt={10} transition="opacity 0.17s ease-in-out">
             <HStack w="full" justifyContent="space-between">
               <HStack>
-                <Text fontSize="xx-large" fontWeight="800" color="textLight">
+                <Text fontSize={{ md: "xx-large", base: "large" }} fontWeight="800" color="textLight">
                   Viewer
                 </Text>
                 <Icon as={FiCornerRightDown} />
@@ -134,13 +141,13 @@ const Home: NextPage = () => {
             />
           </Box>
         </Center>
-        <VStack mt={5} alignItems="flex-start" pos="relative">
-          <Text fontWeight="bold" fontSize="xxx-large" lineHeight={1}>
+        <VStack mt={{ md: 5, base: 10 }} alignItems="flex-start" pos="relative">
+          <Text fontWeight="bold" fontSize={{ md: "xxx-large", base: "xx-large" }} lineHeight={1}>
             Your <span style={{ opacity: 0.25 }}>**</span>
             <span style={{ fontWeight: "900" }}>next writing companion,</span>
             <span style={{ opacity: 0.25 }}>**</span>
           </Text>
-          <Text fontSize="xxx-large" fontWeight="bold">
+          <Text fontSize={{ md: "xxx-large", base: "xx-large" }} fontWeight="bold" lineHeight={1}>
             feature packed!
           </Text>
           <Text
