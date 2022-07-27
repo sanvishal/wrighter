@@ -13,7 +13,7 @@ export class IDB extends Dexie {
 
   constructor() {
     super("wrighter");
-    this.version(1).stores({
+    this.version(2).stores({
       wrights: "++id, title, head, createdAt, updatedAt, userId, content",
       editorContext: "++id, title, head, createdAt, updatedAt, userId, content",
       tags: "++id, name, color, userId",
