@@ -25,12 +25,12 @@ export const useWrightingActions = () => {
     const headingActions: Action[] = [];
     for (let i = 1; i <= 6; i++) {
       headingActions.push({
-        id: `heading-${i}`,
-        icon: <FiType style={{ width: `${18 - i * 2}px`, height: `${18 - i * 2}px` }} />,
+        id: `wright-heading-${i}`,
+        icon: <FiType style={{ width: `${18 - i * 2}px`, height: `${18 - i * 2}px` }} color="var(--chakra-colors-accentColor)" />,
         parent: "wrighter-heading",
         name: `Heading ${i}`,
         keywords: "headings title big small" + `h${i}`,
-        priority: Priority.NORMAL,
+        priority: Priority.LOW,
         perform: () => {
           if (window.cm) {
             window.cm.replaceLines((line) => {
@@ -47,22 +47,15 @@ export const useWrightingActions = () => {
     return headingActions;
   };
 
-  const findSentenceFromLast = (text: string) => {
-    const sentences = text.split(/[.!?]/);
-    // remove las sentence from text
-    text = text.substring(0, text.length - sentences[sentences.length - 1].length);
-    return { text, sentence: sentences[sentences.length - 1] };
-  };
-
   const actions: Action[] = [
     {
       id: "wrighter-bold",
       name: "Bold",
       section: "Typography",
       keywords: "bold",
-      icon: <FiBold />,
+      icon: <FiBold color="var(--chakra-colors-accentColor)" />,
       subtitle: getShortcut("B"),
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.wrapText("**");
@@ -73,10 +66,10 @@ export const useWrightingActions = () => {
       id: "wrighter-italic",
       name: "Italic",
       section: "Typography",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       subtitle: getShortcut("I"),
       keywords: "italic slant oblique",
-      icon: <FiItalic />,
+      icon: <FiItalic color="var(--chakra-colors-accentColor)" />,
       perform: () => {
         if (window.cm) {
           window.cm.wrapText("*");
@@ -88,9 +81,9 @@ export const useWrightingActions = () => {
       name: "Headings",
       section: "Typography",
       keywords: "headings title big",
-      icon: <FiType />,
+      icon: <FiType color="var(--chakra-colors-accentColor)" />,
       subtitle: "h1 to h6",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
     },
     ...getHeadingActions(),
     {
@@ -98,9 +91,9 @@ export const useWrightingActions = () => {
       name: "Blockquote",
       section: "Formatting",
       keywords: "quote blockquote format",
-      icon: <FiArrowRight />,
+      icon: <FiArrowRight color="var(--chakra-colors-accentColor)" />,
       subtitle: "quote a block",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.replaceLines((line) => "> " + line);
@@ -112,9 +105,9 @@ export const useWrightingActions = () => {
       name: "Add URL",
       section: "Formatting",
       keywords: "url link address",
-      icon: <FiLink />,
+      icon: <FiLink color="var(--chakra-colors-accentColor)" />,
       subtitle: getShortcut("K"),
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.wrapText("[", "](url)");
@@ -131,9 +124,9 @@ export const useWrightingActions = () => {
       name: "Add Image Link",
       section: "Formatting",
       keywords: "url link address image attach",
-      icon: <FiImage />,
+      icon: <FiImage color="var(--chakra-colors-accentColor)" />,
       subtitle: "insert image by URL",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.wrapText("![", "](imgurl)");
@@ -150,9 +143,9 @@ export const useWrightingActions = () => {
       name: "Code",
       section: "Formatting",
       keywords: "code inline",
-      icon: <FiCode />,
+      icon: <FiCode color="var(--chakra-colors-accentColor)" />,
       subtitle: getShortcut("Shift + K"),
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.wrapText("`");
@@ -164,9 +157,9 @@ export const useWrightingActions = () => {
       name: "Code Block",
       section: "Formatting",
       keywords: "code block language",
-      icon: <FiCode />,
+      icon: <FiCode color="var(--chakra-colors-accentColor)" />,
       subtitle: getShortcut("Shift + C"),
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           if (window.cm.editor.getSelection().length === 0) {
@@ -185,9 +178,9 @@ export const useWrightingActions = () => {
       name: "Unordered List Item",
       section: "Formatting",
       keywords: "item list ul unordered bulletin",
-      icon: <FiList />,
+      icon: <FiList color="var(--chakra-colors-accentColor)" />,
       subtitle: getShortcut("Shift + U"),
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.replaceLines((line) => "- " + line);
@@ -199,9 +192,9 @@ export const useWrightingActions = () => {
       name: "Ordered List Item",
       section: "Formatting",
       keywords: "item list ol ordered bulletin numbering",
-      icon: <FiList />,
+      icon: <FiList color="var(--chakra-colors-accentColor)" />,
       subtitle: getShortcut("Shift + O"),
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.replaceLines((line, i) => `${i + 1}. ${line}`);
@@ -213,9 +206,9 @@ export const useWrightingActions = () => {
       name: "StrikeThrough",
       section: "Formatting",
       keywords: "strike mistake dash",
-      icon: <FiType />,
+      icon: <FiType color="var(--chakra-colors-accentColor)" />,
       subtitle: "strike through text",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.wrapText("~~");
@@ -227,9 +220,9 @@ export const useWrightingActions = () => {
       name: "Add Todo Item",
       section: "Extras",
       keywords: "todo item done check",
-      icon: <FiCheck />,
+      icon: <FiCheck color="var(--chakra-colors-accentColor)" />,
       subtitle: "add todo item",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.replaceLines((line) => "- [ ] " + line);
@@ -241,9 +234,9 @@ export const useWrightingActions = () => {
       name: "Add Table",
       section: "Extras",
       keywords: "table data columns rows",
-      icon: <FiAlignJustify />,
+      icon: <FiAlignJustify color="var(--chakra-colors-accentColor)" />,
       subtitle: "adds a table",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           const { line } = window.cm.appendBlock(`| heading |  |\n| --- | --- |\n|  |  |\n`);
@@ -256,9 +249,9 @@ export const useWrightingActions = () => {
       name: "Inline Formula",
       section: "Extras",
       keywords: "math formula katex inline",
-      icon: <TbMathFunction />,
+      icon: <TbMathFunction color="var(--chakra-colors-accentColor)" />,
       subtitle: "KaTeX inline formula",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.wrapText("$");
@@ -270,9 +263,9 @@ export const useWrightingActions = () => {
       name: "Formula Block",
       section: "Extras",
       keywords: "math formula katex block",
-      icon: <TbMathFunction />,
+      icon: <TbMathFunction color="var(--chakra-colors-accentColor)" />,
       subtitle: "KaTeX block formula",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           const { line } = window.cm.appendBlock("$$\n\\TeX\n$$");
@@ -285,9 +278,9 @@ export const useWrightingActions = () => {
       name: "Make Paragraph bold",
       section: "Extras",
       keywords: "bold text paragraph",
-      icon: <FiBold />,
+      icon: <FiBold color="var(--chakra-colors-accentColor)" />,
       subtitle: "makes a the current paragraph bold",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           window.cm.replaceLines((line) => {
@@ -302,9 +295,9 @@ export const useWrightingActions = () => {
       name: "Focus Mode",
       section: "This Wright",
       keywords: "focus mode fullscreen distraction",
-      icon: <FiMaximize />,
+      icon: <FiMaximize color="var(--chakra-colors-accentColor)" />,
       subtitle: "Go to Focus mode",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           // hackiest piece of code ever
@@ -318,9 +311,9 @@ export const useWrightingActions = () => {
       name: "Preview",
       section: "This Wright",
       keywords: "preview toggle write markdown",
-      icon: <FiEye />,
+      icon: <FiEye color="var(--chakra-colors-accentColor)" />,
       subtitle: "toggle the preview pane",
-      priority: Priority.HIGH,
+      priority: Priority.NORMAL,
       perform: () => {
         if (window.cm) {
           // hackiest piece of code ever

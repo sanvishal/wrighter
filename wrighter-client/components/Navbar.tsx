@@ -15,9 +15,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import Avvvatars from "avvvatars-react";
+import { useKBar } from "kbar";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { FiBookOpen, FiCloud, FiDatabase, FiKey, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
+import { FiBookOpen, FiCloud, FiCommand, FiDatabase, FiKey, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
 import { TbBulb } from "react-icons/tb";
 import { useQueryClient } from "react-query";
 import { useUserContext } from "../contexts/UserContext";
@@ -33,6 +34,7 @@ export const MobileNav = (): JSX.Element => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const queryclient = useQueryClient();
   const isSaving = queryclient.getQueryState("saveWrightQuery")?.isFetching;
+  const { query } = useKBar();
 
   const handleLogOut = async () => {
     setIsLoggingOut(true);
@@ -54,7 +56,7 @@ export const MobileNav = (): JSX.Element => {
               aria-label="go to bites"
               variant="ghost"
               onClick={() => {
-                router.push("/bites");
+                router.push("/bites", undefined, { shallow: true });
               }}
               size="sm"
               role="group"
@@ -67,7 +69,7 @@ export const MobileNav = (): JSX.Element => {
               aria-label="go to wrights"
               variant="ghost"
               onClick={() => {
-                router.push("/wrights");
+                router.push("/wrights", undefined, { shallow: true });
               }}
               size="sm"
               role="group"
@@ -77,6 +79,17 @@ export const MobileNav = (): JSX.Element => {
           </Box>
         </HStack>
         <HStack spacing={4}>
+          <Box>
+            <IconButton
+              aria-label="open command bar (cmd or ctrl + shift + p)"
+              variant="ghost"
+              icon={<Icon as={FiCommand} strokeWidth={2.5} />}
+              size="sm"
+              onClick={() => {
+                query.toggle();
+              }}
+            />
+          </Box>
           <Box pos="relative" mt={2}>
             {isSaving ? (
               <Spinner
@@ -156,6 +169,7 @@ export const Navbar = () => {
   const { isAuthenticated } = useUserContext();
   const queryclient = useQueryClient();
   const isSaving = queryclient.getQueryState("saveWrightQuery")?.isFetching;
+  const { query } = useKBar();
 
   const handleLogOut = async () => {
     setIsLoggingOut(true);
@@ -193,7 +207,7 @@ export const Navbar = () => {
                 aria-label="go to bites"
                 variant="ghost"
                 onClick={() => {
-                  router.push("/bites");
+                  router.push("/bites", undefined, { shallow: true });
                 }}
                 _hover={{ bg: "biteAccentColorTrans", color: "biteAccentColor" }}
                 _focus={{ bg: "biteAccentColorTrans", color: "biteAccentColor" }}
@@ -212,7 +226,7 @@ export const Navbar = () => {
                 _hover={{ bg: "accentColorTrans", color: "accentColor" }}
                 _focus={{ bg: "accentColorTrans", color: "accentColor" }}
                 onClick={() => {
-                  router.push("/wrights");
+                  router.push("/wrights", undefined, { shallow: true });
                 }}
                 size="sm"
                 role="group"
@@ -223,6 +237,19 @@ export const Navbar = () => {
           </Box>
         </VStack>
         <VStack pb={5} spacing={4}>
+          <CustomToolTip label="open command bar (cmd or ctrl + shift + p)" placement="right">
+            <Box>
+              <IconButton
+                aria-label="open command bar (cmd or ctrl + shift + p)"
+                variant="ghost"
+                icon={<Icon as={FiCommand} strokeWidth={2.5} />}
+                size="sm"
+                onClick={() => {
+                  query.toggle();
+                }}
+              />
+            </Box>
+          </CustomToolTip>
           <CustomToolTip
             label={
               !isSaving

@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import { Box, HStack, Text, useColorMode, VStack } from "@chakra-ui/react";
+import { Box, Center, HStack, Text, useColorMode, VStack } from "@chakra-ui/react";
 import {
   Action,
   ActionId,
@@ -53,9 +53,23 @@ const ResultItem = forwardRef(
         fontSize="lg"
       >
         {action.icon && (
-          <Box mb={0.5} color="textLight">
+          <Center
+            mb={0.5}
+            color="textLight"
+            bg={
+              !action.id.includes("miscother")
+                ? action.id.includes("wright")
+                  ? "accentColorTrans"
+                  : "biteAccentColorTrans"
+                : "bgLight"
+            }
+            w={8}
+            h={8}
+            p={1}
+            borderRadius={8}
+          >
             {action.icon}
-          </Box>
+          </Center>
         )}
         <VStack alignItems="flex-start" spacing={0}>
           <div>
@@ -68,7 +82,7 @@ const ResultItem = forwardRef(
                       marginRight: 8,
                     }}
                   >
-                    {ancestor.name}
+                    {ancestor.name.length > 14 ? ancestor.name.slice(0, 14) + "…" : ancestor.name}
                   </span>
                   <span
                     style={{
@@ -154,7 +168,7 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
       perform: () => {
         router.push("/wrights");
       },
-      icon: <FiBookOpen />,
+      icon: <FiBookOpen color="var(--chakra-colors-accentColor)" />,
       priority: Priority.LOW,
       subtitle: "all your wrightups are here",
     },
@@ -166,12 +180,12 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
       perform: () => {
         router.push("/bites");
       },
-      icon: <TbBulb />,
+      icon: <TbBulb color="var(--chakra-colors-biteAccentColor)" />,
       priority: Priority.LOW,
       subtitle: "jot down bite-sized thoughts and information",
     },
     {
-      id: "home-page",
+      id: "miscother-home-page",
       name: "Home Page",
       keywords: "email",
       section: "Navigation",
@@ -183,7 +197,16 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
       subtitle: "the landing page for wrighter",
     },
     {
-      id: "logout",
+      id: COMMAND_PARENT.BITE_ATTACH,
+      name: "Attach bite to current wright",
+      keywords: "bite wright attach put link",
+      section: "Actions",
+      icon: <TbBulb color="var(--chakra-colors-biteAccentColor)" />,
+      priority: Priority.LOW,
+      subtitle: "Attach bite to your wright you are editing right now",
+    },
+    {
+      id: "miscother-logout",
       name: "Logout/Exit",
       keywords: "logout user exit",
       section: "Navigation",
@@ -200,7 +223,7 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
   ];
 
   return (
-    <KBarProvider actions={routeActions} options={{ toggleShortcut: "$mod+/" }}>
+    <KBarProvider actions={routeActions} options={{ toggleShortcut: "$mod+Shift+P" }}>
       <ActionsProvider>{children}</ActionsProvider>
     </KBarProvider>
   );

@@ -25,11 +25,12 @@ import { UseMultipleSelectionStateChange } from "downshift";
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { FiCheck, FiHash } from "react-icons/fi";
 import { useMutation, useQuery } from "react-query";
+import { useBitesContext } from "../../contexts/BitesContext";
 import { useTagsContext } from "../../contexts/TagsContext";
 import { useUserContext } from "../../contexts/UserContext";
 import { createBite } from "../../services/biteService";
 import { createTag } from "../../services/tagService";
-import { ACTag, BiteType, Tag } from "../../types";
+import { ACTag, Bite, BiteType, Tag } from "../../types";
 import { Toaster } from "../Toaster";
 import { ImageEditor } from "./Image/ImageEditor";
 import { LinkEditor } from "./Link/LinkEditor";
@@ -58,6 +59,7 @@ export const CreateBite = ({
   const toast = useToast();
   const [tagSearchValue, setTagSearchValue] = useState("");
   const [biteContent, setBiteContent] = useState("");
+  const { addToBitesMemoryContext, removeFromBitesMemoryContext } = useBitesContext();
 
   useEffect(() => {
     setTags(
@@ -97,8 +99,9 @@ export const CreateBite = ({
       createdAt: date.toISOString(),
       updatedAt: date.toISOString(),
     };
-    await createBite(!isAuthenticated(), newBite);
+    const bite = await createBite(!isAuthenticated(), newBite);
     triggerRefresh();
+    return bite;
   };
 
   const { mutate: createTagRequest } = useMutation((tag: ACTag) => createTag(!isAuthenticated(), { name: tag.value }), {
@@ -115,13 +118,24 @@ export const CreateBite = ({
   });
 
   const clickSaveHandler = async () => {
-    const { status } = await createBiteRequest();
+    const { status, data: bite } = await createBiteRequest();
     if (status === "error") {
       toast({
         position: "bottom-left",
         render: () => <Toaster message="something happened, please try again" type="error" />,
       });
     } else if (status === "success") {
+      if (bite) {
+        addToBitesMemoryContext({
+          id: bite.id,
+          title: bite.title,
+          content: bite.content,
+          type: bite.type,
+          createdAt: bite.createdAt,
+          updatedAt: bite.updatedAt,
+          tags: bite.tags || [],
+        } as Bite);
+      }
       onClose();
     }
   };
@@ -157,6 +171,10 @@ export const CreateBite = ({
   const isTitleInvalid = () => {
     return title.trim().length < 2 || title.trim().length > 150;
   };
+
+  useEffect(() => {
+    console.log("hehehe", initialRef.current);
+  }, [initialRef, isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={false} size="3xl" initialFocusRef={initialRef}>
@@ -205,6 +223,7 @@ export const CreateBite = ({
                   )}
                 </FormLabel>
                 <Input
+                  autoFocus
                   ref={initialRef}
                   fontSize="lg"
                   borderColor="inputBorderColor"
@@ -295,6 +314,7 @@ export const CreateBite = ({
               onClick={() => setCurrentMode(BiteType.LINK)}
               opacity={currentMode !== BiteType.LINK ? 0.5 : 1}
               leftIcon={currentMode === BiteType.LINK ? <FiCheck strokeWidth={4} /> : <></>}
+              ref={initialRef}
             >
               Link
             </Button>
@@ -371,7 +391,7 @@ export const CreateBite = ({
                 opacity={0.6}
                 display={{ md: "block", base: "none" }}
               >
-                {navigator.platform.indexOf("Mac") > -1 ? "⌘" : "Ctrl"} + S
+                {typeof window !== "undefined" && (navigator.platform.indexOf("Mac") > -1 ? "⌘ + S" : "Ctrl + S")}
               </Text>
             </Box>
           </HStack>

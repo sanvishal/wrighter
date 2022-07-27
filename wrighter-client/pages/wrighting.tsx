@@ -22,6 +22,7 @@ import { CustomToolTip } from "../components/CustomTooltip";
 import { Editor } from "../components/Editor/Editor";
 import { Tags } from "../components/Editor/Tags";
 import { WrightSettings } from "../components/Editor/WrightSettings";
+import { useBiteActions } from "../contexts/CommandBarHooks/useBiteActions";
 import { useWrightingActions } from "../contexts/CommandBarHooks/useWrightingActions";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
@@ -36,6 +37,8 @@ const Wrighting: NextPage = () => {
   const [id, setId] = useState("");
   const [isContextLoaded, setIsContextLoaded] = useState(false);
   const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
+
+  // useBiteActions();
 
   const handleTitleChange = (value: string) => {
     setTitle(value);

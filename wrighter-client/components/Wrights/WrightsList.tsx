@@ -32,6 +32,7 @@ import { WrightCard } from "./WrightCard";
 import { WrightSettings } from "../Editor/WrightSettings";
 import { DeleteWright } from "../DeleteWright";
 import { useWrightsSearch } from "../../contexts/CommandBarHooks/useWrightsSearch";
+import { useBiteActions } from "../../contexts/CommandBarHooks/useBiteActions";
 
 export const CreateWright = ({
   createWrightHandler,
@@ -100,6 +101,7 @@ export const WrightsList = (): JSX.Element => {
   };
 
   useWrightsSearch(createWrightHandler);
+  useBiteActions();
 
   const getAllWrightsHandler = async () => {
     const { data: wrights } = await getWrightsRequest();

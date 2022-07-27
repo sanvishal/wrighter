@@ -1,5 +1,5 @@
 import axios from "axios";
-import { addDays, startOfDay, subDays } from "date-fns";
+import { addDays, subDays } from "date-fns";
 import compact from "lodash.compact";
 import { nanoid } from "nanoid";
 import { useQuery } from "react-query";
@@ -30,7 +30,7 @@ export const createBite = async (isGuest: boolean, bite: Omit<Bite, "id" | "user
   return resp.data;
 };
 
-export const getBites = async (isGuest: boolean, startDate: Date, endDate: Date): Promise<Bite[]> => {
+export const getBites = async (isGuest: boolean, startDate: Date, endDate: Date, isCompact = false): Promise<Bite[]> => {
   if (isGuest) {
     const bites = await db.bites
       .filter((bite) =>
@@ -39,14 +39,17 @@ export const getBites = async (isGuest: boolean, startDate: Date, endDate: Date)
           : startDate.toISOString().localeCompare(bite.createdAt) <= 0 && endDate.toISOString().localeCompare(bite.createdAt) >= 0
       )
       .toArray();
-    const promisedBites = bites.map(async (bite) => {
-      const tagIds = (await db.tagBite.where("biteId").equals(bite.id).toArray()).map((tagBite) => tagBite.tagId);
-      const tags = await db.tags.bulkGet(tagIds);
-      return { ...bite, tags: compact(tags) || [] };
-    });
-    return await Promise.all(promisedBites);
+    if (!isCompact) {
+      const promisedBites = bites.map(async (bite) => {
+        const tagIds = (await db.tagBite.where("biteId").equals(bite.id).toArray()).map((tagBite) => tagBite.tagId);
+        const tags = await db.tags.bulkGet(tagIds);
+        return { ...bite, tags: compact(tags) || [] };
+      });
+      return await Promise.all(promisedBites);
+    }
+    return bites;
   }
-  const resp = await axios.get<Bite[]>(`${API_BASE_URL}/bite`, {
+  const resp = await axios.get<Bite[]>(!isCompact ? `${API_BASE_URL}/bite` : `${API_BASE_URL}/bite?compact=true`, {
     params: {
       f: startDate.toISOString(),
       t: endDate.toISOString(),
@@ -82,9 +85,8 @@ export const searchBites = async (isGuest: boolean, query: string) => {
   return resp.data;
 };
 
-export const useSearchBites = (isGuest: boolean, query: string) => {
-  return useQuery(["searchBites", query], () => searchBites(isGuest, query), {
-    enabled: false,
-    refetchOnWindowFocus: false,
-  });
+export const getLastNDaysBites = async (isGuest: boolean, nDays = 7) => {
+  const startDate = subDays(new Date(), nDays - 1);
+  const endDate = addDays(new Date(), 1);
+  return await getBites(isGuest, startDate, endDate, false);
 };
