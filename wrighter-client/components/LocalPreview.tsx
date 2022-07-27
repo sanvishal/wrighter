@@ -2,9 +2,9 @@ import { Viewer } from "@bytemd/react";
 import { Box, Center, Container, IconButton, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { db, WrightIDB } from "../services/dbService";
-import { figCaptionPlugin, pastePlugin } from "../services/pluginService";
+import { autoLinkHeadingsPlugin, figCaptionPlugin, pastePlugin } from "../services/pluginService";
 import mathPlugin from "@bytemd/plugin-math-ssr";
 import mediumZoom from "@bytemd/plugin-medium-zoom";
 import gfmPluin from "@bytemd/plugin-gfm";
@@ -14,9 +14,24 @@ import { useQuery } from "react-query";
 import { getWright } from "../services/wrightService";
 import { FiMoon, FiSun } from "react-icons/fi";
 import Head from "next/head";
+import { scrollAnchorIntoView } from "../utils";
 
 export interface ILocalPreviewProps {
   // wright: WrightIDB;
+}
+
+function useIsMounted() {
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  return useCallback(() => isMounted.current, []);
 }
 
 export const LocalPreview = (): JSX.Element => {
@@ -49,6 +64,10 @@ export const LocalPreview = (): JSX.Element => {
     }
   }, [isAuthenticated, isUserLoading, id]);
 
+  useEffect(() => {
+    scrollAnchorIntoView();
+  }, [isWrightLoading, localWright?.content, remoteWright?.content]);
+
   const plugins = useMemo(
     () => [
       figCaptionPlugin(),
@@ -56,6 +75,7 @@ export const LocalPreview = (): JSX.Element => {
       highlightPlugin(),
       gfmPluin(),
       mathPlugin({ katexOptions: { output: "html" } }),
+      autoLinkHeadingsPlugin(),
     ],
     []
   );

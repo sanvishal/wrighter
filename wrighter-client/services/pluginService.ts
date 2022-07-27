@@ -1,7 +1,13 @@
 // @ts-ignore
 import remarkFigureCaption from "@microflash/remark-figure-caption";
 import type { BytemdPlugin } from "bytemd";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeSlug from "rehype-slug";
 import { turndownService } from "../services/turndownService";
+
+export const autoLinkHeadingsPlugin = (): BytemdPlugin => {
+  return { rehype: (processor) => processor.use(rehypeSlug).use(rehypeAutolinkHeadings, { behavior: "append" }) };
+};
 
 export const figCaptionPlugin = (): BytemdPlugin => {
   return { remark: (processor) => processor.use(remarkFigureCaption) };
@@ -48,7 +54,7 @@ export const pastePlugin = ({ injectCM = false }: { injectCM?: boolean }): Bytem
       });
 
       return () => {
-        if (window && injectCM) {
+        if (window) {
           window.cm = null;
           console.log("cm window destroy");
         }

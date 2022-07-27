@@ -6,11 +6,12 @@ import { Viewer } from "@bytemd/react";
 import { Box, Center, Container, HStack, Icon, Text, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSidePropsContext, NextPage } from "next";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { API_BASE_URL } from "../../constants";
 import { Wright } from "../../types";
 import Head from "next/head";
-import { figCaptionPlugin } from "../../services/pluginService";
+import { autoLinkHeadingsPlugin, figCaptionPlugin } from "../../services/pluginService";
+import { scrollAnchorIntoView } from "../../utils";
 
 interface PageProps {
   wright: Wright & { user: string };
@@ -20,6 +21,7 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
   const plugins = useMemo(
     () => [
       mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
+      autoLinkHeadingsPlugin(),
       // pastePlugin({injectCM: false}),
       figCaptionPlugin(),
       highlightPlugin(),

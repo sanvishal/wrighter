@@ -29,8 +29,8 @@ const Home: NextPage = () => {
         <title>wrighter</title>
       </Head>
       <GrainyTexture />
-      <Box pos="fixed" top="0" left="0" w="full" h="100vh" id="waves-bg-overlay" zIndex="-1"></Box>
-      <Box pos="fixed" top="0" left="0" w="full" h="100vh" id="waves-bg" zIndex="-2"></Box>
+      <Box pos="absolute" top="0" left="0" w="full" h="150vh" id="waves-bg-overlay" zIndex="-1"></Box>
+      <Box pos="absolute" top="0" left="0" w="full" h="150vh" id="waves-bg" zIndex="-2"></Box>
       <Container maxW="8xl">
         <HStack w="full" justifyContent="space-between" pt={4}>
           <HStack w="50px" h="50px" spacing={3}>
@@ -62,7 +62,7 @@ const Home: NextPage = () => {
           <Text fontSize="x-large" color="textLighter" fontWeight="bold">
             Your new favourite markdown editor
           </Text>
-          <Text fontSize="5rem" fontWeight={800}>
+          <Text fontSize="5rem" fontWeight={800} lineHeight={1}>
             Minimal yet powerful writing app
           </Text>
           <Box h={8} />

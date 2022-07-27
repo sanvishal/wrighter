@@ -44,3 +44,13 @@ export const getHostName = (url: string) => {
     return null;
   }
 };
+
+export const scrollAnchorIntoView = (): void => {
+  const hash = window.location.hash;
+  if (hash) {
+    const ele = document.querySelector(hash);
+    if (ele) {
+      ele.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+};
