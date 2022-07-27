@@ -28,13 +28,29 @@ export const slugify = (text: string) => {
 };
 
 export const isValidUrl = (str: string) => {
-  let url;
-
   try {
-    url = new URL(str);
-  } catch (_) {
+    return Boolean(new URL(str));
+  } catch (e) {
     return false;
   }
+};
 
-  return url.protocol === "http:" || url.protocol === "https:";
+export const getHostName = (url: string) => {
+  var match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+  if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
+    var hostname = match[2].split(".");
+    return hostname[0];
+  } else {
+    return null;
+  }
+};
+
+export const scrollAnchorIntoView = (): void => {
+  const hash = window.location.hash;
+  if (hash) {
+    const ele = document.querySelector(hash);
+    if (ele) {
+      ele.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 };

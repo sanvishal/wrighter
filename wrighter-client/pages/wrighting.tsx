@@ -22,6 +22,7 @@ import { CustomToolTip } from "../components/CustomTooltip";
 import { Editor } from "../components/Editor/Editor";
 import { Tags } from "../components/Editor/Tags";
 import { WrightSettings } from "../components/Editor/WrightSettings";
+import { useWrightingActions } from "../contexts/CommandBarHooks/useWrightingActions";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
 import { clearAndCreateEditorContext, getWright, saveWright } from "../services/wrightService";
@@ -87,7 +88,7 @@ const Wrighting: NextPage = () => {
 
   const handleTitleSave = async (value: string) => {
     setTitle(value.trim());
-    if (id) {
+    if (id && value.trim().length > 0 && value.trim().length < 200) {
       await db.editorContext.update(id, {
         title: value.trim(),
       });
@@ -107,7 +108,7 @@ const Wrighting: NextPage = () => {
         <title>wrighter • wrighting</title>
       </Head>
       {!isContextLoaded ? (
-        <Container maxWidth="full" centerContent mt={20}>
+        <Container maxWidth="full" centerContent mt={16}>
           <VStack spacing={4}>
             <Spinner
               sx={{
@@ -125,7 +126,7 @@ const Wrighting: NextPage = () => {
         </Container>
       ) : (
         <>
-          <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3} pos="relative">
+          <Container maxW={{ base: "full", md: "5xl" }} px={0} pt={3} pos="relative" className="fade-in">
             <Editable
               defaultValue={title}
               height={{ base: "48px", md: "58px" }}
@@ -142,7 +143,7 @@ const Wrighting: NextPage = () => {
                 overflowY="auto"
                 w="full"
                 height={{ base: "48px", md: "58px" }}
-                bg={title.trim().length <= 0 ? "errorRedTransBg" : "transparent"}
+                bg={title.trim().length <= 0 || title.trim().length > 200 ? "errorRedTransBg" : "transparent"}
                 opacity={title.trim().length > 0 ? 1 : 0.15}
               />
               <EditableTextarea

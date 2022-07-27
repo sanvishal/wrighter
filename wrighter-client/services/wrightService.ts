@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { IndexableType } from "dexie";
 import compact from "lodash.compact";
 import { nanoid } from "nanoid";
+import { useQuery } from "react-query";
 import { API_BASE_URL } from "../constants";
 import { ResponseTypeMap, Tag, Wright } from "../types";
 import { toBoolean } from "../utils";
@@ -113,4 +114,11 @@ export const deleteWright = async (isGuest: boolean, wrightId: string) => {
     return;
   }
   return axios.delete(`${API_BASE_URL}/wright/${wrightId}`, { withCredentials: true });
+};
+
+export const useGetAllWrights = (isGuest: boolean, isEnabled: boolean = false) => {
+  return useQuery("getAllWrightsQuery", () => getAllWrights(isGuest), {
+    enabled: isEnabled,
+    refetchOnWindowFocus: false,
+  });
 };

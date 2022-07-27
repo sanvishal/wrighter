@@ -10,7 +10,7 @@ const LocalPreview = dynamic<ILocalPreviewProps>(
   () => import("../components/LocalPreview").then((module) => module.LocalPreview) as any,
   {
     ssr: false,
-    loading: () => <SuspenseFallback />,
+    loading: () => <SuspenseFallback message="loading your wright for the first time..." />,
   }
 );
 

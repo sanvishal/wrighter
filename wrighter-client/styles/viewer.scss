@@ -1,3 +1,25 @@
+@mixin linkOnHeading {
+  & {
+    a {
+      position: absolute;
+      text-decoration: none;
+      color: var(--chakra-colors-textLighter);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.06s ease-in-out;
+      span.icon-link::after {
+        content: "#";
+      }
+    }
+    &:hover {
+      a {
+        opacity: 0.5;
+        transform: translateX(5px);
+      }
+    }
+  }
+}
+
 @mixin viewer {
   & {
     color: var(--chakra-colors-textColor);
@@ -11,6 +33,7 @@
       img {
         border-radius: 7px;
         box-shadow: var(--chakra-shadows-md);
+        margin: 0 auto;
       }
       figcaption {
         font-style: italic;
@@ -67,6 +90,11 @@
       overflow-x: auto;
     }
 
+    hr {
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
     table {
       @media screen and (max-width: 30em) {
         & {
@@ -77,7 +105,7 @@
       width: 100%;
       background-color: var(--chakra-colors-bgLighter);
       border-radius: 7px;
-      box-shadow: var(--chakra-shadows-base);
+      // box-shadow: var(--chakra-shadows-base);
       margin: 1.2em 0;
       thead {
         background-color: var(--chakra-colors-bgLight);
@@ -120,6 +148,8 @@
       font-weight: 800 !important;
       line-height: 1.4;
       margin: 0.4em 0;
+      position: relative;
+      @include linkOnHeading;
     }
     h2 {
       font-size: map-get($map: $preview-header-sizes, $key: "h2");
@@ -127,12 +157,14 @@
       line-height: 1.2;
       margin-top: 0.7em;
       margin-bottom: 0.4em;
+      @include linkOnHeading;
     }
     h3 {
       font-size: map-get($map: $preview-header-sizes, $key: "h3");
       font-weight: 500 !important;
       line-height: 1;
       margin: 0.5em 0;
+      @include linkOnHeading;
     }
     h4 {
       font-size: map-get($map: $preview-header-sizes, $key: "h4");

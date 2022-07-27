@@ -10,7 +10,7 @@ import { SuspenseFallback } from "../components/SuspenseFallback";
 import { useUserContext } from "../contexts/UserContext";
 const WrightsList = dynamic(() => import("../components/Wrights/WrightsList").then((module) => module.WrightsList) as any, {
   ssr: false,
-  loading: () => <SuspenseFallback />,
+  loading: () => <SuspenseFallback message="scanning your wrights..." />,
 });
 
 const Wrights: NextPage = () => {

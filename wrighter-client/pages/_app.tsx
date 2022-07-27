@@ -1,32 +1,34 @@
-import "../styles/globals.css";
-import "../styles/calender.scss";
-import type { AppProps } from "next/app";
-import NProgress from "nprogress";
-import Router from "next/router";
-import "nprogress/nprogress.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import "bytemd/dist/index.css";
 import "highlight.js/styles/default.css";
-import "../styles/editor.scss";
 import "katex/dist/katex.css";
+import type { AppProps } from "next/app";
+import Router from "next/router";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
+import { useState } from "react";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { theme } from "../theme";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { UserProvider } from "../contexts/UserContext";
-import { useEffect } from "react";
 import { TagsProvider } from "../contexts/TagsContext";
+import { UserProvider } from "../contexts/UserContext";
+import "../styles/calender.scss";
+import "../styles/cmdbar.scss";
+import "../styles/editor.scss";
+import "../styles/globals.css";
+import { theme } from "../theme";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
+        {/* <GrainyTexture /> */}
         <UserProvider>
           <TagsProvider>
             <Component {...pageProps} />

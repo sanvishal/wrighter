@@ -1,6 +1,7 @@
+import type { BytemdEditorContext } from "bytemd";
 export {};
 declare global {
   interface Window {
-    cm?: CodeMirror.Editor | null;
+    cm?: BytemdEditorContext | null;
   }
 }

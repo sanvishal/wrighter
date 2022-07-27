@@ -29,6 +29,8 @@ export type Tag = {
   userId?: string;
 };
 
+export type ACTag = Tag & { label: string; value: string };
+
 export type TagWright = {
   id?: number;
   tagId: string;
@@ -53,3 +55,14 @@ export type Bite = {
   userId: string;
   tags?: Tag[];
 };
+
+export type TagBite = {
+  id?: number;
+  tagId: string;
+  biteId: string;
+};
+
+export enum COMMAND_PARENT {
+  WRIGHT_SEARCH = "wright-search",
+  BITE_ATTACH = "bite-attach",
+}

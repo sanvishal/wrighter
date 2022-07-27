@@ -1,6 +1,6 @@
 import { Container, Spinner, Text } from "@chakra-ui/react";
 
-export const SuspenseFallback = (): JSX.Element => {
+export const SuspenseFallback = ({ message }: { message?: string }): JSX.Element => {
   return (
     <Container maxW="5xl" centerContent mt={20}>
       <Spinner
@@ -13,7 +13,7 @@ export const SuspenseFallback = (): JSX.Element => {
         }}
       />
       <Text fontSize="lg" color="textLighter" mt={8}>
-        Loading for the first time
+        {message || "Loading for the first time"}
       </Text>
     </Container>
   );

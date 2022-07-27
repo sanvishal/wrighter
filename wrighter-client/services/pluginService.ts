@@ -1,15 +1,25 @@
 // @ts-ignore
 import remarkFigureCaption from "@microflash/remark-figure-caption";
 import type { BytemdPlugin } from "bytemd";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeSlug from "rehype-slug";
 import { turndownService } from "../services/turndownService";
+
+export const autoLinkHeadingsPlugin = (): BytemdPlugin => {
+  return { rehype: (processor) => processor.use(rehypeSlug).use(rehypeAutolinkHeadings, { behavior: "append" }) };
+};
+
+export const figCaptionPlugin = (): BytemdPlugin => {
+  return { remark: (processor) => processor.use(remarkFigureCaption) };
+};
 
 export const pastePlugin = ({ injectCM = false }: { injectCM?: boolean }): BytemdPlugin => {
   return {
-    remark: (processor) => processor.use(remarkFigureCaption),
     editorEffect(ctx) {
+      // injecting the whole editor instance in window and using it feels illegal... but it works so... ¯\_(ツ)_/¯
       if (window && injectCM) {
         console.log("cm window set");
-        window["cm"] = ctx.editor;
+        window["cm"] = ctx;
       }
       ctx.editor.on("copy", (cm, event) => {
         if (cm.getSelection()) {
@@ -44,8 +54,9 @@ export const pastePlugin = ({ injectCM = false }: { injectCM?: boolean }): Bytem
       });
 
       return () => {
-        if (window && injectCM) {
+        if (window) {
           window.cm = null;
+          console.log("cm window destroy");
         }
       };
     },

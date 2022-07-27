@@ -117,7 +117,6 @@ export const attachTagToWright = async (wrightId: string, tagId: string, userId:
       wright: { connect: { id: wrightId } },
     },
   });
-  console.log(resp);
   return resp;
 };
 

@@ -26,11 +26,12 @@ import { FaSort } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { useUserContext } from "../../contexts/UserContext";
 import { WrightIDB } from "../../services/dbService";
-import { createWright, getAllWrights } from "../../services/wrightService";
+import { createWright, getAllWrights, useGetAllWrights } from "../../services/wrightService";
 import { Wright } from "../../types";
 import { WrightCard } from "./WrightCard";
 import { WrightSettings } from "../Editor/WrightSettings";
 import { DeleteWright } from "../DeleteWright";
+import { useWrightsSearch } from "../../contexts/CommandBarHooks/useWrightsSearch";
 
 export const CreateWright = ({
   createWrightHandler,
@@ -89,11 +90,7 @@ export const WrightsList = (): JSX.Element => {
     enabled: false,
   });
 
-  const { refetch: getWrightsRequest, isLoading: isGettingWrights } = useQuery(
-    "getAllWrightsQuery",
-    () => getAllWrights(!isAuthenticated()),
-    { enabled: false }
-  );
+  const { refetch: getWrightsRequest, isLoading: isGettingWrights } = useGetAllWrights(!isAuthenticated());
 
   const createWrightHandler = async () => {
     const { data: wright } = await createWrightRequest();
@@ -101,6 +98,8 @@ export const WrightsList = (): JSX.Element => {
       router.push(`/wrighting?id=${wright.id}`);
     }
   };
+
+  useWrightsSearch(createWrightHandler);
 
   const getAllWrightsHandler = async () => {
     const { data: wrights } = await getWrightsRequest();
@@ -151,7 +150,7 @@ export const WrightsList = (): JSX.Element => {
   };
 
   return (
-    <Container maxW="full" pt={{ base: 5, md: 20 }}>
+    <Container maxW="full" pt={{ base: 5, md: 20 }} pb={20} className="fade-in">
       <HStack w="full" justify="space-between" wrap={{ base: "wrap", md: "nowrap" }}>
         <HStack spacing={4}>
           <Center borderRadius={10} w={16} h={16} bg="accentColorTrans">

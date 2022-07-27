@@ -8,7 +8,8 @@ import { Router, useRouter } from "next/router";
 import debounce from "lodash.debounce";
 import { db, WrightIDB } from "../../services/dbService";
 import { Wright } from "../../types";
-import { pastePlugin } from "../../services/pluginService";
+import { figCaptionPlugin, pastePlugin } from "../../services/pluginService";
+import { useWrightingActions } from "../../contexts/CommandBarHooks/useWrightingActions";
 
 export const Editor = ({
   editorOnSaveHandler = () => {},
@@ -23,7 +24,13 @@ export const Editor = ({
   const editorMode = useBreakpointValue({ base: "tab", md: "split" });
 
   const plugins = useMemo(
-    () => [pastePlugin({ injectCM: true }), highlightPlugin(), gfmPluin(), mathPlugin({ katexOptions: { output: "html" } })],
+    () => [
+      pastePlugin({ injectCM: true }),
+      figCaptionPlugin(),
+      highlightPlugin(),
+      gfmPluin(),
+      mathPlugin({ katexOptions: { output: "html" } }),
+    ],
     []
   );
 
@@ -64,6 +71,8 @@ export const Editor = ({
       setId((router?.query?.id || "") as string);
     }
   }, [router.isReady]);
+
+  useWrightingActions();
 
   return (
     <Box>

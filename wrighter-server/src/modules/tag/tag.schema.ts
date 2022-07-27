@@ -5,7 +5,7 @@ const createTagSchema = z.object({
   name: z.string().min(3).max(35),
 });
 
-const tagResponseSchema = z.object({
+export const tagResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   color: z.string().optional(),

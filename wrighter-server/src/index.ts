@@ -12,6 +12,8 @@ import { FastifyReply } from "fastify";
 import { wrightSchemas } from "./modules/wright/wright.schema";
 import tagRoutes from "./modules/tag/tag.route";
 import { tagSchemas } from "./modules/tag/tag.schema";
+import biteRoutes from "./modules/bite/bite.route";
+import { biteSchemas } from "./modules/bite/bite.schema";
 
 export const fastify = Fastify({
   logger: process.env.NODE_ENV === "development",
@@ -95,7 +97,7 @@ async function build() {
 
 build()
   .then((fastify) => {
-    for (const schema of [...userSchemas, ...wrightSchemas, ...tagSchemas]) {
+    for (const schema of [...userSchemas, ...wrightSchemas, ...tagSchemas, ...biteSchemas]) {
       fastify.addSchema(schema);
     }
 
@@ -107,6 +109,9 @@ build()
     });
     fastify.register(tagRoutes, {
       prefix: "api/tag",
+    });
+    fastify.register(biteRoutes, {
+      prefix: "api/bite",
     });
 
     const port = +process.env.PORT! || 8080;

@@ -303,6 +303,13 @@ export const theme = extendTheme({
       editorToolBarDropDownBgHover: { default: "#F5F5F5", _dark: "#333439" },
       editorQuoteFormatting: { default: "#e1e3e7", _dark: "#393a3d" },
       landingPageBgColor: { default: "#e8e8e8", _dark: "#57575738" },
+      cmdbarBg: { default: "#f2f2f3de", _dark: "#1d1e20d1" },
+    },
+    backdropFilter: {
+      cmdbarFilter: {
+        default: "saturate(300%) blur(15px)",
+        _dark: "blur(15px)",
+      },
     },
   },
 });

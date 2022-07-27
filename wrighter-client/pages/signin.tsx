@@ -334,7 +334,7 @@ export default function SignIn(): JSX.Element {
 
   return (
     <Container maxWidth="6xl" py={{ base: 3, md: 6 }}>
-      <HStack w="50px" h="50px" spacing={3}>
+      <HStack w="50px" h="50px" spacing={3} as="a" href="/">
         <Box>
           <Logo />
         </Box>
