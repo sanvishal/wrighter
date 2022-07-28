@@ -51,3 +51,41 @@ export const deleteTag = async (tagId: string, userId: string) => {
     },
   });
 };
+
+export const getTagContents = async (tagId: string, userId: string) => {
+  const wrights = await prisma.wright.findMany({
+    select: {
+      title: true,
+      id: true,
+      slug: true,
+      isPublic: true,
+    },
+    where: {
+      tagWrights: {
+        some: {
+          tagId,
+        },
+      },
+      userId,
+    },
+  });
+
+  const bites = await prisma.bite.findMany({
+    select: {
+      title: true,
+      id: true,
+      type: true,
+      content: true,
+    },
+    where: {
+      tagBites: {
+        some: {
+          tagId,
+        },
+      },
+      userId,
+    },
+  });
+
+  return [...wrights, ...bites];
+};

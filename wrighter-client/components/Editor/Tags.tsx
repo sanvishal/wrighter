@@ -1,33 +1,31 @@
 import {
-  HStack,
-  Popover,
-  PopoverTrigger,
-  IconButton,
-  PopoverContent,
-  PopoverArrow,
-  PopoverHeader,
-  Center,
-  Input,
-  PopoverBody,
-  PopoverFooter,
-  Button,
-  Text,
   Box,
-  VStack,
-  Spinner,
-  Kbd,
+  Center,
+  HStack,
   Icon,
-  useToast,
+  IconButton,
+  Input,
+  Kbd,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  Spinner,
+  Text,
   useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
-import debounce from "lodash.debounce";
 import { useRouter } from "next/router";
-import { useState, useEffect, ChangeEvent, KeyboardEvent, useMemo, useRef } from "react";
-import { FiPlusCircle, FiX, FiCheck, FiHash } from "react-icons/fi";
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { FiHash, FiPlusCircle, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
+import { useTagsContext } from "../../contexts/TagsContext";
 import { useUserContext } from "../../contexts/UserContext";
-import { getTagsForWright, createTag, attachTagToWright, searchTags, untagWright } from "../../services/tagService";
-import { Wright, Tag, TagSearchResult } from "../../types";
+import { attachTagToWright, createTag, getTagsForWright, untagWright } from "../../services/tagService";
+import { Tag, TagSearchResult, Wright } from "../../types";
 import { CustomToolTip } from "../CustomTooltip";
 import { Toaster } from "../Toaster";
 
@@ -83,9 +81,10 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
   const [currentEditingTag, setCurrentEditingTag] = useState("");
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [focusedTagIdx, setFocusedTagIdx] = useState<number>(0);
-  const [isTyping, setIsTyping] = useState(false);
   const { onOpen, onClose, isOpen } = useDisclosure();
   const { isAuthenticated } = useUserContext();
+  const { tags: allTags, fetchTags } = useTagsContext();
+  const [searchTagResults, setSearchTagResults] = useState<TagSearchResult[]>([]);
   const initialFocusRef = useRef<any>();
   const toast = useToast();
 
@@ -142,32 +141,21 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     return modifiedTags;
   };
 
-  const searchTagsHandler = async (): Promise<TagSearchResult[]> => {
-    const tags = await searchTags(!isAuthenticated(), currentEditingTag);
-    setIsTyping(false);
+  const searchTagsHandler = (): void => {
+    setSearchTagResults(
+      markTaggedTags(
+        currentTags,
+        allTags.filter((tag) => tag.name.includes(currentEditingTag))
+      )
+    );
     setFocusedTagIdx(currentEditingTag.trim().length === 0 ? 0 : -1);
-    if (tags) {
-      return markTaggedTags(currentTags, tags);
-    }
-    return [];
   };
 
   useEffect(() => {
     if (isOpen) {
-      // setIsTyping(true);
-      debouncedTagsSearch();
+      searchTagsHandler();
     }
-  }, [currentTags, isOpen]);
-
-  const {
-    refetch: searchTagRequest,
-    isFetching: isSearchingTags,
-    data: searchTagResults,
-  } = useQuery("searchTagsQuery", () => searchTagsHandler(), {
-    enabled: false,
-  });
-
-  const debouncedTagsSearch = useMemo(() => debounce(searchTagRequest, isAuthenticated() ? 400 : 300), []);
+  }, [currentTags, isOpen, allTags]);
 
   const createAndAttachTagHandler = async () => {
     let newtagName = "";
@@ -176,7 +164,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     } else if (searchTagResults && focusedTagIdx < searchTagResults?.length && focusedTagIdx >= 0) {
       newtagName = searchTagResults[focusedTagIdx]?.name;
     }
-    if (newtagName.trim().length === 0 || (searchTagResults && searchTagResults[focusedTagIdx]?.isTagged) || isTyping) {
+    if (newtagName.trim().length === 0 || (searchTagResults && searchTagResults[focusedTagIdx]?.isTagged)) {
       return [];
     }
     if (focusedTagIdx === -1 && (currentEditingTag.trim().length < 3 || currentEditingTag.trim().length > 35)) {
@@ -192,6 +180,9 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
       const { data: updatedTags } = await refetchTagsForWright();
       setCurrentTags(updatedTags || []);
       setCurrentEditingTag("");
+      if (fetchTags) {
+        await fetchTags();
+      }
       return updatedTags || [];
     }
     return [];
@@ -208,8 +199,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
 
   const handleTagInputChange = async (value: string) => {
     setCurrentEditingTag(value.trim());
-    setIsTyping(true);
-    debouncedTagsSearch();
+    searchTagsHandler();
   };
 
   useEffect(() => {
@@ -317,7 +307,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
                 </HStack>
               </PopoverHeader>
               <PopoverBody maxH="200px" minH="200px" overflowY="auto">
-                {isSearchingTags || isAddingTag || isFetchingTags || isTyping ? (
+                {isAddingTag || isFetchingTags ? (
                   <Center w="full" h="120px">
                     <Spinner
                       sx={{

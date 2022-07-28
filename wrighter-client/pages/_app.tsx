@@ -10,6 +10,7 @@ import { useState } from "react";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { BitesProvider } from "../contexts/BitesContext";
 import { TagsProvider } from "../contexts/TagsContext";
 import { UserProvider } from "../contexts/UserContext";
 import "../styles/calender.scss";
@@ -31,7 +32,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         {/* <GrainyTexture /> */}
         <UserProvider>
           <TagsProvider>
-            <Component {...pageProps} />
+            <BitesProvider>
+              <Component {...pageProps} />
+            </BitesProvider>
           </TagsProvider>
         </UserProvider>
       </ChakraProvider>

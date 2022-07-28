@@ -10,6 +10,7 @@ import { db, WrightIDB } from "../../services/dbService";
 import { Wright } from "../../types";
 import { figCaptionPlugin, pastePlugin } from "../../services/pluginService";
 import { useWrightingActions } from "../../contexts/CommandBarHooks/useWrightingActions";
+import { useBiteActions } from "../../contexts/CommandBarHooks/useBiteActions";
 
 export const Editor = ({
   editorOnSaveHandler = () => {},
@@ -73,6 +74,7 @@ export const Editor = ({
   }, [router.isReady]);
 
   useWrightingActions();
+  useBiteActions();
 
   return (
     <Box>

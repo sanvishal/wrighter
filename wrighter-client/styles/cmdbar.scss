@@ -19,3 +19,12 @@
     // background-color: var(--chakra-colors-bgDark);
   }
 }
+
+@media screen and (max-width: 48em) {
+  .cmd-bar {
+    & .search {
+      height: 50px;
+      font-size: x-large;
+    }
+  }
+}

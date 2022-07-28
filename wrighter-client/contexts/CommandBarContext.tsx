@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import { Box, HStack, Text, useColorMode, VStack } from "@chakra-ui/react";
+import { Box, Center, HStack, Text, useColorMode, VStack } from "@chakra-ui/react";
 import {
   Action,
   ActionId,
@@ -53,23 +53,39 @@ const ResultItem = forwardRef(
         fontSize="lg"
       >
         {action.icon && (
-          <Box mb={0.5} color="textLight">
+          <Center
+            mb={0.5}
+            color="textLight"
+            bg={
+              !action.id.includes("miscother")
+                ? action.id.includes("wright")
+                  ? "accentColorTrans"
+                  : "biteAccentColorTrans"
+                : "bgLight"
+            }
+            w={{ base: 7, md: 8 }}
+            h={{ base: 7, md: 8 }}
+            p={1.5}
+            borderRadius={8}
+          >
             {action.icon}
-          </Box>
+          </Center>
         )}
         <VStack alignItems="flex-start" spacing={0}>
           <div>
             {ancestors.length > 0 &&
               ancestors.map((ancestor) => (
                 <Fragment key={ancestor.id}>
-                  <span
+                  <Text
+                    as="span"
+                    fontSize={{ base: "md", md: "lg" }}
                     style={{
                       opacity: 0.5,
                       marginRight: 8,
                     }}
                   >
-                    {ancestor.name}
-                  </span>
+                    {ancestor.name.length > 14 ? ancestor.name.slice(0, 14) + "…" : ancestor.name}
+                  </Text>
                   <span
                     style={{
                       marginRight: 8,
@@ -79,10 +95,12 @@ const ResultItem = forwardRef(
                   </span>
                 </Fragment>
               ))}
-            <span>{action.name}</span>
+            <Text as="span" fontSize={{ base: "md", md: "lg" }}>
+              {action.name}
+            </Text>
           </div>
           {action.subtitle && (
-            <Text as="span" fontSize="xs" color="textLighter">
+            <Text as="span" fontSize={{ base: "xs", md: "sm" }} color="textLighter">
               {action.subtitle}
             </Text>
           )}
@@ -103,7 +121,14 @@ function RenderResults() {
         if (typeof item === "string") {
           return (
             <Box bg="cmdbarBg">
-              <Text color="textLighter" fontWeight="800" casing="uppercase" opacity={0.4} fontSize="xs" px={2}>
+              <Text
+                color="textLighter"
+                fontWeight="800"
+                casing="uppercase"
+                opacity={0.4}
+                fontSize={{ base: "11px", md: "xs" }}
+                px={2}
+              >
                 {item}
               </Text>
             </Box>
@@ -142,8 +167,12 @@ export const ActionsProvider = ({ children }: { children: React.ReactNode }) => 
 
 export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.Element[] }): JSX.Element => {
   const router = useRouter();
-  const { isAuthenticated } = useUserContext();
-  const { setColorMode, colorMode, toggleColorMode } = useColorMode();
+  const { isAuth } = useUserContext();
+
+  const logoutAction = async () => {
+    logout();
+    router.push("/signin");
+  };
 
   const routeActions: Action[] = [
     {
@@ -154,7 +183,7 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
       perform: () => {
         router.push("/wrights");
       },
-      icon: <FiBookOpen />,
+      icon: <FiBookOpen color="var(--chakra-colors-accentColor)" />,
       priority: Priority.LOW,
       subtitle: "all your wrightups are here",
     },
@@ -166,12 +195,12 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
       perform: () => {
         router.push("/bites");
       },
-      icon: <TbBulb />,
+      icon: <TbBulb color="var(--chakra-colors-biteAccentColor)" />,
       priority: Priority.LOW,
       subtitle: "jot down bite-sized thoughts and information",
     },
     {
-      id: "home-page",
+      id: "miscother-home-page",
       name: "Home Page",
       keywords: "email",
       section: "Navigation",
@@ -183,24 +212,27 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
       subtitle: "the landing page for wrighter",
     },
     {
-      id: "logout",
+      id: COMMAND_PARENT.BITE_ATTACH,
+      name: "Attach bite to current wright",
+      keywords: "bite wright attach put link",
+      section: "Actions",
+      icon: <TbBulb color="var(--chakra-colors-biteAccentColor)" />,
+      priority: Priority.LOW,
+      subtitle: "Attach bite to your wright you are editing right now",
+    },
+    {
+      id: "miscother-logout",
       name: "Logout/Exit",
       keywords: "logout user exit",
       section: "Navigation",
       icon: <FiLogOut />,
       priority: Priority.LOW,
-      perform: () => {
-        if (!isAuthenticated()) {
-          router.push("/signin");
-        } else {
-          logout();
-        }
-      },
+      perform: () => logoutAction(),
     },
   ];
 
   return (
-    <KBarProvider actions={routeActions} options={{ toggleShortcut: "$mod+/" }}>
+    <KBarProvider actions={routeActions} options={{ toggleShortcut: "$mod+Shift+P" }}>
       <ActionsProvider>{children}</ActionsProvider>
     </KBarProvider>
   );

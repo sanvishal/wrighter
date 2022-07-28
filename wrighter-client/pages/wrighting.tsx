@@ -8,6 +8,7 @@ import {
   Spinner,
   Text,
   useDisclosure,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import debounce from "lodash.debounce";
@@ -22,6 +23,8 @@ import { CustomToolTip } from "../components/CustomTooltip";
 import { Editor } from "../components/Editor/Editor";
 import { Tags } from "../components/Editor/Tags";
 import { WrightSettings } from "../components/Editor/WrightSettings";
+import { Toaster } from "../components/Toaster";
+import { useBiteActions } from "../contexts/CommandBarHooks/useBiteActions";
 import { useWrightingActions } from "../contexts/CommandBarHooks/useWrightingActions";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
@@ -35,7 +38,10 @@ const Wrighting: NextPage = () => {
   const [wright, setWright] = useState<Wright | WrightIDB>({});
   const [id, setId] = useState("");
   const [isContextLoaded, setIsContextLoaded] = useState(false);
+  const toast = useToast();
   const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
+
+  // useBiteActions();
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -54,6 +60,12 @@ const Wrighting: NextPage = () => {
         await clearAndCreateEditorContext(wright);
         setWright(wright);
         setTitle(wright.title || "");
+      } else {
+        router.push("/wrights");
+        toast({
+          position: "bottom-left",
+          render: () => <Toaster message="wright with that id is not found!" type="error" />,
+        });
       }
     }
     setIsContextLoaded(true);

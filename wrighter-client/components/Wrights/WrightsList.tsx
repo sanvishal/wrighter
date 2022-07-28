@@ -32,6 +32,7 @@ import { WrightCard } from "./WrightCard";
 import { WrightSettings } from "../Editor/WrightSettings";
 import { DeleteWright } from "../DeleteWright";
 import { useWrightsSearch } from "../../contexts/CommandBarHooks/useWrightsSearch";
+import { useBiteActions } from "../../contexts/CommandBarHooks/useBiteActions";
 
 export const CreateWright = ({
   createWrightHandler,
@@ -77,7 +78,7 @@ export const WrightsList = (): JSX.Element => {
   const [wrights, setWrights] = useState<Wright[] | WrightIDB[]>([]);
   const [sortedWrights, setSortedWrights] = useState<Wright[] | WrightIDB[]>([]);
   const router = useRouter();
-  const { isUserLoading, isAuthenticated, fetchUser } = useUserContext();
+  const { isUserLoading, isAuth, user } = useUserContext();
   const { onOpen, onClose, isOpen } = useDisclosure();
   const [currentSortParam, setCurrentSortParam] = useState<SortParam>(SortParam.UPDATED);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -86,11 +87,11 @@ export const WrightsList = (): JSX.Element => {
   const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
   const { isOpen: isDeleteConfOpen, onOpen: onDeleteConfOpen, onClose: onDeleteConfClose } = useDisclosure();
 
-  const { refetch: createWrightRequest, isLoading } = useQuery("createWrightQuery", () => createWright(!isAuthenticated()), {
+  const { refetch: createWrightRequest, isLoading } = useQuery("createWrightQuery", () => createWright(!isAuth), {
     enabled: false,
   });
 
-  const { refetch: getWrightsRequest, isLoading: isGettingWrights } = useGetAllWrights(!isAuthenticated());
+  const { refetch: getWrightsRequest, isLoading: isGettingWrights } = useGetAllWrights(!isAuth);
 
   const createWrightHandler = async () => {
     const { data: wright } = await createWrightRequest();
@@ -100,10 +101,10 @@ export const WrightsList = (): JSX.Element => {
   };
 
   useWrightsSearch(createWrightHandler);
+  useBiteActions();
 
   const getAllWrightsHandler = async () => {
     const { data: wrights } = await getWrightsRequest();
-    console.log(wrights);
     if (wrights) {
       setWrights(wrights || []);
     }
@@ -113,7 +114,7 @@ export const WrightsList = (): JSX.Element => {
     if (!isUserLoading) {
       getAllWrightsHandler();
     }
-  }, [isUserLoading]);
+  }, [isUserLoading, isAuth]);
 
   useEffect(() => {
     const sortWrights = [...wrights];
@@ -140,7 +141,6 @@ export const WrightsList = (): JSX.Element => {
   };
 
   const onTriggerUpdate = () => {
-    console.log(isUserLoading, isAuthenticated());
     getAllWrightsHandler();
   };
 
@@ -267,7 +267,7 @@ export const WrightsList = (): JSX.Element => {
                       key={wright.id}
                       wright={wright as Wright}
                       onWrightSettingsClick={wrightSettingsClickHandler}
-                      showSettings={isAuthenticated()}
+                      showSettings={isAuth}
                       onWrightDeleteClick={wrightDeleteClickHandler}
                     />
                     <Divider py={6} opacity={0.3} width="75%" style={{ margin: "8px auto" }} />
@@ -277,7 +277,7 @@ export const WrightsList = (): JSX.Element => {
                     key={wright.id}
                     wright={wright as Wright}
                     onWrightSettingsClick={wrightSettingsClickHandler}
-                    showSettings={isAuthenticated()}
+                    showSettings={isAuth}
                     onWrightDeleteClick={wrightDeleteClickHandler}
                   />
                 );
@@ -296,7 +296,7 @@ export const WrightsList = (): JSX.Element => {
           triggerUpdate={onTriggerUpdate}
         />
       )}
-      {isAuthenticated() && (
+      {isAuth && (
         <WrightSettings
           showButton={false}
           wrightId={currentSettingWright}

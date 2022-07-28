@@ -3,8 +3,8 @@ import { IndexableType } from "dexie";
 import compact from "lodash.compact";
 import { nanoid } from "nanoid";
 import { API_BASE_URL } from "../constants";
-import { Tag, TagWright } from "../types";
-import { db } from "./dbService";
+import { Bite, Tag, TagWright, Wright } from "../types";
+import { db, WrightIDB } from "./dbService";
 
 export const getAllTags = async (isGuest: boolean): Promise<Tag[] | undefined> => {
   if (isGuest) {
@@ -83,5 +83,28 @@ export const untagWright = async (isGuest: boolean, tagId: string, wrightId: str
   const resp = (await axios.delete(`${API_BASE_URL}/wright/${wrightId}/tag/${tagId}`, {
     withCredentials: true,
   })) as AxiosResponse<any>;
+  return resp.data;
+};
+
+export const getTagContents = async (isGuest: boolean, tagId: string): Promise<(Wright | WrightIDB | Bite)[]> => {
+  if (isGuest) {
+    const wrightRelations = await db.tagWright.where("tagId").equals(tagId).toArray();
+    const biteRelations = await db.tagBite.where("tagId").equals(tagId).toArray();
+    const wrights = await db.wrights.bulkGet(wrightRelations.map((relation) => relation.wrightId));
+    const bites = await db.bites.bulkGet(biteRelations.map((relation) => relation.biteId));
+    return [...compact(wrights), ...compact(bites)];
+  }
+  const resp = await axios.get<(Wright | Bite)[]>(`${API_BASE_URL}/tag/${tagId}/content`, { withCredentials: true });
+  return resp.data;
+};
+
+export const deleteTag = async (isGuest: boolean, tagId: string): Promise<any> => {
+  if (isGuest) {
+    await db.tags.delete(tagId);
+    await db.tagWright.where("tagId").equals(tagId).delete();
+    await db.tagBite.where("tagId").equals(tagId).delete();
+    return {};
+  }
+  const resp = await axios.delete(`${API_BASE_URL}/tag/${tagId}`, { withCredentials: true });
   return resp.data;
 };

@@ -54,7 +54,7 @@ export const pastePlugin = ({ injectCM = false }: { injectCM?: boolean }): Bytem
       });
 
       return () => {
-        if (window) {
+        if (window && injectCM) {
           window.cm = null;
           console.log("cm window destroy");
         }

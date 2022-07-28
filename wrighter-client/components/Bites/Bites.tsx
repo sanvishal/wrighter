@@ -37,6 +37,8 @@ import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { useTagsContext } from "../../contexts/TagsContext";
 import { ACTag, Bite, Tag } from "../../types";
 import { BiteCard } from "./BiteCard";
+import { useBitesContext } from "../../contexts/BitesContext";
+import { useBiteActions } from "../../contexts/CommandBarHooks/useBiteActions";
 
 export const Bites = (): JSX.Element => {
   const [carouselDate, setCarouselDate] = useState({
@@ -49,11 +51,14 @@ export const Bites = (): JSX.Element => {
     endDate: new Date(),
     key: "selection",
   });
-  const { isOpen: isBiteCreateOpen, onOpen: onBiteCreateOpen, onClose: onBiteCreateClose } = useDisclosure();
-  const { isAuthenticated } = useUserContext();
+  // const { isOpen: isBiteCreateOpen, onOpen: onBiteCreateOpen, onClose: onBiteCreateClose } = useDisclosure();
+  const { isAuth, isUserLoading, user } = useUserContext();
   const { tags: allTags } = useTagsContext();
   const [tags, setTags] = useState<ACTag[]>([]);
   const [selectedTags, setSelectedTags] = useState<ACTag[]>([]);
+  const { onCreateBiteOpen, triggerRefresh, removeFromBitesMemoryContext } = useBitesContext();
+
+  useBiteActions();
 
   useEffect(() => {
     setTags(
@@ -149,14 +154,14 @@ export const Bites = (): JSX.Element => {
 
   const getBitesHandler = async () => {
     if (selectionDateRange.startDate && selectionDateRange.endDate) {
-      const bites = await getBites(!isAuthenticated(), selectionDateRange.startDate, selectionDateRange.endDate);
+      const bites = await getBites(!isAuth, selectionDateRange.startDate, selectionDateRange.endDate);
       bites.sort((a, b) => a.createdAt.localeCompare(b.createdAt) * -1);
       return bites;
     }
     return [];
   };
 
-  const { mutate: biteDeleteRequest } = useMutation((biteToDelete: Bite) => deleteBite(!isAuthenticated(), biteToDelete.id));
+  const { mutate: biteDeleteRequest } = useMutation((biteToDelete: Bite) => deleteBite(!isAuth, biteToDelete.id));
 
   const {
     refetch: getBitesRequest,
@@ -169,18 +174,23 @@ export const Bites = (): JSX.Element => {
 
   const onDeleteHandler = async (biteToDelete: Bite) => {
     await biteDeleteRequest(biteToDelete);
+    removeFromBitesMemoryContext(biteToDelete);
     // fake delay cuz deletion is not read consistent
     await new Promise((resolve) => setTimeout(resolve, 300));
     await getBitesRequest();
   };
 
   useEffect(() => {
-    getBitesRequest();
-  }, [selectionDateRange, carouselDate.start]);
+    if (!isUserLoading) {
+      getBitesRequest();
+    }
+  }, [selectionDateRange, carouselDate.start, isUserLoading, isAuth]);
 
-  const triggerRefresh = () => {
-    getBitesRequest();
-  };
+  useEffect(() => {
+    if (!isUserLoading) {
+      getBitesRequest();
+    }
+  }, [triggerRefresh, isUserLoading, isAuth]);
 
   const handleTagSelectStateChange = (changes: UseMultipleSelectionStateChange<ACTag>) => {
     // enums is undefined and does not work for some reason
@@ -223,7 +233,7 @@ export const Bites = (): JSX.Element => {
         <Button
           variant="solid-bite"
           rightIcon={<FiPlus style={{ marginBottom: "2px" }} />}
-          onClick={onBiteCreateOpen}
+          onClick={() => onCreateBiteOpen(getSelectedDate())}
           display={{ base: "none", md: "flex" }}
         >
           Create Bite
@@ -234,7 +244,7 @@ export const Bites = (): JSX.Element => {
           as={FiPlus}
           size="md"
           p={2}
-          onClick={onBiteCreateOpen}
+          onClick={() => onCreateBiteOpen(getSelectedDate())}
           display={{ base: "flex", md: "none" }}
         />
       </HStack>
@@ -451,7 +461,11 @@ export const Bites = (): JSX.Element => {
                 <Text fontSize="lg" color="textLighter">
                   No bites found on {format(getSelectedDate(), "do MMM")}, create one?
                 </Text>
-                <Button variant="ghost" rightIcon={<FiPlus style={{ marginBottom: "2px" }} />} onClick={onBiteCreateOpen}>
+                <Button
+                  variant="ghost"
+                  rightIcon={<FiPlus style={{ marginBottom: "2px" }} />}
+                  onClick={() => onCreateBiteOpen(getSelectedDate())}
+                >
                   Create Bite
                 </Button>
               </Center>
@@ -479,12 +493,12 @@ export const Bites = (): JSX.Element => {
           </>
         )}
       </Box>
-      <CreateBite
+      {/* <CreateBite
         isOpen={isBiteCreateOpen}
         onClose={onBiteCreateClose}
         date={getSelectedDate()}
         triggerRefresh={triggerRefresh}
-      />
+      /> */}
     </Container>
   );
 };
