@@ -63,9 +63,9 @@ const ResultItem = forwardRef(
                   : "biteAccentColorTrans"
                 : "bgLight"
             }
-            w={8}
-            h={8}
-            p={1}
+            w={{ base: 7, md: 8 }}
+            h={{ base: 7, md: 8 }}
+            p={1.5}
             borderRadius={8}
           >
             {action.icon}
@@ -76,14 +76,16 @@ const ResultItem = forwardRef(
             {ancestors.length > 0 &&
               ancestors.map((ancestor) => (
                 <Fragment key={ancestor.id}>
-                  <span
+                  <Text
+                    as="span"
+                    fontSize={{ base: "md", md: "lg" }}
                     style={{
                       opacity: 0.5,
                       marginRight: 8,
                     }}
                   >
                     {ancestor.name.length > 14 ? ancestor.name.slice(0, 14) + "…" : ancestor.name}
-                  </span>
+                  </Text>
                   <span
                     style={{
                       marginRight: 8,
@@ -93,10 +95,12 @@ const ResultItem = forwardRef(
                   </span>
                 </Fragment>
               ))}
-            <span>{action.name}</span>
+            <Text as="span" fontSize={{ base: "md", md: "lg" }}>
+              {action.name}
+            </Text>
           </div>
           {action.subtitle && (
-            <Text as="span" fontSize="xs" color="textLighter">
+            <Text as="span" fontSize={{ base: "xs", md: "sm" }} color="textLighter">
               {action.subtitle}
             </Text>
           )}
@@ -117,7 +121,14 @@ function RenderResults() {
         if (typeof item === "string") {
           return (
             <Box bg="cmdbarBg">
-              <Text color="textLighter" fontWeight="800" casing="uppercase" opacity={0.4} fontSize="xs" px={2}>
+              <Text
+                color="textLighter"
+                fontWeight="800"
+                casing="uppercase"
+                opacity={0.4}
+                fontSize={{ base: "11px", md: "xs" }}
+                px={2}
+              >
                 {item}
               </Text>
             </Box>
@@ -156,8 +167,12 @@ export const ActionsProvider = ({ children }: { children: React.ReactNode }) => 
 
 export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.Element[] }): JSX.Element => {
   const router = useRouter();
-  const { isAuthenticated } = useUserContext();
-  const { setColorMode, colorMode, toggleColorMode } = useColorMode();
+  const { isAuth } = useUserContext();
+
+  const logoutAction = async () => {
+    logout();
+    router.push("/signin");
+  };
 
   const routeActions: Action[] = [
     {
@@ -212,13 +227,7 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
       section: "Navigation",
       icon: <FiLogOut />,
       priority: Priority.LOW,
-      perform: () => {
-        if (!isAuthenticated()) {
-          router.push("/signin");
-        } else {
-          logout();
-        }
-      },
+      perform: () => logoutAction(),
     },
   ];
 

@@ -79,7 +79,10 @@ export const getWright = async (
       }
       return [];
     })();
-    return { ...wright, tags };
+    if (wright) {
+      return { ...wright, tags };
+    }
+    return undefined;
   }
 
   const wright = (await axios.get(`${API_BASE_URL}/wright/${id}${isCompact ? "?compact=true" : ""}`, {
@@ -117,7 +120,7 @@ export const deleteWright = async (isGuest: boolean, wrightId: string) => {
 };
 
 export const useGetAllWrights = (isGuest: boolean, isEnabled: boolean = false) => {
-  return useQuery("getAllWrightsQuery", () => getAllWrights(isGuest), {
+  return useQuery(["getAllWrightsQuery", isGuest], () => getAllWrights(isGuest), {
     enabled: isEnabled,
     refetchOnWindowFocus: false,
   });

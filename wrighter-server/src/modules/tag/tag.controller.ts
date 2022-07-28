@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateTagRequestSchema } from "./tag.schema";
-import { createTag, deleteTag, getAllTags } from "./tag.service";
+import { createTag, deleteTag, getAllTags, getTagContents } from "./tag.service";
 
 export const createTagHandler = async (request: FastifyRequest<{ Body: CreateTagRequestSchema }>, reply: FastifyReply) => {
   try {
@@ -31,6 +31,19 @@ export const deleteTagHandler = async (request: FastifyRequest<{ Params: { id: s
       });
     }
     return await deleteTag(request.params.id, request.user.id);
+  } catch (e) {
+    return reply.code(500).send(e);
+  }
+};
+
+export const getTagContentsHandler = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  try {
+    if (!request.params.id) {
+      return reply.code(400).send({
+        error: "missing id",
+      });
+    }
+    return await getTagContents(request.params.id, request.user.id);
   } catch (e) {
     return reply.code(500).send(e);
   }

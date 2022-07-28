@@ -1,5 +1,5 @@
 import axios from "axios";
-import { addDays, subDays } from "date-fns";
+import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
 import compact from "lodash.compact";
 import { nanoid } from "nanoid";
 import { useQuery } from "react-query";
@@ -51,8 +51,8 @@ export const getBites = async (isGuest: boolean, startDate: Date, endDate: Date,
   }
   const resp = await axios.get<Bite[]>(!isCompact ? `${API_BASE_URL}/bite` : `${API_BASE_URL}/bite?compact=true`, {
     params: {
-      f: startDate.toISOString(),
-      t: endDate.toISOString(),
+      f: startOfDay(startDate).toISOString(),
+      t: endOfDay(endDate).toISOString(),
     },
     withCredentials: true,
   });
@@ -88,5 +88,5 @@ export const searchBites = async (isGuest: boolean, query: string) => {
 export const getLastNDaysBites = async (isGuest: boolean, nDays = 7) => {
   const startDate = subDays(new Date(), nDays - 1);
   const endDate = addDays(new Date(), 1);
-  return await getBites(isGuest, startDate, endDate, false);
+  return getBites(isGuest, startDate, endDate, false);
 };

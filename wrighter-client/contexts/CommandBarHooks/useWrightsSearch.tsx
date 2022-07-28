@@ -9,10 +9,10 @@ import { COMMAND_PARENT, Wright } from "../../types";
 import { useUserContext } from "../UserContext";
 
 export const useWrightsSearch = (createWrightHandler: () => void) => {
-  const { isAuthenticated } = useUserContext();
+  const { isAuth } = useUserContext();
   const router = useRouter();
 
-  const { data: wrights, isFetching } = useGetAllWrights(!isAuthenticated());
+  const { data: wrights, isFetching } = useGetAllWrights(!isAuth);
 
   const { actions: kBarActions } = useKBar(({ actions }) => {
     // if ("wrights-search" in actions) {
@@ -34,6 +34,7 @@ export const useWrightsSearch = (createWrightHandler: () => void) => {
       name: wright.title || "",
       keywords: wright.head || "",
       icon: <FiBook color="var(--chakra-colors-accentColor)" />,
+      subtitle: wright.head ? (wright.head?.length > 70 ? wright.head?.substring(0, 70) + "..." : wright.head || "") : "",
     };
     return [
       parentAction,

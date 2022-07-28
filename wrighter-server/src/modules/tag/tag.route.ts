@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createTagHandler, deleteTagHandler, getAllTagsHandler } from "./tag.controller";
+import { createTagHandler, deleteTagHandler, getAllTagsHandler, getTagContentsHandler } from "./tag.controller";
 import { $ref } from "./tag.schema";
 
 export default async function tagRoutes(server: FastifyInstance) {
@@ -36,5 +36,13 @@ export default async function tagRoutes(server: FastifyInstance) {
       preHandler: server.authenticate,
     },
     deleteTagHandler
+  );
+
+  server.get(
+    "/:id/content",
+    {
+      preHandler: server.authenticate,
+    },
+    getTagContentsHandler
   );
 }

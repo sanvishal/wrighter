@@ -16,19 +16,17 @@ export const TagsContext = createContext<{
 
 export const TagsProvider = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
   const [tags, setTags] = useState<Tag[]>([]);
-  const { isAuthenticated, isUserLoading } = useUserContext();
+  const { isAuth, isUserLoading } = useUserContext();
 
   const { refetch: fetchAllTagsRequest, isFetching: isTagsLoading } = useQuery(
-    ["getAllTagsQuery", !isAuthenticated()],
-    () => getAllTags(!isAuthenticated()),
+    ["getAllTagsQuery", !isAuth],
+    () => getAllTags(!isAuth),
     { enabled: false, refetchOnWindowFocus: false }
   );
 
   const fetchTags = async () => {
     const { data: tags } = await fetchAllTagsRequest();
-    if (tags && tags.length > 0) {
-      setTags(tags);
-    }
+    setTags(tags || []);
     return tags || [];
   };
 
@@ -36,7 +34,7 @@ export const TagsProvider = ({ children }: { children: JSX.Element[] | JSX.Eleme
     if (!isUserLoading) {
       fetchTags();
     }
-  }, [isUserLoading]);
+  }, [isUserLoading, isAuth]);
 
   return <TagsContext.Provider value={{ tags, isTagsLoading, fetchTags }}>{children}</TagsContext.Provider>;
 };

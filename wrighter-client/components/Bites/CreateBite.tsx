@@ -160,7 +160,6 @@ export const CreateBite = ({
   };
 
   const handleOnContentChange = (content: string, type: BiteType) => {
-    console.log(content, type);
     return setBiteContent(content);
   };
 
@@ -171,10 +170,6 @@ export const CreateBite = ({
   const isTitleInvalid = () => {
     return title.trim().length < 2 || title.trim().length > 150;
   };
-
-  useEffect(() => {
-    console.log("hehehe", initialRef.current);
-  }, [initialRef, isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={false} size="3xl" initialFocusRef={initialRef}>

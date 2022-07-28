@@ -11,45 +11,54 @@ export const UserContext = createContext<{
   isAuthenticated: () => boolean;
   isAuthenticatedString: () => "true" | "false";
   isUserLoading: boolean;
+  isAuth: boolean;
 }>({
   user: null,
   fetchUser: () => Promise.resolve(null),
   isAuthenticated: () => false,
-  isUserLoading: false,
+  isUserLoading: true,
   isAuthenticatedString: () => "false",
+  isAuth: false,
 });
 
 export const UserProvider = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
   const [user, setUser] = useState<User | undefined | null>(null);
-  const { refetch: refetchUser, isLoading: isUserLoading } = useQuery<AxiosResponse<User>, AxiosError<unknown, unknown>>(
-    "user",
-    () => getUser(),
-    { enabled: false, retry: false }
-  );
+  const [isAuth, setIsAuth] = useState(false);
+  const [isUserLoading, setIsUserLoading] = useState(true);
+  const { refetch: refetchUser } = useQuery<AxiosResponse<User>, AxiosError<unknown, unknown>>("user", () => getUser(), {
+    enabled: false,
+    retry: false,
+  });
   const router = useRouter();
 
   const fetchUser = async () => {
+    setIsUserLoading(true);
     const { status, data } = await refetchUser();
     setUser(data?.data);
+    if (status === "success") {
+      setIsAuth(true);
+    } else {
+      setIsAuth(false);
+    }
+    setIsUserLoading(false);
     if (status === "success" && router.route === "/signin") {
       router.push("/wrights");
     } else if (status === "error") {
       // router.push("/signin");
     }
-
     return data?.data;
   };
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [router.pathname]);
 
   const isAuthenticated = () => user !== null && user !== undefined;
 
   const isAuthenticatedString = () => (isAuthenticated() ? "true" : "false");
 
   return (
-    <UserContext.Provider value={{ user, fetchUser, isAuthenticated, isAuthenticatedString, isUserLoading }}>
+    <UserContext.Provider value={{ user, fetchUser, isAuthenticated, isAuthenticatedString, isUserLoading, isAuth }}>
       {children}
     </UserContext.Provider>
   );

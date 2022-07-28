@@ -55,7 +55,6 @@ export const useBiteActions = () => {
   }, [router.pathname]);
 
   const actions = useMemo(() => {
-    console.log(bites);
     if (bites) {
       if (COMMAND_PARENT.BITE_ATTACH in kBarActions) {
         const allBiteActions: Action[] = [];
@@ -63,7 +62,6 @@ export const useBiteActions = () => {
         kBarActions[COMMAND_PARENT.BITE_ATTACH].children = [];
 
         bites.forEach((bite) => {
-          console.log(bite.tags && bite.tags.map((t) => t.name).join(" "));
           allBiteActions.push({
             id: bite.id,
             name: bite.title,

@@ -1,10 +1,11 @@
 import { useDisclosure } from "@chakra-ui/react";
+import { addDays, subDays } from "date-fns";
 import { Priority, useRegisterActions } from "kbar";
 import { createContext, useContext, useEffect, useState } from "react";
 import { TbBulb } from "react-icons/tb";
-import { useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { CreateBite } from "../components/Bites/CreateBite";
-import { getLastNDaysBites } from "../services/biteService";
+import { getBites, getLastNDaysBites } from "../services/biteService";
 import { Bite } from "../types";
 import { useUserContext } from "./UserContext";
 
@@ -32,26 +33,41 @@ export const BitesProvider = ({ children }: { children: JSX.Element | JSX.Elemen
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [triggerRefresh, setTriggerRefresh] = useState(false);
-  const { isAuthenticated } = useUserContext();
+  const { isUserLoading, user, isAuth } = useUserContext();
   const [bites, setBites] = useState<Bite[]>([]);
 
-  const { refetch: refetchBites, isFetching: isBitesLoading } = useQuery(
-    "getLast7DaysBitesQuery",
-    () => getLastNDaysBites(!isAuthenticated(), 7),
+  // const { refetch: refetchBites, isFetching: isBitesLoading } = useQuery(
+  //   "getLast7DaysBitesQuery",
+  //   () => getLastNDaysBites(!isAuth, 7),
+  //   {
+  //     refetchOnWindowFocus: false,
+  //     enabled: false,
+  //   }
+  // );
+
+  const { mutate: refetchBites, isLoading: isBitesLoading } = useMutation(
+    (guest: boolean) => getBites(guest, subDays(new Date(), 7), addDays(new Date(), 1)),
     {
-      refetchOnWindowFocus: false,
-      enabled: false,
+      onSuccess: (data, isGuest) => {
+        console.log({ isGuest, isAuth, data });
+        if (isGuest === !isAuth) {
+          setBites(data || []);
+        }
+      },
     }
   );
 
-  const handleRefetchBites = async () => {
-    const { data } = await refetchBites();
-    setBites(data || []);
-  };
+  // const handleRefetchBites = async () => {
+  //   const bites = await refetchBites(isAuth);
+  //   console.log("new", bites, isAuth);
+  //   setBites(bites || []);
+  // };
 
   useEffect(() => {
-    handleRefetchBites();
-  }, []);
+    if (!isUserLoading) {
+      refetchBites(!isAuth);
+    }
+  }, [isUserLoading, isAuth]);
 
   const handleTriggerRefresh = () => {
     setTriggerRefresh(!triggerRefresh);

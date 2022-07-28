@@ -62,7 +62,7 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
   const { refetch: sendLoginRequest, isLoading } = useQuery<unknown, AxiosError<{ message: string }, unknown>>(
     "loginQuery",
     () => login({ email: email.value, password: password.value }),
-    { enabled: false }
+    { enabled: false, refetchOnWindowFocus: false, retry: false }
   );
 
   const handleLogin = async () => {
@@ -212,7 +212,7 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
   const { refetch: sendRegisterRequest, isLoading } = useQuery<unknown, AxiosError<{ message: string }, unknown>>(
     "registerQuery",
     () => register({ email: email.value, password: password.value, name: name.value }),
-    { enabled: false }
+    { enabled: false, refetchOnWindowFocus: false }
   );
 
   const handleRegister = async () => {

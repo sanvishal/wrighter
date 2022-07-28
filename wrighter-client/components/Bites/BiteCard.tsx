@@ -41,7 +41,7 @@ export const BiteCard = ({
           </Menu>
         </HStack>
         {bite.tags && bite.tags.length > 0 && (
-          <HStack mb={2}>
+          <HStack mb={2} wrap="wrap" columnGap={1.5} rowGap={1.5} spacing={0}>
             {bite.tags.map((tag) => {
               return (
                 <HStack

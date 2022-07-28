@@ -52,7 +52,7 @@ export const Bites = (): JSX.Element => {
     key: "selection",
   });
   // const { isOpen: isBiteCreateOpen, onOpen: onBiteCreateOpen, onClose: onBiteCreateClose } = useDisclosure();
-  const { isAuthenticated } = useUserContext();
+  const { isAuth, isUserLoading, user } = useUserContext();
   const { tags: allTags } = useTagsContext();
   const [tags, setTags] = useState<ACTag[]>([]);
   const [selectedTags, setSelectedTags] = useState<ACTag[]>([]);
@@ -154,14 +154,14 @@ export const Bites = (): JSX.Element => {
 
   const getBitesHandler = async () => {
     if (selectionDateRange.startDate && selectionDateRange.endDate) {
-      const bites = await getBites(!isAuthenticated(), selectionDateRange.startDate, selectionDateRange.endDate);
+      const bites = await getBites(!isAuth, selectionDateRange.startDate, selectionDateRange.endDate);
       bites.sort((a, b) => a.createdAt.localeCompare(b.createdAt) * -1);
       return bites;
     }
     return [];
   };
 
-  const { mutate: biteDeleteRequest } = useMutation((biteToDelete: Bite) => deleteBite(!isAuthenticated(), biteToDelete.id));
+  const { mutate: biteDeleteRequest } = useMutation((biteToDelete: Bite) => deleteBite(!isAuth, biteToDelete.id));
 
   const {
     refetch: getBitesRequest,
@@ -181,12 +181,16 @@ export const Bites = (): JSX.Element => {
   };
 
   useEffect(() => {
-    getBitesRequest();
-  }, [selectionDateRange, carouselDate.start]);
+    if (!isUserLoading) {
+      getBitesRequest();
+    }
+  }, [selectionDateRange, carouselDate.start, isUserLoading, isAuth]);
 
   useEffect(() => {
-    getBitesRequest();
-  }, [triggerRefresh]);
+    if (!isUserLoading) {
+      getBitesRequest();
+    }
+  }, [triggerRefresh, isUserLoading, isAuth]);
 
   const handleTagSelectStateChange = (changes: UseMultipleSelectionStateChange<ACTag>) => {
     // enums is undefined and does not work for some reason
