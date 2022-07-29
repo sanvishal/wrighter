@@ -43,6 +43,8 @@ export const MobileNav = (): JSX.Element => {
   const handleLogOut = async () => {
     setIsLoggingOut(true);
     await logout();
+    // fake timeout cuz logout cuz cookie clearing is not consistent
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsLoggingOut(false);
     router.push("/signin");
   };

@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef } from "react";
 import { FiCheck, FiX } from "react-icons/fi";
+import { logout } from "../services/authService";
 
 export const GuestWarn = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }): JSX.Element => {
   const initialRef = useRef<any>(null);
@@ -56,7 +57,7 @@ export const GuestWarn = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button w="full" fontWeight="bold" as="a" href="/wrights" ref={initialRef}>
+          <Button w="full" fontWeight="bold" as="a" href="/wrights" ref={initialRef} onClick={() => logout()}>
             Ok, Continue!
           </Button>
         </ModalFooter>
