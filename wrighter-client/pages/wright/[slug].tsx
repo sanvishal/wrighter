@@ -36,29 +36,33 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
   return (
     <Container maxW="5xl" id="wright-preview" pt={10}>
       <Head>
-        <title>{wright ? wright.title : "wrighter • wright"}</title>
-        <meta property="og:title" content={wright.title} key="title" />
-        <meta property="twitter:title" content={wright.title} key="title" />
-        <meta
-          name="description"
-          content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
-        />
-        <meta property="og:type" content="article" />
-        <meta property="og:image" content={wright.ogImage || ""} />
-        <meta property="og:image:alt" content={wright.title || ""} />
-        <meta property="twitter:image" content={wright.ogImage || ""} />
-        <meta property="twitter:image:alt" content={wright.title || ""} />
-        <meta name="keywords" content={wright.tags ? wright.tags?.map((tag) => tag.name).join(", ") : ""}></meta>
-        <meta name="author" content={wright.user}></meta>
-        <meta name="twitter:creator" content={wright.user}></meta>
-        <meta
-          name="twitter:description"
-          content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
-        />
-        <meta
-          name="og:description"
-          content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
-        />
+        {wright && (
+          <>
+            <title>{wright ? wright.title : "wrighter • wright"}</title>
+            <meta property="og:title" content={wright.title} key="title" />
+            <meta property="twitter:title" content={wright.title} key="title" />
+            <meta
+              name="description"
+              content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
+            />
+            <meta property="og:type" content="article" />
+            <meta property="og:image" content={wright.ogImage || ""} />
+            <meta property="og:image:alt" content={wright.title || ""} />
+            <meta property="twitter:image" content={wright.ogImage || ""} />
+            <meta property="twitter:image:alt" content={wright.title || ""} />
+            <meta name="keywords" content={wright.tags ? wright.tags?.map((tag) => tag.name).join(", ") : ""}></meta>
+            <meta name="author" content={wright.user}></meta>
+            <meta name="twitter:creator" content={wright.user}></meta>
+            <meta
+              name="twitter:description"
+              content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
+            />
+            <meta
+              name="og:description"
+              content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
+            />
+          </>
+        )}
       </Head>
       {wright ? (
         <>
