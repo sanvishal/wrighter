@@ -95,6 +95,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: {
         wright: null,
       },
+      revalidate: 50,
     };
   }
 
@@ -106,20 +107,22 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         props: {
           wright: null,
         },
+        revalidate: 50,
       };
     }
 
     return {
       props: {
         wright: req.data,
-        revalidate: 10,
       },
+      revalidate: 50,
     };
   } catch (e) {
     return {
       props: {
         wright: null,
       },
+      revalidate: 50,
     };
   }
 }
