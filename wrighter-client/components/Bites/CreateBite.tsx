@@ -142,6 +142,7 @@ export const CreateBite = ({
 
   const handleTagSelectStateChange = (changes: UseMultipleSelectionStateChange<ACTag>) => {
     // enums is undefined and does not work for some reason
+    console.log(changes);
     if (changes.type === "__function_add_selected_item__" || changes.type === "__function_remove_selected_item__") {
       setSelectedTags(changes?.selectedItems || []);
     }
