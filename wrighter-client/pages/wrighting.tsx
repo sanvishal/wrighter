@@ -63,7 +63,7 @@ const Wrighting: NextPage = () => {
       } else {
         router.push("/wrights");
         toast({
-          position: "bottom-left",
+          position: "bottom-right",
           render: () => <Toaster message="wright with that id is not found!" type="error" />,
         });
       }
@@ -173,7 +173,13 @@ const Wrighting: NextPage = () => {
             <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} />
             <Box pos="absolute" top="24px" left="0px">
               {isAuthenticated() && (
-                <WrightSettings wrightId={id} isOpen={isSettingsOpen} onOpen={onSettingsOpen} onClose={onSettingsClose} />
+                <WrightSettings
+                  wrightId={id}
+                  isOpen={isSettingsOpen}
+                  onOpen={onSettingsOpen}
+                  onClose={onSettingsClose}
+                  gotoWrightsOnDelete
+                />
               )}
               {!isAuthenticated() && (
                 <CustomToolTip label="preview in new tab">

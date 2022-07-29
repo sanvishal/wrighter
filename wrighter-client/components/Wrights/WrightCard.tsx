@@ -58,19 +58,18 @@ export const WrightCard = ({
             mb={3}
           />
         )}
-        <IconButton
-          cursor="pointer"
-          as={FiTrash2}
-          onClick={() => {
-            onWrightDeleteClick(wright);
-          }}
-          variant="ghost"
-          bg="errorRedTransBg"
-          _hover={{ bg: "errorRedTransBg" }}
-          _focus={{ bg: "errorRedTransBg" }}
-          aria-label="wright delete"
-          p={3}
-        />
+        {!showSettings && (
+          <IconButton
+            cursor="pointer"
+            as={FiSettings}
+            onClick={() => {
+              onWrightDeleteClick(wright);
+            }}
+            variant="ghost"
+            aria-label="wright settings"
+            p={3}
+          />
+        )}
       </Box>
       <HStack alignItems="flex-start">
         <Box w={{ base: "85%", md: "90%" }}>
@@ -180,25 +179,24 @@ export const WrightCard = ({
               />
             </CustomToolTip>
           )}
-          <CustomToolTip label="delete wright">
-            <IconButton
-              display={{ base: "flex", md: "none" }}
-              size="sm"
-              style={{ marginTop: "0px" }}
-              height={{ base: "28px", md: "auto" }}
-              padding={{ base: "14px", md: "auto" }}
-              onClick={() => {
-                onWrightDeleteClick(wright);
-              }}
-              variant="ghost"
-              bg="errorRedTransBg"
-              _hover={{ bg: "errorRedTransBg" }}
-              _focus={{ bg: "errorRedTransBg" }}
-              icon={<FiTrash2 />}
-              borderRadius="100px"
-              aria-label="delete wright"
-            />
-          </CustomToolTip>
+          {!showSettings && (
+            <CustomToolTip label="wright settings">
+              <IconButton
+                display={{ base: "flex", md: "none" }}
+                size="sm"
+                style={{ marginTop: "0px" }}
+                height={{ base: "28px", md: "auto" }}
+                padding={{ base: "14px", md: "auto" }}
+                onClick={() => {
+                  onWrightDeleteClick(wright);
+                }}
+                variant="ghost"
+                icon={<FiSettings />}
+                borderRadius="100px"
+                aria-label="settings for wright"
+              />
+            </CustomToolTip>
+          )}
         </Stack>
       </HStack>
     </Box>

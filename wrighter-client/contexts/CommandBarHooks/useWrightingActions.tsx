@@ -6,6 +6,7 @@ import {
   FiBold,
   FiCheck,
   FiCode,
+  FiDownload,
   FiEye,
   FiImage,
   FiItalic,
@@ -20,7 +21,7 @@ export const getShortcut = (key: string) => {
   return navigator.platform.indexOf("Mac") > -1 ? `⌘ + ${key}` : `Ctrl + ${key}`;
 };
 
-export const useWrightingActions = () => {
+export const useWrightingActions = (exportHandler: () => void) => {
   const getHeadingActions = () => {
     const headingActions: Action[] = [];
     for (let i = 1; i <= 6; i++) {
@@ -304,6 +305,18 @@ export const useWrightingActions = () => {
           // @ts-ignore
           document.querySelector('.bytemd-toolbar-right > [bytemd-tippy-path="4"]')?.click?.();
         }
+      },
+    },
+    {
+      id: "wrighter-export",
+      name: "Export as MD",
+      section: "This Wright",
+      keywords: "export download markdown blog import",
+      icon: <FiDownload color="var(--chakra-colors-accentColor)" />,
+      subtitle: "Download this wright as markdown",
+      priority: Priority.NORMAL,
+      perform: () => {
+        exportHandler();
       },
     },
     {

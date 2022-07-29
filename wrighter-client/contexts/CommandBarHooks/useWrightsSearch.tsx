@@ -42,6 +42,7 @@ export const useWrightsSearch = (createWrightHandler: () => void) => {
         parent: parentAction.id,
         id: "edit" + parentAction.id,
         name: "Edit",
+        section: "Actions",
         icon: <FiEdit color="var(--chakra-colors-accentColor)" />,
         perform: () => {
           router.push(`/wrighting?id=${wright.id}`);
@@ -51,6 +52,7 @@ export const useWrightsSearch = (createWrightHandler: () => void) => {
         parent: parentAction.id,
         id: "preview" + parentAction.id,
         name: "Preview",
+        section: "Actions",
         icon: <FiEye color="var(--chakra-colors-accentColor)" />,
         perform: () => {
           if (wright.isPublic) {

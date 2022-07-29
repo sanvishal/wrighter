@@ -94,6 +94,10 @@ export const Bites = (): JSX.Element => {
         start: addDays(carouselDate.start, 1),
         end: carouselDate.end,
       });
+      setSelectionDateRange({
+        startDate: addDays(carouselDate.start, 8),
+        endDate: addDays(carouselDate.start, 8),
+      });
       setSelectedCarouselIdx(selectedCarouselIdx + dir - 1);
       return;
     }
@@ -102,6 +106,10 @@ export const Bites = (): JSX.Element => {
       setCarouselDate({
         start: subDays(carouselDate.start, 1),
         end: carouselDate.end,
+      });
+      setSelectionDateRange({
+        startDate: subDays(carouselDate.start, 0),
+        endDate: subDays(carouselDate.start, 0),
       });
       setSelectedCarouselIdx(0);
       return;

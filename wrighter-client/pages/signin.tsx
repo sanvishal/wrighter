@@ -71,7 +71,7 @@ const LogInForm = ({ handleGotoSignUp }: { handleGotoSignUp: () => void }): JSX.
     if (status === "error") {
       setErrorAnimClass("shake");
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => (
           <Toaster message={error.response?.data?.message || "Something bad happened! Please try again."} type="error" />
         ),
@@ -221,7 +221,7 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
     if (status === "error") {
       setErrorAnimClass("shake");
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => (
           <Toaster message={error.response?.data?.message || "Something bad happened! Please try again."} type="error" />
         ),
@@ -229,7 +229,7 @@ const SignUpForm = ({ handleGotoLogin }: { handleGotoLogin: () => void }): JSX.E
     } else if (status === "success") {
       handleGotoLogin();
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message="Account created! You can login now :)" type="success" />,
       });
     }

@@ -82,7 +82,7 @@ async function build() {
     try {
       await request.jwtVerify();
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       await reply.code(401).send(e);
     }
   });

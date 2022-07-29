@@ -3,6 +3,7 @@ import {
   Button,
   Center,
   Checkbox,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -24,10 +25,11 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
-import { FiCheck, FiExternalLink, FiInfo, FiSettings, FiX } from "react-icons/fi";
+import { FiCheck, FiDownload, FiExternalLink, FiInfo, FiSettings, FiTrash2, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
-import { changeWrightSettings, getWright } from "../../services/wrightService";
+import { changeWrightSettings, deleteWright, getWright } from "../../services/wrightService";
 import { isValidUrl, slugify } from "../../utils";
 import { CustomToolTip } from "../CustomTooltip";
 import { Toaster } from "../Toaster";
@@ -39,13 +41,15 @@ export const WrightSettings = ({
   onClose,
   showButton = true,
   triggerUpdate,
+  gotoWrightsOnDelete = false,
 }: {
   wrightId: string;
-  isOpen: any;
-  onOpen: any;
-  onClose: any;
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
   showButton?: boolean;
   triggerUpdate?: () => void;
+  gotoWrightsOnDelete?: boolean;
 }): JSX.Element => {
   // const { isOpen, onOpen, onClose } = useDisclosure();
   const [switchChecked, setSwitchChecked] = useState(false);
@@ -53,8 +57,10 @@ export const WrightSettings = ({
   const [slugError, setIsSlugError] = useState("");
   const [metaImage, setMetaImage] = useState("");
   const [imgError, setImgError] = useState("");
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
   const [shouldTriggerUpdate, setShouldTriggerUpdate] = useState(false);
   const toast = useToast();
+  const router = useRouter();
 
   const {
     data: wright,
@@ -66,6 +72,12 @@ export const WrightSettings = ({
     retry: false,
   });
 
+  const { refetch: deleteWrightRequest, isFetching: isDeletingWright } = useQuery(
+    "deleteWrightQueryRemote",
+    () => deleteWright(false, wright?.id || ""),
+    { enabled: false, refetchOnWindowFocus: false }
+  );
+
   const { isFetching: isSaving, refetch: saveSettings } = useQuery(
     "saveWrightSettingsQuery",
     () => changeWrightSettings(wrightId, switchChecked, slugify(slugValue), metaImage),
@@ -75,6 +87,32 @@ export const WrightSettings = ({
       retry: false,
     }
   );
+
+  const { refetch: getWrightRequestWithContent, isFetching: isGettingWrightWithContent } = useQuery(
+    "getWrightOnSettingsWithContent",
+    () => getWright(false, wright?.id || "", false),
+    { enabled: false, refetchOnWindowFocus: false }
+  );
+
+  const deleteWrightHandler = async () => {
+    const { status } = await deleteWrightRequest();
+    if (status === "success") {
+      if (gotoWrightsOnDelete) {
+        router.push("/wrights");
+      }
+      triggerUpdate?.();
+      toast({
+        position: "bottom-right",
+        render: () => <Toaster message="deleted wright successfully" type="success" />,
+      });
+      onClose();
+    } else if (status === "error") {
+      toast({
+        position: "bottom-right",
+        render: () => <Toaster message="error deleting wright" type="error" />,
+      });
+    }
+  };
 
   useEffect(() => {
     getWrightRequest();
@@ -90,6 +128,7 @@ export const WrightSettings = ({
   useEffect(() => {
     if (isOpen) {
       handleWrightRequest();
+      setIsDeleteClicked(false);
     }
   }, [isOpen]);
 
@@ -105,14 +144,29 @@ export const WrightSettings = ({
     if (status === "success") {
       await handleWrightRequest();
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message="wright settings successfully updated" type="success" />,
       });
     } else if (status === "error") {
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message={"something bad happened! please try again."} type="error" />,
       });
+    }
+  };
+
+  const exportWrightHandler = async () => {
+    const { data: latestWright, status } = await getWrightRequestWithContent();
+    if (latestWright && status === "success") {
+      const blob = new Blob([latestWright.content || ""], {
+        type: "application/text",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${slugify((latestWright.title || "") + " " + new Date().toDateString())}.md`;
+      link.click();
+      window.URL.revokeObjectURL(url);
     }
   };
 
@@ -264,6 +318,50 @@ export const WrightSettings = ({
                     />
                   </Box>
                 </FormControl>
+                <Box h={10} />
+                <VStack alignItems="space-between" spacing={10} w="full">
+                  <HStack justifyContent="space-between">
+                    <Text fontSize={{ base: "md", md: "lg" }}>Export as Markdown file</Text>
+                    <Button fontWeight="bold" leftIcon={<FiDownload />} onClick={exportWrightHandler}>
+                      Export
+                    </Button>
+                  </HStack>
+                  <HStack justifyContent="space-between" w="full">
+                    <Box>
+                      <Text fontWeight="bold" fontSize={{ base: "md", md: "lg" }}>
+                        Delete Wright
+                      </Text>
+                      <Text fontWeight="bold" fontSize={{ base: "md", md: "lg" }} color="errorRed">
+                        This action is irreversible!
+                      </Text>
+                    </Box>
+                    <VStack spacing={1} alignItems="flex-end">
+                      <Button
+                        fontWeight="bold"
+                        variant="solid-negative-cta"
+                        leftIcon={<FiTrash2 />}
+                        isLoading={isDeletingWright}
+                        onClick={() => {
+                          if (!isDeleteClicked) {
+                            setIsDeleteClicked(true);
+                          } else {
+                            deleteWrightHandler();
+                          }
+                        }}
+                      >
+                        Delete
+                      </Button>
+                      <Text
+                        visibility={isDeleteClicked ? "visible" : "hidden"}
+                        fontSize={{ base: "xs", md: "sm" }}
+                        color="textLighter"
+                        textAlign="right"
+                      >
+                        (click it again to delete)
+                      </Text>
+                    </VStack>
+                  </HStack>
+                </VStack>
               </VStack>
             ) : (
               <Spinner

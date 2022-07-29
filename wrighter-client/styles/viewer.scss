@@ -27,6 +27,12 @@
     font-family: "Avenir";
     max-width: calc(100%) !important;
     margin-left: 20px;
+    line-height: 1.6;
+
+    p {
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
 
     figure {
       margin: 20px auto;
@@ -83,6 +89,17 @@
       ul,
       ol {
         margin: 0.2em 1.6em;
+      }
+    }
+
+    @media screen and (max-width: 48em) {
+      ul,
+      ol {
+        margin: 0.5em 1.2em;
+        ul,
+        ol {
+          margin: 0.2em 0.4em;
+        }
       }
     }
 

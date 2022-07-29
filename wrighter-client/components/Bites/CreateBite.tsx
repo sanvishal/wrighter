@@ -121,7 +121,7 @@ export const CreateBite = ({
     const { status, data: bite } = await createBiteRequest();
     if (status === "error") {
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message="something happened, please try again" type="error" />,
       });
     } else if (status === "success") {
@@ -159,7 +159,7 @@ export const CreateBite = ({
     const tagName = tag.value.trim().replace(/\s/g, "");
     if (tagName.length < 3 || tagName.length > 35) {
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message="tag name too short or too long" type="error" />,
       });
       return;
@@ -200,7 +200,7 @@ export const CreateBite = ({
               onClose();
             } else {
               toast({
-                position: "bottom-left",
+                position: "bottom-right",
                 render: () => <Toaster message="please fix the errors before saving" type="error" />,
               });
             }

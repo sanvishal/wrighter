@@ -66,6 +66,7 @@ export const useBiteActions = () => {
             id: bite.id,
             name: bite.title,
             icon: getIconForBite(bite.type),
+            section: "Actions",
             keywords: bite.tags ? bite.tags.map((t) => t.name).join(" ") : "",
             parent: COMMAND_PARENT.BITE_ATTACH,
             subtitle: bite.content.length > 70 ? bite.content.substring(0, 70) + "..." : bite.content,
@@ -90,7 +91,7 @@ export const useBiteActions = () => {
                 }
               } else {
                 toast({
-                  position: "bottom-left",
+                  position: "bottom-right",
                   render: () => <Toaster message="no editor context found!" type="error" />,
                 });
               }

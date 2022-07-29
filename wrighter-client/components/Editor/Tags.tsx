@@ -46,7 +46,7 @@ const Tag = ({ tag, onTagDelete }: { tag: Tag; onTagDelete: (tag: Tag) => void }
       onTagDelete(tag);
     } catch (e) {
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message={"something bad happened! please try again."} type="error" />,
       });
     }
@@ -169,7 +169,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
     }
     if (focusedTagIdx === -1 && (currentEditingTag.trim().length < 3 || currentEditingTag.trim().length > 35)) {
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message="tag name too short or too long" type="error" />,
       });
       return [];
@@ -191,7 +191,7 @@ export const Tags = ({ initWright }: { initWright: Wright }): JSX.Element => {
   useEffect(() => {
     if (createAndAttachStatus === "error") {
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message={"something bad happened! please try again."} type="error" />,
       });
     }

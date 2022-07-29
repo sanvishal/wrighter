@@ -11,6 +11,7 @@ import { Wright } from "../../types";
 import { figCaptionPlugin, pastePlugin } from "../../services/pluginService";
 import { useWrightingActions } from "../../contexts/CommandBarHooks/useWrightingActions";
 import { useBiteActions } from "../../contexts/CommandBarHooks/useBiteActions";
+import { slugify } from "../../utils";
 
 export const Editor = ({
   editorOnSaveHandler = () => {},
@@ -73,7 +74,19 @@ export const Editor = ({
     }
   }, [router.isReady]);
 
-  useWrightingActions();
+  const exportHandler = () => {
+    const blob = new Blob([content || ""], {
+      type: "application/text",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${slugify((initWright.title || "") + " " + new Date().toDateString())}.md`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  useWrightingActions(exportHandler);
   useBiteActions();
 
   return (

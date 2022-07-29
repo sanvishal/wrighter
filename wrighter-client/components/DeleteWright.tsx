@@ -47,13 +47,13 @@ export const DeleteWright = ({
     if (status === "success") {
       triggerUpdate();
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message="deleted wright successfully" type="success" />,
       });
       onClose();
     } else if (status === "error") {
       toast({
-        position: "bottom-left",
+        position: "bottom-right",
         render: () => <Toaster message="error deleting wright" type="error" />,
       });
     }

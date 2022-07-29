@@ -33,6 +33,7 @@ import { WrightSettings } from "../Editor/WrightSettings";
 import { DeleteWright } from "../DeleteWright";
 import { useWrightsSearch } from "../../contexts/CommandBarHooks/useWrightsSearch";
 import { useBiteActions } from "../../contexts/CommandBarHooks/useBiteActions";
+import { WrightSettingsGuest } from "../WrightSettingsGuest";
 
 export const CreateWright = ({
   createWrightHandler,
@@ -288,8 +289,8 @@ export const WrightsList = (): JSX.Element => {
           </VStack>
         )}
       </Box>
-      {currentDeleteWright && (
-        <DeleteWright
+      {!isAuth && currentDeleteWright && (
+        <WrightSettingsGuest
           onClose={onDeleteConfClose}
           isOpen={isDeleteConfOpen}
           wright={currentDeleteWright}
