@@ -14,6 +14,7 @@ export interface Wright {
   userId: string;
   tags?: Tag[];
   slug?: string;
+  ogImage?: string;
   isPublic?: boolean;
 }
 

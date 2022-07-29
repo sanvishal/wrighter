@@ -13,6 +13,7 @@ const wright = {
   slug: z.string(),
   isPublic: z.boolean(),
   tags: tagResponseArraySchema,
+  ogImage: z.string().optional(),
 };
 
 const wrightResponseSchema = z.object({
@@ -32,6 +33,7 @@ const tagAttachRequestSchema = z.object({
 const wrightSettingRequestSchema = z.object({
   isPublic: z.boolean().optional(),
   slug: z.string().min(5).max(200).optional(),
+  ogImage: z.string().min(0).max(250).optional().default(""),
 });
 
 const wrightBySlugResponseSchema = z.object({

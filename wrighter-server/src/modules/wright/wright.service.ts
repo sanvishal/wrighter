@@ -34,6 +34,7 @@ export const getAllWrights = async (userId: string, compact: boolean) => {
       createdAt: true,
       updatedAt: true,
       userId: true,
+      ogImage: true,
     },
   });
 
@@ -59,6 +60,7 @@ export const getWright = async (id: string, userId: string, compact: boolean) =>
       createdAt: true,
       updatedAt: true,
       userId: true,
+      ogImage: true,
     },
   });
   if (wright?.userId !== userId && !wright?.isPublic) {
@@ -138,7 +140,7 @@ export const getTagsForWright = async (wrightId: string, userId: string) => {
 export const changeWrightSettings = async (
   wrightId: string,
   userId: string,
-  { isPublic, slug }: { isPublic?: boolean; slug?: string }
+  { isPublic, slug, ogImage = "" }: { isPublic?: boolean; slug?: string; ogImage?: string }
 ) => {
   const wright = await prisma.wright.findFirst({ where: { id: wrightId, userId: userId } });
   if (!wright) {
@@ -149,6 +151,7 @@ export const changeWrightSettings = async (
     data: {
       isPublic: isPublic === undefined ? wright.isPublic : isPublic,
       slug: slug?.trim().length === 0 ? slugify(wright.title) : slug,
+      ogImage: ogImage.trim() || "",
     },
   });
   return count;

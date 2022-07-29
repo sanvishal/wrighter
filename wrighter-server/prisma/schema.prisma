@@ -30,6 +30,7 @@ model Wright {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   slug String @db.VarChar(200) @default("")
+  ogImage String @db.VarChar(250) @default("")
   wrighter User @relation(fields: [userId], references: [id])
   userId String
   tagWrights TagWright[]

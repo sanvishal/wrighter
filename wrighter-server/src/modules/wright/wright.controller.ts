@@ -178,6 +178,7 @@ export const changeWrightSettingsHandler = async (
     const isUpdated = await changeWrightSettings(request.params.id, request.user.id, {
       isPublic: request.body.isPublic,
       slug: request.body.slug,
+      ogImage: request.body.ogImage,
     });
     if (!isUpdated) {
       return reply.code(400).send({

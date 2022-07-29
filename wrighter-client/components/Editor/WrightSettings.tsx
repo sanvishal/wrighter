@@ -28,7 +28,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FiCheck, FiExternalLink, FiInfo, FiSettings, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { changeWrightSettings, getWright } from "../../services/wrightService";
-import { slugify } from "../../utils";
+import { isValidUrl, slugify } from "../../utils";
 import { CustomToolTip } from "../CustomTooltip";
 import { Toaster } from "../Toaster";
 
@@ -51,6 +51,8 @@ export const WrightSettings = ({
   const [switchChecked, setSwitchChecked] = useState(false);
   const [slugValue, setSlugValue] = useState("");
   const [slugError, setIsSlugError] = useState("");
+  const [metaImage, setMetaImage] = useState("");
+  const [imgError, setImgError] = useState("");
   const [shouldTriggerUpdate, setShouldTriggerUpdate] = useState(false);
   const toast = useToast();
 
@@ -66,7 +68,7 @@ export const WrightSettings = ({
 
   const { isFetching: isSaving, refetch: saveSettings } = useQuery(
     "saveWrightSettingsQuery",
-    () => changeWrightSettings(wrightId, switchChecked, slugify(slugValue)),
+    () => changeWrightSettings(wrightId, switchChecked, slugify(slugValue), metaImage),
     {
       refetchOnWindowFocus: false,
       enabled: false,
@@ -81,6 +83,7 @@ export const WrightSettings = ({
   const handleWrightRequest = async () => {
     const { data: wright } = await getWrightRequest();
     setSlugValue(wright?.slug || "");
+    setMetaImage(wright?.ogImage || "");
     setSwitchChecked(wright?.isPublic === undefined ? false : wright.isPublic);
   };
 
@@ -91,7 +94,11 @@ export const WrightSettings = ({
   }, [isOpen]);
 
   const handleOnSaveClick = async () => {
-    if (wright?.slug !== slugify(slugValue) || wright?.isPublic !== switchChecked) {
+    if (
+      wright?.slug !== slugify(slugValue) ||
+      wright?.isPublic !== switchChecked ||
+      (wright.ogImage && wright?.ogImage?.trim() !== metaImage.trim())
+    ) {
       setShouldTriggerUpdate(true);
     }
     const { status } = await saveSettings();
@@ -119,6 +126,22 @@ export const WrightSettings = ({
     setSlugValue(value);
   };
 
+  const handleMetaChange = (value: string) => {
+    const trimmed = value.trim();
+    setMetaImage(trimmed);
+    if (trimmed.length > 250) {
+      setImgError("slug must be below 250 characters");
+      return;
+    } else {
+      setImgError("");
+    }
+    if (trimmed.length > 0 && !isValidUrl(trimmed)) {
+      setImgError("invalid URL");
+    } else {
+      setImgError("");
+    }
+  };
+
   const onCloseHandler = () => {
     if (shouldTriggerUpdate && triggerUpdate) {
       triggerUpdate();
@@ -129,6 +152,8 @@ export const WrightSettings = ({
   useEffect(() => {
     if (isOpen) {
       setShouldTriggerUpdate(false);
+      setImgError("");
+      setIsSlugError("");
     }
   }, [isOpen]);
 
@@ -211,6 +236,33 @@ export const WrightSettings = ({
                       </Text>
                     </HStack>
                   </Box>
+                  <Box mt={5}>
+                    <FormLabel htmlFor="img" mb={1}>
+                      <HStack>
+                        <Text>Meta Image</Text>
+                        <CustomToolTip label="the image that would appear in shared link if you share your wright in social media">
+                          <Center>
+                            <Icon as={FiInfo} color="textLighter" cursor="pointer" />
+                          </Center>
+                        </CustomToolTip>
+                        {imgError && (
+                          <Text color="errorRed" fontSize="sm" w="50%" style={{ marginLeft: "auto" }} textAlign="right">
+                            {imgError}
+                          </Text>
+                        )}
+                      </HStack>
+                    </FormLabel>
+                    <Input
+                      borderColor="inputBorderColor"
+                      type="text"
+                      id="img"
+                      isInvalid={imgError.length > 0}
+                      placeholder="A link to the meta image, helps with SEO"
+                      required
+                      value={metaImage}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleMetaChange(e.target.value)}
+                    />
+                  </Box>
                 </FormControl>
               </VStack>
             ) : (
@@ -231,7 +283,7 @@ export const WrightSettings = ({
               fontWeight="bold"
               isLoading={isWrightLoading || isSaving}
               onClick={handleOnSaveClick}
-              disabled={slugError.length > 0}
+              disabled={slugError.length > 0 || imgError.length > 0}
             >
               Save
             </Button>
