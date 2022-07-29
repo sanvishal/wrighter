@@ -47,13 +47,9 @@ export const MobileNav = (): JSX.Element => {
     router.push("/signin");
   };
 
-  useEffect(() => {
-    console.log(isTagTreeOpen);
-  }, [isTagTreeOpen]);
-
   return (
     <>
-      <Box w="full" h={14} bg="bgDark" pos="fixed" bottom="0" borderTopRadius={10}>
+      <Box w="full" h={14} bg="bgDark" pos="fixed" bottom="0" borderTopRadius={10} zIndex={2}>
         <Flex alignItems="center" justifyContent="space-between" w="full" flexDirection="row" px={2} h="full">
           <HStack spacing={4} h="full">
             <Center w="40px" h="40px">
@@ -91,7 +87,6 @@ export const MobileNav = (): JSX.Element => {
                 aria-label="open tags"
                 variant="ghost"
                 onClick={() => {
-                  // console.log("heheh");
                   onTagTreeToggle();
                 }}
                 _hover={{ bg: "successGreenTransBg", color: "successGreen" }}
@@ -115,7 +110,7 @@ export const MobileNav = (): JSX.Element => {
                 }}
               />
             </Box>
-            <Box pos="relative" mt={2}>
+            <Box pos="relative" style={{ marginTop: "5px" }}>
               {isSaving ? (
                 <Spinner
                   sx={{
@@ -153,30 +148,41 @@ export const MobileNav = (): JSX.Element => {
                   >
                     Toggle theme
                   </MenuItem>
-                  <MenuItem
-                    closeOnSelect={false}
-                    icon={
-                      !isLoggingOut ? (
-                        <Icon as={FiLogOut} strokeWidth={2.5} mt={1} />
-                      ) : (
-                        <Spinner
-                          mt={0.5}
-                          sx={{
-                            "--spinner-size": "0.7rem",
-                            borderBottomColor: "textLighter",
-                            borderLeftColor: "textLighter",
-                            borderTopColor: "transparent",
-                            borderRightColor: "transparent",
-                          }}
-                        />
-                      )
-                    }
-                    onClick={handleLogOut}
-                    aria-label="Logout"
-                    _hover={{ bg: "errorRedTransBg" }}
-                  >
-                    Logout
-                  </MenuItem>
+                  {isAuthenticated() ? (
+                    <MenuItem
+                      closeOnSelect={false}
+                      icon={
+                        !isLoggingOut ? (
+                          <Icon as={FiLogOut} strokeWidth={2.5} mt={1} />
+                        ) : (
+                          <Spinner
+                            mt={0.5}
+                            sx={{
+                              "--spinner-size": "0.7rem",
+                              borderBottomColor: "textLighter",
+                              borderLeftColor: "textLighter",
+                              borderTopColor: "transparent",
+                              borderRightColor: "transparent",
+                            }}
+                          />
+                        )
+                      }
+                      onClick={handleLogOut}
+                      aria-label="Logout"
+                      _hover={{ bg: "errorRedTransBg" }}
+                    >
+                      Logout
+                    </MenuItem>
+                  ) : (
+                    <MenuItem
+                      closeOnSelect={false}
+                      icon={<Icon as={FiKey} strokeWidth={2.5} mt={1} />}
+                      onClick={() => router.push("/signin")}
+                      aria-label="signin"
+                    >
+                      Signin
+                    </MenuItem>
+                  )}
                 </MenuList>
               </Menu>
             </Box>
@@ -205,10 +211,6 @@ export const Navbar = () => {
     setIsLoggingOut(false);
     router.push("/signin");
   };
-
-  // useEffect(() => {
-  //   console.log(saveQuery);
-  // }, [saveQuery]);
 
   return (
     <>

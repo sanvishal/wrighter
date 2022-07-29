@@ -4,6 +4,7 @@ import "highlight.js/styles/default.css";
 import "katex/dist/katex.css";
 import type { AppProps } from "next/app";
 import Router from "next/router";
+import Script from "next/script";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useState } from "react";
@@ -27,18 +28,35 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ChakraProvider theme={theme}>
-        {/* <GrainyTexture /> */}
-        <UserProvider>
-          <TagsProvider>
-            <BitesProvider>
-              <Component {...pageProps} />
-            </BitesProvider>
-          </TagsProvider>
-        </UserProvider>
-      </ChakraProvider>
-    </QueryClientProvider>
+    <>
+      <Script
+        strategy="lazyOnload"
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+      />
+
+      <Script strategy="lazyOnload" id="ga">
+        {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+                    page_path: window.location.pathname,
+                    });
+                `}
+      </Script>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider theme={theme}>
+          {/* <GrainyTexture /> */}
+          <UserProvider>
+            <TagsProvider>
+              <BitesProvider>
+                <Component {...pageProps} />
+              </BitesProvider>
+            </TagsProvider>
+          </UserProvider>
+        </ChakraProvider>
+      </QueryClientProvider>
+    </>
   );
 }
 
