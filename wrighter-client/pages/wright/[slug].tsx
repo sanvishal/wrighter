@@ -73,6 +73,9 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
           </Text>
           <Text fontSize="md" color="textLighter" mt="-8px" mb={12}>
             by <span style={{ fontWeight: 800 }}>{wright.user}</span>
+            <Text as="a" href="https://wrighter.vercel.app/" target="_blank" ml={1.5} fontWeight="bold">
+              using <u>wrighter</u>
+            </Text>
           </Text>
           <Viewer value={wright.content} plugins={plugins} />
         </>
