@@ -3,7 +3,7 @@ import mediumZoom from "@bytemd/plugin-medium-zoom";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
 import { Viewer } from "@bytemd/react";
-import { Box, Center, Container, HStack, Icon, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, Container, HStack, Icon, IconButton, Text, useColorMode, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useEffect, useMemo } from "react";
@@ -12,12 +12,14 @@ import { Wright } from "../../types";
 import Head from "next/head";
 import { autoLinkHeadingsPlugin, figCaptionPlugin } from "../../services/pluginService";
 import { scrollAnchorIntoView } from "../../utils";
+import { FiMoon, FiSun } from "react-icons/fi";
 
 interface PageProps {
   wright: Wright & { user: string };
 }
 
 const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
+  const { colorMode, toggleColorMode } = useColorMode();
   const plugins = useMemo(
     () => [
       mediumZoom({ background: "var(--chakra-colors-bgLight)" }),
@@ -60,8 +62,20 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
       </Head>
       {wright ? (
         <>
-          <HStack mb="-5px" justify="space-between" fontSize="sm" color="textLighter" opacity={0.6} w="full" spacing={3}>
-            <Text w="30%">{new Date(wright.updatedAt || new Date().toISOString()).toDateString()}</Text>
+          <Box pos="fixed" bottom="20px" left="20px">
+            <IconButton
+              aria-label="toggle theme"
+              as={colorMode === "dark" ? FiMoon : FiSun}
+              onClick={toggleColorMode}
+              cursor="pointer"
+              variant="ghost"
+              p={3}
+            ></IconButton>
+          </Box>
+          <HStack mb="-5px" justify="space-between" fontSize="sm" color="textLighter" opacity={0.7} w="full" spacing={3}>
+            <Text w="30%" color="textColor">
+              {new Date(wright.updatedAt || new Date().toISOString()).toDateString()}
+            </Text>
             <HStack wrap="wrap" justifyContent="flex-end" w="70%" alignItems="flex-start">
               {wright.tags?.map((tag) => {
                 return <Text key={tag.id}>#{tag.name}</Text>;
@@ -78,6 +92,13 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
             </Text>
           </Text>
           <Viewer value={wright.content} plugins={plugins} />
+          <Box w="full" h={32}></Box>
+          <Box opacity={0.6} pos="absolute" bottom="20px" right="20px" mt={1} zIndex={-2}>
+            try
+            <Text as="a" href="https://wrighter.vercel.app/" target="_blank" ml={1}>
+              <u>wrighter</u>
+            </Text>
+          </Box>
         </>
       ) : (
         <Center>
