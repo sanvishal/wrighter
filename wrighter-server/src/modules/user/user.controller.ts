@@ -86,7 +86,7 @@ export const userLogoutHandler = async (request: FastifyRequest, reply: FastifyR
     path: "/",
     secure: process.env.NODE_ENV !== "development",
     httpOnly: true,
-    sameSite: true,
+    sameSite: process.env.NODE_ENV === "development" ? false : "none",
     maxAge: -1,
   });
   return reply.code(200).send();
