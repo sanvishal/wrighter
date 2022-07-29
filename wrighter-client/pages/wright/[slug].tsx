@@ -88,6 +88,7 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  context.res.setHeader("Cache-Control", "public, s-maxage=20, stale-while-revalidate=59");
   const slug = context.params?.slug;
 
   if (!slug) {
@@ -95,7 +96,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: {
         wright: null,
       },
-      revalidate: 50,
     };
   }
 
@@ -107,7 +107,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         props: {
           wright: null,
         },
-        revalidate: 50,
       };
     }
 
@@ -115,14 +114,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: {
         wright: req.data,
       },
-      revalidate: 50,
     };
   } catch (e) {
     return {
       props: {
         wright: null,
       },
-      revalidate: 50,
     };
   }
 }
