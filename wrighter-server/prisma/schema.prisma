@@ -35,6 +35,8 @@ model Wright {
   userId String
   tagWrights TagWright[]
   isPublic Boolean @default(false)
+
+  @@index([slug])
 }
 
 model Tag {
