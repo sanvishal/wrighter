@@ -160,7 +160,7 @@ export const WrightSettings = ({
   return (
     <>
       {showButton && (
-        <VStack spacing={2}>
+        <VStack spacing={2} display={{ base: "none", md: "flex" }}>
           <CustomToolTip label="wright settings" placement="left">
             <IconButton aria-label="wright settings" icon={<FiSettings />} variant="ghost" size="sm" onClick={onOpen} />
           </CustomToolTip>

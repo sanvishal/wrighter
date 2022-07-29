@@ -39,7 +39,7 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
         <meta property="twitter:title" content={wright.title} key="title" />
         <meta
           name="description"
-          content={`by ${wright.user} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
+          content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
         />
         <meta property="og:type" content="article" />
         <meta property="og:image" content={wright.ogImage || ""} />
@@ -51,11 +51,11 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
         <meta name="twitter:creator" content={wright.user}></meta>
         <meta
           name="twitter:description"
-          content={`by ${wright.user} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
+          content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
         />
         <meta
           name="og:description"
-          content={`by ${wright.user} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
+          content={`by ${wright.user + " • "} ` + (wright.content.trim() ? wright.content.substring(0, 150) : wright.title)}
         />
       </Head>
       {wright ? (
