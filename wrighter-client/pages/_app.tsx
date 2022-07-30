@@ -32,7 +32,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Script strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=G-3GJH7QG23L`} />
-
       <Script strategy="lazyOnload" id="ga">
         {`
                     window.dataLayer = window.dataLayer || [];
@@ -43,7 +42,24 @@ function MyApp({ Component, pageProps }: AppProps) {
                     });
                 `}
       </Script>
-      <Head>{router.pathname !== "/wright" && <meta property="og:image" content="https://imgur.com/LOKixkl.png" />}</Head>
+      {router.pathname !== "/wright/[slug]" && (
+        <Head>
+          <meta property="og:image" content="https://imgur.com/LOKixkl.png" />
+          <meta property="og:title" content="Wrighter" />
+          <meta property="og:description" content="Minimal yet powerful writing app" />
+          <meta property="og:url" content="https://wrighter.vercel.app/" />
+          <meta property="og:type" content="website" />
+          <meta property="og:site_name" content="Wrighter" />
+          <meta property="og:locale" content="en_US" />
+          <meta property="og:image:alt" content="Wrighter" />
+          <meta name="twitter:creator" content="@tk_vishal_tk" />
+          <meta name="twitter:title" content="Wrighter" />
+          <meta name="twitter:description" content="Minimal yet powerful writing app" />
+          <meta name="twitter:image" content="https://imgur.com/LOKixkl.png" />
+          <meta name="author" content="Vishal TK" />
+          <meta name="description" content="Minimal yet powerful writing app" />
+        </Head>
+      )}
       <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme}>
           {/* <GrainyTexture /> */}
