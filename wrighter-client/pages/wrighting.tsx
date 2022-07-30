@@ -15,7 +15,7 @@ import debounce from "lodash.debounce";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { Router, useRouter } from "next/router";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FiExternalLink, FiSettings, FiX } from "react-icons/fi";
 import { useQuery } from "react-query";
 import { Content } from "../components/Content";
@@ -28,7 +28,7 @@ import { useBiteActions } from "../contexts/CommandBarHooks/useBiteActions";
 import { useWrightingActions } from "../contexts/CommandBarHooks/useWrightingActions";
 import { useUserContext } from "../contexts/UserContext";
 import { db, WrightIDB } from "../services/dbService";
-import { clearAndCreateEditorContext, getWright, saveWright } from "../services/wrightService";
+import { clearAndCreateEditorContext, getWright, getWrightOnContext, saveWright } from "../services/wrightService";
 import { Wright } from "../types";
 
 const Wrighting: NextPage = () => {
@@ -40,6 +40,7 @@ const Wrighting: NextPage = () => {
   const [isContextLoaded, setIsContextLoaded] = useState(false);
   const toast = useToast();
   const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
+  const [syncContent, setSyncContent] = useState("");
 
   // useBiteActions();
 
@@ -59,6 +60,7 @@ const Wrighting: NextPage = () => {
       if (wright) {
         await clearAndCreateEditorContext(wright);
         setWright(wright);
+        setSyncContent(wright.content || "");
         setTitle(wright.title || "");
       } else {
         router.push("/wrights");
@@ -113,6 +115,19 @@ const Wrighting: NextPage = () => {
       setId((router?.query?.id || "") as string);
     }
   }, [router.isReady]);
+
+  // codemirror or bytemd destorys and recreates the whole editor on the 1280px marker
+  // so get from content when that happens
+  const onEditorDestroy = async () => {
+    if (router.pathname.includes("wrighting")) {
+      const newWright = await getWrightOnContext(id);
+      if (newWright) {
+        await clearAndCreateEditorContext(newWright);
+        setWright(newWright);
+        setTitle(newWright.title || "");
+      }
+    }
+  };
 
   return (
     <Content isWide>
@@ -170,7 +185,7 @@ const Wrighting: NextPage = () => {
               />
             </Editable>
             <Tags initWright={wright as Wright} />
-            <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} />
+            <Editor editorOnSaveHandler={debouncedEditorOnSaveHandler} initWright={wright} onDestory={onEditorDestroy} />
             <Box pos="absolute" top="24px" left="0px">
               {isAuthenticated() && (
                 <WrightSettings

@@ -18,7 +18,11 @@ import {
 import { TbMathFunction } from "react-icons/tb";
 
 export const getShortcut = (key: string) => {
-  return navigator.platform.indexOf("Mac") > -1 ? `⌘ + ${key}` : `Ctrl + ${key}`;
+  return typeof navigator !== "undefined"
+    ? navigator.platform.indexOf("Mac") > -1
+      ? `⌘ + ${key}`
+      : `Ctrl + ${key}`
+    : `⌘ + ${key}`;
 };
 
 export const useWrightingActions = (exportHandler: () => void) => {

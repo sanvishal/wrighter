@@ -1,6 +1,6 @@
 import { Box, useBreakpointValue } from "@chakra-ui/react";
 import { Editor as ByteMdEditor, EditorProps } from "@bytemd/react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import gfmPluin from "@bytemd/plugin-gfm";
 import highlightPlugin from "@bytemd/plugin-highlight-ssr";
 import mathPlugin from "@bytemd/plugin-math-ssr";
@@ -16,9 +16,11 @@ import { slugify } from "../../utils";
 export const Editor = ({
   editorOnSaveHandler = () => {},
   initWright = {},
+  onDestory,
 }: {
   editorOnSaveHandler: () => void;
   initWright: Wright | WrightIDB;
+  onDestory: () => {};
 }) => {
   const [content, setContent] = useState("");
   const [id, setId] = useState("");
@@ -73,6 +75,12 @@ export const Editor = ({
       setId((router?.query?.id || "") as string);
     }
   }, [router.isReady]);
+
+  useEffect(() => {
+    return () => {
+      onDestory();
+    };
+  }, []);
 
   const exportHandler = () => {
     const blob = new Blob([content || ""], {

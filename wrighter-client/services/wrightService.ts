@@ -100,8 +100,17 @@ export const saveWright = async (isGuest: boolean, wright: Wright | WrightIDB): 
   return resp.data;
 };
 
-export const changeWrightSettings = async (wrightId: string, isPublic: boolean, slug: string, ogImage: string = ''): Promise<AxiosResponse> => {
-  const resp = await axios.put(`${API_BASE_URL}/wright/${wrightId}/settings`, { isPublic, slug, ogImage }, { withCredentials: true });
+export const changeWrightSettings = async (
+  wrightId: string,
+  isPublic: boolean,
+  slug: string,
+  ogImage: string = ""
+): Promise<AxiosResponse> => {
+  const resp = await axios.put(
+    `${API_BASE_URL}/wright/${wrightId}/settings`,
+    { isPublic, slug, ogImage },
+    { withCredentials: true }
+  );
   return resp.data;
 };
 
@@ -124,4 +133,8 @@ export const useGetAllWrights = (isGuest: boolean, isEnabled: boolean = false) =
     enabled: isEnabled,
     refetchOnWindowFocus: false,
   });
+};
+
+export const getWrightOnContext = async (wrightId: string): Promise<WrightIDB | undefined> => {
+  return await db.editorContext.get(wrightId);
 };
