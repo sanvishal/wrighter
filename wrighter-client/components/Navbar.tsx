@@ -54,7 +54,7 @@ export const MobileNav = (): JSX.Element => {
       <Box w="full" h={14} bg="bgDark" pos="fixed" bottom="0" borderTopRadius={10} zIndex={2}>
         <Flex alignItems="center" justifyContent="space-between" w="full" flexDirection="row" px={2} h="full">
           <HStack spacing={4} h="full">
-            <Center w="40px" h="40px">
+            <Center w="40px" h="40px" cursor="pointer" onClick={() => query.toggle()}>
               <Logo />
             </Center>
             <Box w={0.5} h={9} bg="bgLight" borderRadius={10} ml={3} />
@@ -65,6 +65,8 @@ export const MobileNav = (): JSX.Element => {
                 onClick={() => {
                   router.push("/bites", undefined, { shallow: true });
                 }}
+                bg={router.pathname === "/bites" ? "biteAccentColorTrans" : ""}
+                color={router.pathname === "/bites" ? "biteAccentColor" : ""}
                 size="sm"
                 role="group"
               >
@@ -78,6 +80,8 @@ export const MobileNav = (): JSX.Element => {
                 onClick={() => {
                   router.push("/wrights", undefined, { shallow: true });
                 }}
+                bg={router.pathname.includes("/wright") ? "accentColorTrans" : ""}
+                color={router.pathname.includes("/wright") ? "accentColor" : ""}
                 size="sm"
                 role="group"
               >
@@ -232,7 +236,7 @@ export const Navbar = () => {
       >
         <Flex alignItems="center" pos="fixed" w={14} justifyContent="space-between" h="full" flexDirection="column">
           <VStack spacing={4}>
-            <Center w="40px" h="40px">
+            <Center w="40px" h="40px" cursor="pointer" onClick={() => query.toggle()}>
               <Logo />
             </Center>
             <Box w={9} h={0.5} bg="bgLight" borderRadius={10} mb={3} />
@@ -246,6 +250,8 @@ export const Navbar = () => {
                   }}
                   _hover={{ bg: "biteAccentColorTrans", color: "biteAccentColor" }}
                   _focus={{ bg: "biteAccentColorTrans", color: "biteAccentColor" }}
+                  bg={router.pathname === "/bites" ? "biteAccentColorTrans" : ""}
+                  color={router.pathname === "/bites" ? "biteAccentColor" : ""}
                   size="sm"
                   role="group"
                 >
@@ -260,6 +266,8 @@ export const Navbar = () => {
                   variant="ghost"
                   _hover={{ bg: "accentColorTrans", color: "accentColor" }}
                   _focus={{ bg: "accentColorTrans", color: "accentColor" }}
+                  bg={router.pathname.includes("/wright") ? "accentColorTrans" : ""}
+                  color={router.pathname.includes("/wright") ? "accentColor" : ""}
                   onClick={() => {
                     router.push("/wrights", undefined, { shallow: true });
                   }}

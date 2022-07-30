@@ -75,7 +75,14 @@ export const WrightCard = ({
         <Box w={{ base: "85%", md: "90%" }}>
           <VStack align="flex-start" spacing={0}>
             <HStack spacing={2}>
-              <Text fontWeight="800" fontSize="x-large">
+              <Text
+                fontWeight="800"
+                fontSize="x-large"
+                cursor="pointer"
+                onClick={() => {
+                  router.push("/wrighting?id=" + wright.id);
+                }}
+              >
                 {wright.title} &nbsp;
                 <CustomToolTip
                   placement="top"
