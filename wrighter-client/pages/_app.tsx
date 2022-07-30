@@ -25,6 +25,7 @@ Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
+const HOST = "https://wrighter.vercel.app";
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
   const router = useRouter();
@@ -44,10 +45,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Script>
       {router.pathname !== "/wright/[slug]" && (
         <Head>
-          <meta property="og:image" content="https://imgur.com/LOKixkl.png" />
+          <meta property="og:image" content={`${HOST}/ogimage.png`} />
           <meta property="og:title" content="Wrighter" />
           <meta property="og:description" content="Minimal yet powerful writing app" />
-          <meta property="og:url" content="https://wrighter.vercel.app/" />
+          <meta property="og:url" content="https://wrighter.vercel.app" />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content="Wrighter" />
           <meta property="og:locale" content="en_US" />
@@ -55,7 +56,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <meta name="twitter:creator" content="@tk_vishal_tk" />
           <meta name="twitter:title" content="Wrighter" />
           <meta name="twitter:description" content="Minimal yet powerful writing app" />
-          <meta name="twitter:image" content="https://imgur.com/LOKixkl.png" />
+          <meta name="twitter:image" content={`${HOST}/ogimage.png`} />
           <meta name="author" content="Vishal TK" />
           <meta name="description" content="Minimal yet powerful writing app" />
         </Head>
