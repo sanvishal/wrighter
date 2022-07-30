@@ -232,7 +232,7 @@ export const CommandBarProvider = ({ children }: { children: JSX.Element | JSX.E
   ];
 
   return (
-    <KBarProvider actions={routeActions} options={{ toggleShortcut: "$mod+Shift+P" }}>
+    <KBarProvider actions={routeActions} options={{ toggleShortcut: "$mod+Shift+P", enableHistory: true }}>
       <ActionsProvider>{children}</ActionsProvider>
     </KBarProvider>
   );
