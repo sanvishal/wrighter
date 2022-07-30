@@ -1,5 +1,5 @@
-import { Box, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Portal, Text } from "@chakra-ui/react";
-import { FiHash, FiSettings, FiTrash2 } from "react-icons/fi";
+import { Box, HStack, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Portal, Text } from "@chakra-ui/react";
+import { FiCopy, FiHash, FiSettings, FiTrash2 } from "react-icons/fi";
 import { Bite, BiteType, Tag } from "../../types";
 import { ImageCard } from "./Image/ImageCard";
 import { LinkCard } from "./Link/LinkCard";
@@ -21,24 +21,35 @@ export const BiteCard = ({
           <Text fontSize="lg" fontWeight="800" mb={0.5}>
             {bite.title}
           </Text>
-          <Menu>
-            <MenuButton as="button">
-              <Icon as={FiSettings} color="textLighter"></Icon>
-            </MenuButton>
-            <Portal>
-              <MenuList minWidth="150px" boxShadow="md">
-                {/* <MenuItem icon={<Icon as={FiEdit} mb={-0.5} />}>Edit Bite</MenuItem> */}
-                <MenuItem
-                  icon={<Icon as={FiTrash2} mb={-0.5} />}
-                  _hover={{ bg: "errorRedTransBg" }}
-                  _focus={{ bg: "errorRedTransBg" }}
-                  onClick={() => onDeleteClick(bite)}
-                >
-                  Delete Bite
-                </MenuItem>
-              </MenuList>
-            </Portal>
-          </Menu>
+          <HStack>
+            <IconButton
+              as={FiCopy}
+              color="textLighter"
+              aria-label="copy contents"
+              variant="ghost"
+              size="xs"
+              p={1.5}
+              onClick={() => navigator.clipboard.writeText(bite.content)}
+            />
+            <Menu>
+              <MenuButton as="button">
+                <IconButton as={FiSettings} variant="ghost" size="xs" p={1.5} color="textLighter" aria-label="Bite Settings" />
+              </MenuButton>
+              <Portal>
+                <MenuList minWidth="150px" boxShadow="md">
+                  {/* <MenuItem icon={<Icon as={FiEdit} mb={-0.5} />}>Edit Bite</MenuItem> */}
+                  <MenuItem
+                    icon={<Icon as={FiTrash2} mb={-0.5} />}
+                    _hover={{ bg: "errorRedTransBg" }}
+                    _focus={{ bg: "errorRedTransBg" }}
+                    onClick={() => onDeleteClick(bite)}
+                  >
+                    Delete Bite
+                  </MenuItem>
+                </MenuList>
+              </Portal>
+            </Menu>
+          </HStack>
         </HStack>
         {bite.tags && bite.tags.length > 0 && (
           <HStack mb={2} wrap="wrap" columnGap={1.5} rowGap={1.5} spacing={0}>
