@@ -115,7 +115,7 @@ build()
     });
 
     const port = +process.env.PORT! || 8080;
-    fastify.listen({ port }, (err, address) => {
+    fastify.listen({ port, host: "0.0.0.0" }, (err, address) => {
       if (err) {
         console.error(err);
         process.exit(1);
