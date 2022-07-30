@@ -3,7 +3,8 @@ import "bytemd/dist/index.css";
 import "highlight.js/styles/default.css";
 import "katex/dist/katex.css";
 import type { AppProps } from "next/app";
-import Router from "next/router";
+import Head from "next/head";
+import Router, { useRouter } from "next/router";
 import Script from "next/script";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -26,6 +27,7 @@ Router.events.on("routeChangeError", () => NProgress.done());
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
+  const router = useRouter();
 
   return (
     <>
@@ -41,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     });
                 `}
       </Script>
+      <Head>{router.pathname !== "/wright" && <meta property="og:image" content="https://imgur.com/LOKixkl.png" />}</Head>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme}>
           {/* <GrainyTexture /> */}

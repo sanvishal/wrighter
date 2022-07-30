@@ -134,7 +134,7 @@ const Home: NextPage = () => {
             Your new favourite markdown editor
           </Text>
           <Text fontSize={{ base: "xx-large", md: "5rem" }} fontWeight={800} lineHeight={1}>
-            Minimal yet powerful writing app
+            Minimal yet powerful writing companion
           </Text>
           <Box h={8} />
           <Button size="lg" as="a" fontWeight="800" href="/signin">
@@ -329,7 +329,7 @@ const Home: NextPage = () => {
           <FeatureCard
             title="Smart Commands"
             icon={<Icon as={FiCommand} width="1.5em" height="1.5em" color="textLight" />}
-            description="command bar knows what you want to search and gives suggeestions based on the context"
+            description="command bar knows what you want to search and gives suggestions based on the context"
           />
           <FeatureCard
             title="Handy Shortcuts"
@@ -354,9 +354,31 @@ const Home: NextPage = () => {
           <FeatureCard
             title="...and more features"
             icon={<Icon as={FiGift} width="1.5em" height="1.5em" color="textLight" />}
-            description="even more features to make writing easier and faster for you"
+            description="even more features to make ideation & writing easier and faster for you"
           />
         </Stack>
+        <VStack mt={20} mb={12}>
+          <Text fontSize={{ base: "x-large", md: "xx-large" }} textAlign="center">
+            Start wrighting right now with this instant link ⚡
+          </Text>
+          <Text
+            bg="bgLighter"
+            variant="unstyled"
+            fontSize={{ base: "x-large", md: "xx-large" }}
+            fontWeight="bold"
+            p={1}
+            borderRadius={10}
+            px={3}
+            as="a"
+            href="https://wrighter.vercel.app/new"
+            target="_blank"
+          >
+            <Text as="span" color="textLighter" opacity="0.6">
+              wrighter.vercel.app
+            </Text>
+            <Text as="span">/new</Text>
+          </Text>
+        </VStack>
         <GuestWarn isOpen={isGuestWarnOpen} onClose={onGuestWarnClose} />
       </Container>
     </>
