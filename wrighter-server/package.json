@@ -10,7 +10,8 @@
     "watch-node": "nodemon dist/index.js",
     "postinstall": "npx prisma generate && tsc",
     "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
-    "migrate": "npx prisma migrate dev --name init"
+    "migrate": "npx prisma migrate dev --name init",
+    "build": "yarn"
   },
   "dependencies": {
     "@fastify/cookie": "^7.0.0",
