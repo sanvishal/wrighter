@@ -59,14 +59,28 @@ const FeatureCard = ({
   title,
   description,
   bg = "bgLight",
+  link = "",
 }: {
   icon: JSX.Element;
   title: string;
   description: string;
   bg?: string;
+  link?: string;
 }) => {
   return (
-    <Box p={4} borderRadius={12} h="150px" w="290px" bg={bg} pr={3} shadow="base">
+    <Box
+      p={4}
+      borderRadius={12}
+      h="150px"
+      w="290px"
+      bg={bg}
+      pr={3}
+      shadow="base"
+      as={link ? "a" : "div"}
+      // @ts-ignore
+      target="_blank"
+      href={link || "#"}
+    >
       <HStack alignItems="flex-start" spacing={3}>
         <Center p={2} bg="bg" borderRadius={8} w={10} h={10}>
           {icon}
@@ -243,23 +257,27 @@ const Home: NextPage = () => {
         >
           <FeatureCard
             title="Wrights"
+            link="https://wrighter.vercel.app/wright/introducing-wrighter-a-powerful-markdown-blogger-and-a-writing-companion-6J96hd6t0pyy8wDFlkZUI0#the-wrights-aka-your-blogs"
             icon={<Icon as={FiBookOpen} width="1.5em" height="1.5em" color="accentColor" />}
             bg="accentColorTransLighter"
             description="wrights are your markdown articles written with wrighter's powerful editor"
           />
           <FeatureCard
             title="Bites"
+            link="https://wrighter.vercel.app/wright/introducing-wrighter-a-powerful-markdown-blogger-and-a-writing-companion-6J96hd6t0pyy8wDFlkZUI0#the-bites-aka-your-ideas"
             icon={<Icon as={TbBulb} width="1.6em" height="1.6em" color="biteAccentColor" />}
             bg="biteAccentColorTransLighter"
             description="bites are short blob of information(links, images, markdown snippets) that you can jot down anytime"
           />
           <FeatureCard
             title="Wrighter Editor"
+            link="https://wrighter.vercel.app/wright/introducing-wrighter-a-powerful-markdown-blogger-and-a-writing-companion-6J96hd6t0pyy8wDFlkZUI0#about-wrighter"
             icon={<Icon as={TbEdit} width="1.6em" height="1.6em" color="successGreen" />}
             bg="successGreenTransBg"
             description="powerful WYSIWYM(what you see is what you mean) markdown editor, designed for productivty"
           />
           <FeatureCard
+            link="https://wrighter.vercel.app/wright/introducing-wrighter-a-powerful-markdown-blogger-and-a-writing-companion-6J96hd6t0pyy8wDFlkZUI0#about-wrighter"
             title="Command Bar"
             icon={<Icon as={FiCommand} width="1.5em" height="1.5em" color="textLight" />}
             description="central command bar to control wrighter in a few keystrokes (Ctrl/⌘+Shift+P), can't find it? just search for it!"
@@ -379,6 +397,41 @@ const Home: NextPage = () => {
             <Text as="span">/new</Text>
           </Text>
         </VStack>
+        <Text fontWeight="800" w="full" textAlign="center" color="textLighter" pt={3} pb={5} fontSize={{ base: "md", md: "lg" }}>
+          Originally made for the{" "}
+          <Text as="a" href="https://hashnode.com/" target="_blank" mr={1} color="biteAccentColor">
+            Hashnode
+          </Text>
+          x
+          <Text as="a" href="https://planetscale.com/" target="_blank" ml={1} mr={1} color="biteAccentColor">
+            PlanetScale
+          </Text>
+          Hackathon by
+          <Text as="a" href="https://twitter.com/tk_vishal_tk" target="_blank" ml={1} color="biteAccentColor" mr={2}>
+            Vishal TK.
+          </Text>
+          Read more about it
+          <Text
+            as="a"
+            href="https://wrighter.vercel.app/wright/introducing-wrighter-a-powerful-markdown-blogger-and-a-writing-companion-6J96hd6t0pyy8wDFlkZUI0"
+            target="_blank"
+            ml={1}
+            mr={1}
+            color="biteAccentColor"
+          >
+            here
+          </Text>
+          or
+          <Text
+            as="a"
+            href="https://vishaltk.hashnode.dev/introducing-wrighter-a-powerful-markdown-blogger-a-writing-companion"
+            target="_blank"
+            ml={1}
+            color="biteAccentColor"
+          >
+            here
+          </Text>
+        </Text>
         <GuestWarn isOpen={isGuestWarnOpen} onClose={onGuestWarnClose} />
       </Container>
     </>
