@@ -1,6 +1,6 @@
 @mixin linkOnHeading {
   & {
-    a {
+    a[aria-hidden="true"] {
       position: absolute;
       text-decoration: none;
       color: var(--chakra-colors-textLighter);
@@ -12,7 +12,7 @@
       }
     }
     &:hover {
-      a {
+      a[aria-hidden="true"] {
         opacity: 0.5;
         transform: translateX(5px);
       }
