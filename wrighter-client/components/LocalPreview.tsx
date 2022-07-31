@@ -88,7 +88,7 @@ export const LocalPreview = (): JSX.Element => {
             <Text fontSize="sm" color="textLighter" mb="-5px">
               {new Date(localWright.updatedAt || new Date().toISOString()).toLocaleString()}
             </Text>
-            <Text fontWeight="800" lineHeight="1.03" my={4} mb={8} fontSize={{ base: "5xl", md: "6xl" }}>
+            <Text fontWeight="800" lineHeight="1.03" my={4} mb={8} fontSize={{ base: "2.1em", md: "6xl" }}>
               {localWright.title || ""}
             </Text>
             <Viewer value={localWright.content || ""} plugins={plugins} />
@@ -142,7 +142,7 @@ export const LocalPreview = (): JSX.Element => {
           <Text fontSize="sm" color="textLighter" mb="-5px">
             {new Date(remoteWright.updatedAt || new Date().toISOString()).toLocaleString()}
           </Text>
-          <Text fontWeight="800" lineHeight="1.03" my={4} mb={8} fontSize={{ base: "5xl", md: "6xl" }}>
+          <Text fontWeight="800" lineHeight="1.03" my={4} mb={8} fontSize={{ base: "2.1em", md: "6xl" }}>
             {remoteWright.title || ""}
           </Text>
           <Viewer value={remoteWright.content || ""} plugins={plugins} />

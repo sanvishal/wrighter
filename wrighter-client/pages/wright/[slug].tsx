@@ -86,7 +86,7 @@ const Wrights: NextPage<PageProps> = ({ wright }: PageProps) => {
               })}
             </HStack>
           </HStack>
-          <Text fontSize={{ base: "5xl", md: "6xl" }} fontWeight="800" lineHeight="1.03" my={4}>
+          <Text fontSize={{ base: "2.1em", md: "6xl" }} fontWeight="800" lineHeight="1.03" my={4}>
             {wright.title || ""}
           </Text>
           <Text fontSize="md" color="textLighter" mt="-8px" mb={12}>
