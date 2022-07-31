@@ -66,7 +66,7 @@ export const MobileNav = (): JSX.Element => {
                   router.push("/bites", undefined, { shallow: true });
                 }}
                 bg={router.pathname === "/bites" ? "biteAccentColorTrans" : ""}
-                color={router.pathname === "/bites" ? "biteAccentColor" : ""}
+                color={router.pathname === "/bites" ? "biteAccentColor" : "textLighter"}
                 size="sm"
                 role="group"
               >
@@ -81,7 +81,7 @@ export const MobileNav = (): JSX.Element => {
                   router.push("/wrights", undefined, { shallow: true });
                 }}
                 bg={router.pathname.includes("/wright") ? "accentColorTrans" : ""}
-                color={router.pathname.includes("/wright") ? "accentColor" : ""}
+                color={router.pathname.includes("/wright") ? "accentColor" : "textLighter"}
                 size="sm"
                 role="group"
               >
@@ -251,7 +251,7 @@ export const Navbar = () => {
                   _hover={{ bg: "biteAccentColorTrans", color: "biteAccentColor" }}
                   _focus={{ bg: "biteAccentColorTrans", color: "biteAccentColor" }}
                   bg={router.pathname === "/bites" ? "biteAccentColorTrans" : ""}
-                  color={router.pathname === "/bites" ? "biteAccentColor" : ""}
+                  color={router.pathname === "/bites" ? "biteAccentColor" : "textLighter"}
                   size="sm"
                   role="group"
                 >
@@ -267,7 +267,7 @@ export const Navbar = () => {
                   _hover={{ bg: "accentColorTrans", color: "accentColor" }}
                   _focus={{ bg: "accentColorTrans", color: "accentColor" }}
                   bg={router.pathname.includes("/wright") ? "accentColorTrans" : ""}
-                  color={router.pathname.includes("/wright") ? "accentColor" : ""}
+                  color={router.pathname.includes("/wright") ? "accentColor" : "textLighter"}
                   onClick={() => {
                     router.push("/wrights", undefined, { shallow: true });
                   }}

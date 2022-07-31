@@ -52,6 +52,7 @@ export const CreateWright = ({
         variant="ghost"
         onClick={createWrightHandler}
         isLoading={isLoading}
+        autoFocus
       >
         Create Wright
       </Button>
@@ -238,6 +239,7 @@ export const WrightsList = (): JSX.Element => {
             onClick={createWrightHandler}
             display={wrights?.length > 0 ? "flex" : "none"}
             isLoading={isLoading}
+            autoFocus
           >
             Create Wright
           </Button>
