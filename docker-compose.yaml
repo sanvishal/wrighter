@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  mariadb:
+    image: mariadb:10.7
+    container_name: mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=S3cret
+      - MYSQL_PASSWORD=An0thrS3crt
+      - MYSQL_USER=writer
+      - MYSQL_DATABASE=writer_db
+  server:
+    build: ./wrighter-server/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "mariadb"
+  client:
+    build: ./wrighter-client/
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "server"
