@@ -19,7 +19,10 @@ import "../styles/calender.scss";
 import "../styles/cmdbar.scss";
 import "../styles/editor.scss";
 import "../styles/globals.css";
+import { PRIVACY } from "../constants";
 import { theme } from "../theme";
+import Gtag from "../components/gtag";
+import Analytics from "../components/analytics";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
@@ -32,17 +35,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <Script strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=G-3GJH7QG23L`} />
-      <Script strategy="lazyOnload" id="ga">
-        {`
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-                    gtag('config', 'G-3GJH7QG23L', {
-                    page_path: window.location.pathname,
-                    });
-                `}
-      </Script>
+      {`${PRIVACY}` ? console.log('privacy is on')
+        : <Gtag />}
+      {`${PRIVACY}` ? console.log('privacy is on')
+        : <Analytics />}
+
+
       {router.pathname !== "/wright/[slug]" && (
         <Head>
           <meta property="og:image" content={`${HOST}/ogimage.png`} />
