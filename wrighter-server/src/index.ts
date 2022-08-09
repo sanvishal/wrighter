@@ -68,7 +68,7 @@ async function build() {
   // @ts-ignore
   fastify.use(
     cors({
-      origin: ["http://localhost:3000", "http://127.0.0.1", "https://wrighter.vercel.app"],
+      origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://wrighter.vercel.app"],
       credentials: true,
       exposedHeaders: ["set-cookie"],
     })
@@ -115,7 +115,7 @@ build()
     });
 
     const port = +process.env.PORT! || 8080;
-    fastify.listen({ port, host: "0.0.0.0" }, (err, address) => {
+    fastify.listen({ port: port, host: "0.0.0.0" }, (err, address) => {
       if (err) {
         console.error(err);
         process.exit(1);

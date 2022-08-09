@@ -41,3 +41,22 @@ COOKIE_SECRET="SECRETCookieforwrighterapplication"
 
 - from the root directory, run `yarn dev`, it would concurrently run both the server and client
 - goto `localhost:3000` to see wrighter ✨
+
+
+## Docker Version
+
+Modify the server `.env` file to use docker default network:
+
+```
+DATABASE_URL="mysql://wrighter_user:secrete_wrighter_pass@mariadb:3306/wrighter_db"
+SECRET_KEY="SECRETkeyforwrighterapplication"
+COOKIE_SECRET="SECRETCookieforwrighterapplication"
+```
+
+And then run inside main folder:
+
+```
+docker compose up
+```
+
+It start mysql docker, build and start server and client nodes and then all is ready to run at `localhost:3000`
