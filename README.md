@@ -1,6 +1,7 @@
 ![wrighter-banner](https://imgur.com/mPITnEv.png)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## [Wrighter - A Powerful Markdown Blogger & A Writing Companion ⚡](https://wrighter.vercel.app/)
 
 - Wrighter has a powerful WYSIWYM markdown editor and a renderer (batteries included ⚡)
@@ -34,6 +35,7 @@ DATABASE_URL="<INSERT DB URL HERE>"
 SECRET_KEY="<SOME SECRET>"
 COOKIE_SECRET="<COOKIE SECRET>"
 ```
+
 Example of configuration file:
 
 ```
@@ -44,3 +46,7 @@ COOKIE_SECRET="SECRETCookieforwrighterapplication"
 
 - from the root directory, run `yarn dev`, it would concurrently run both the server and client
 - goto `localhost:3000` to see wrighter ✨
+
+## Contributing
+
+- Contributions and feature ideas are welcome 🤗
