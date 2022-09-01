@@ -1,9 +1,12 @@
+![wrighter-banner](https://imgur.com/mPITnEv.png)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ## [Wrighter - A Powerful Markdown Blogger & A Writing Companion ⚡](https://wrighter.vercel.app/)
 
-- Wrighter is originally made for the [hashnode x PlanetScale hackathon](https://townhall.hashnode.com/planetscale-hackathon)
-- It has a powerful WYSIWYM markdown editor and a renderer
+- Wrighter has a powerful WYSIWYM markdown editor and a renderer (batteries included ⚡)
 - It is optional signup, so you can use wrighter offline too! or you can fork this project and use wrighter standalone
 - Wrighter has a feature called bites, that allow you to gather & organize _bite_ sized ideas and later use them in your blogs
+- ...and a lot more features that aims to make modern writing easier and productive!
 
 ### To read more about it, visit [here](https://wrighter.vercel.app/wright/introducing-wrighter-a-powerful-markdown-blogger-and-a-writing-companion-6J96hd6t0pyy8wDFlkZUI0) or [here](https://vishaltk.hashnode.dev/introducing-wrighter-a-powerful-markdown-blogger-a-writing-companion)
 
