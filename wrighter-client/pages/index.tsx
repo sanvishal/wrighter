@@ -397,16 +397,8 @@ const Home: NextPage = () => {
             <Text as="span">/new</Text>
           </Text>
         </VStack>
-        <Text fontWeight="800" w="full" textAlign="center" color="textLighter" pt={3} pb={5} fontSize={{ base: "md", md: "lg" }}>
-          Originally made for the{" "}
-          <Text as="a" href="https://hashnode.com/" target="_blank" mr={1} color="biteAccentColor">
-            Hashnode
-          </Text>
-          x
-          <Text as="a" href="https://planetscale.com/" target="_blank" ml={1} mr={1} color="biteAccentColor">
-            PlanetScale
-          </Text>
-          Hackathon by
+        <Text fontWeight="800" w="full" textAlign="center" color="textLighter" pt={6} pb={5} fontSize={{ base: "md", md: "lg" }}>
+          made by
           <Text as="a" href="https://twitter.com/tk_vishal_tk" target="_blank" ml={1} color="biteAccentColor" mr={2}>
             Vishal TK.
           </Text>
@@ -432,6 +424,21 @@ const Home: NextPage = () => {
             here
           </Text>
         </Text>
+        <Center mb={6}>
+          <a
+            href="https://www.producthunt.com/posts/wrighter?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-wrighter"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=358140&theme=neutral"
+              alt="Wrighter - A&#0032;modern&#0032;markdown&#0032;editor&#0032;&#0038;&#0032;writing&#0032;companion | Product Hunt"
+              style={{ width: "250px", height: "54px" }}
+              width="250"
+              height="54"
+            />
+          </a>
+        </Center>
         <GuestWarn isOpen={isGuestWarnOpen} onClose={onGuestWarnClose} />
       </Container>
     </>
