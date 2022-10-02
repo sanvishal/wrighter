@@ -300,7 +300,7 @@ const Home: NextPage = () => {
             description="you can signup to wrighter, it autosaves regularly both on device and cloud, preventing data loss"
           />
           <FeatureCard
-            title="Optional Siginup"
+            title="Optional Signup"
             icon={<Icon as={FiCloudOff} width="1.5em" height="1.5em" color="textLight" />}
             description="you can use wrighter without even signing up, no data leaves your browser, super private"
           />
